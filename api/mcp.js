@@ -2,11 +2,25 @@
 // fillprompt.com. Stateless Streamable HTTP at https://fillprompt.com/api/mcp, read-only, no sign-in.
 import { createMcpHandler } from 'mcp-handler';
 import { z } from 'zod';
-import { search, find, slots, credit, summary, filters, KINDS, SITE } from './_catalog.js';
+import { search, find, random, slots, credit, summary, filters, KINDS, SITE } from './_catalog.js';
 import { recordUsage } from './_usage.js';
 
 const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }], structuredContent: data });
 const readOnly = { readOnlyHint: true, openWorldHint: false };
+
+/** The full form of one prompt, as get_prompt and random_prompt return it. */
+const full = (x) => ({
+  title: x.title,
+  type: x.kind,
+  model: x.model,
+  tags: x.tags,
+  url: x.url,
+  ...(x.desc ? { description: x.desc } : {}),
+  prompt: x.prompt,
+  slots: slots(x.prompt),
+  media: x.media,
+  credit: credit(x),
+});
 
 const mcp = createMcpHandler(
   (server) => {
@@ -48,18 +62,28 @@ const mcp = createMcpHandler(
         const x = find(ref, type);
         recordUsage('get_prompt', x?.kind);
         if (!x) return { isError: true, content: [{ type: 'text', text: `No prompt found for "${ref}". Use search_prompts to find one.` }] };
-        return json({
-          title: x.title,
-          type: x.kind,
-          model: x.model,
-          tags: x.tags,
-          url: x.url,
-          ...(x.desc ? { description: x.desc } : {}),
-          prompt: x.prompt,
-          slots: slots(x.prompt),
-          media: x.media,
-          credit: credit(x),
-        });
+        return json(full(x));
+      },
+    );
+
+    server.registerTool(
+      'random_prompt',
+      {
+        title: 'Random prompt',
+        description:
+          'Get one fillprompt.com prompt picked at random, in full (the same shape as get_prompt), for requests like "surprise me" or "give me an idea for a poster" that have no search query. Narrow it with type, model or category.',
+        inputSchema: z.object({
+          type: z.enum(KINDS).optional().describe('Only image, video or text prompts.'),
+          model: z.string().optional().describe('Only prompts written for this AI model, e.g. "Nano Banana", "Seedance", "Claude". See list_filters.'),
+          category: z.string().optional().describe('Image category (e.g. "poster") or text prompt type (e.g. "agent"). See list_filters.'),
+        }),
+        annotations: readOnly,
+      },
+      async (args) => {
+        const x = random(args);
+        recordUsage('random_prompt', x?.kind ?? args.type, !x);
+        if (!x) return { isError: true, content: [{ type: 'text', text: 'No prompt matches these filters. Use list_filters to see the valid values.' }] };
+        return json(full(x));
       },
     );
 
@@ -80,7 +104,7 @@ const mcp = createMcpHandler(
   {
     serverInfo: { name: 'fillprompt', version: '1.0.0', title: 'fillprompt.com prompts', websiteUrl: SITE },
     instructions:
-      'fillprompt.com is a free library of AI prompts for images, video and text. Use search_prompts to find candidates, get_prompt to read one in full, then fill its slots with the user\'s details. Link the prompt page and credit the author when you share a prompt.',
+      'fillprompt.com is a free library of AI prompts for images, video and text. Use search_prompts to find candidates (or random_prompt for an idea when there is no query), get_prompt to read one in full, then fill its slots with the user\'s details. Link the prompt page and credit the author when you share a prompt.',
   },
 );
 

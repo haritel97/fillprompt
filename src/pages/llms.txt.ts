@@ -30,7 +30,7 @@ Last updated: ${BUILD_DATE}
 - [Video prompts](${SITE}/videos): all ${fmt(videos.length)} video prompts
 - [Text prompts](${SITE}/text): all ${fmt(texts.length)} text prompts
 - [Agent skills](${SITE}/skills): official and community skills for AI agents
-- [MCP server](${SITE}/mcp): remote MCP server at ${SITE}/api/mcp that lets AI assistants search and fetch these prompts (tools: search_prompts, get_prompt, list_filters)
+- [MCP server](${SITE}/mcp): remote MCP server at ${SITE}/api/mcp that lets AI assistants search and fetch these prompts (tools: search_prompts, get_prompt, list_filters, random_prompt)
 - [Search](${SITE}/search): search every prompt by keyword
 - [Sources, licenses and credits](${SITE}/credits): where the content comes from
 

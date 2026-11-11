@@ -20,7 +20,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if t not in ('search_prompts', 'get_prompt', 'list_filters') or coalesce(k, '') not in ('', 'image', 'video', 'text') then
+  if t not in ('search_prompts', 'get_prompt', 'list_filters', 'random_prompt') or coalesce(k, '') not in ('', 'image', 'video', 'text') then
     return;
   end if;
   insert into mt_mcp_usage (day, tool, kind, calls, empty)

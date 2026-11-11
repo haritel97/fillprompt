@@ -62,7 +62,7 @@ Or install the plugin, which adds the server plus a `fillprompt` skill:
 
 <img src=".github/assets/mcp.jpg" alt="The fillprompt MCP setup page" width="100%">
 
-Tools: `search_prompts`, `get_prompt` (full text, fill-in slots, samples and author credit) and `list_filters`. Usage is counted per day, tool and prompt type only (no queries or client details) in Supabase; `npm run stats:mcp` prints the last 30 days, and `supabase/mcp-usage.sql` creates the table. Setup for other clients: [fillprompt.com/mcp](https://fillprompt.com/mcp). The server lives in [`api/`](api) and the plugin in [`plugins/fillprompt`](plugins/fillprompt).
+Tools: `search_prompts`, `get_prompt` (full text, fill-in slots, samples and author credit) `list_filters` and `random_prompt` (one prompt at random, with the same filters as the search). Usage is counted per day, tool and prompt type only (no queries or client details) in Supabase; `npm run stats:mcp` prints the last 30 days, and `supabase/mcp-usage.sql` creates the table. Setup for other clients: [fillprompt.com/mcp](https://fillprompt.com/mcp). The server lives in [`api/`](api) and the plugin in [`plugins/fillprompt`](plugins/fillprompt).
 
 ## Stack
 

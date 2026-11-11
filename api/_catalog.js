@@ -44,17 +44,22 @@ export function catalog() {
 
 const norm = (s) => words(s || '').join(' ');
 
+/** The type, model and category filters search() and random() share: a test for one item. */
+function filter({ type, model, category }) {
+  const m = norm(model);
+  const c = norm(category);
+  return (x) =>
+    (!type || x.kind === type) && (!m || norm(x.model).includes(m)) && (!c || x.tags.some((t) => norm(t) === c));
+}
+
 /** Ranked search: title hits weigh most, then category/model, summary and prompt text. */
 export function search({ query = '', type, model, category, limit = 8 }) {
   const { items } = catalog();
   const terms = [...new Set(words(query))];
-  const m = norm(model);
-  const c = norm(category);
+  const keep = filter({ type, model, category });
   const scored = [];
   for (const x of items) {
-    if (type && x.kind !== type) continue;
-    if (m && !norm(x.model).includes(m)) continue;
-    if (c && !x.tags.some((t) => norm(t) === c)) continue;
+    if (!keep(x)) continue;
     let score = 0;
     let hits = 0;
     for (const w of terms) {
@@ -73,6 +78,12 @@ export function search({ query = '', type, model, category, limit = 8 }) {
   }
   scored.sort((a, b) => b[0] - a[0]);
   return { total: scored.length, results: scored.slice(0, limit).map(([, x]) => x) };
+}
+
+/** One prompt picked at random from those that pass the same filters as search(); undefined if none do. */
+export function random({ type, model, category } = {}, pick = Math.random) {
+  const matches = catalog().items.filter(filter({ type, model, category }));
+  return matches.length ? matches[Math.floor(pick() * matches.length)] : undefined;
 }
 
 /** Find a prompt by its page URL or slug. */

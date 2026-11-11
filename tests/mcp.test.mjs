@@ -1,4 +1,4 @@
-// Tests for the MCP server in api/mcp.js: speaks the protocol and the three tools return sound data.
+// Tests for the MCP server in api/mcp.js: speaks the protocol and the four tools return sound data.
 // Run with `npm test`. Usage recording is switched off so the tests send nothing anywhere.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -37,9 +37,9 @@ test('initialize names the server', async () => {
   assert.ok(r.capabilities.tools);
 });
 
-test('tools/list has the three read-only tools', async () => {
+test('tools/list has the four read-only tools', async () => {
   const { tools } = await rpc('tools/list');
-  assert.deepEqual(tools.map((t) => t.name).sort(), ['get_prompt', 'list_filters', 'search_prompts']);
+  assert.deepEqual(tools.map((t) => t.name).sort(), ['get_prompt', 'list_filters', 'random_prompt', 'search_prompts']);
   for (const t of tools) assert.equal(t.annotations?.readOnlyHint, true, `${t.name} is read-only`);
 });
 
@@ -90,6 +90,30 @@ test('get_prompt reads template slots with their defaults', async () => {
 
 test('get_prompt reports an unknown prompt as a tool error', async () => {
   const r = await call('get_prompt', { ref: 'https://fillprompt.com/prompt/does-not-exist' });
+  assert.equal(r.isError, true);
+});
+
+test('random_prompt with type video returns a full video prompt', async () => {
+  const p = (await call('random_prompt', { type: 'video' })).structuredContent;
+  assert.equal(p.type, 'video');
+  assert.match(p.url, /^https:\/\/fillprompt\.com\/video\/[a-z0-9-]+$/);
+  assert.ok(p.prompt.length > 20);
+  assert.ok(Array.isArray(p.slots));
+  assert.ok(p.credit, 'has a credit');
+  assert.deepEqual((await call('get_prompt', { ref: p.url })).structuredContent, p, 'same shape as get_prompt');
+});
+
+test('random_prompt honours the model and category filters', async () => {
+  for (let i = 0; i < 5; i++) {
+    const v = (await call('random_prompt', { model: 'seedance' })).structuredContent;
+    assert.match(v.model, /seedance/i);
+    const a = (await call('random_prompt', { type: 'text', category: 'agent' })).structuredContent;
+    assert.ok(a.tags.includes('agent'));
+  }
+});
+
+test('random_prompt reports filters nothing matches as a tool error', async () => {
+  const r = await call('random_prompt', { model: 'no-such-model-anywhere' });
   assert.equal(r.isError, true);
 });
 
