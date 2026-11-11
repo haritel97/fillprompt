@@ -227,6 +227,7 @@ const en = {
       ['search_prompts', 'Searches image, video and text prompts by what you want to make, with filters for type, AI model and category.'],
       ['get_prompt', 'Returns the full prompt, its fill-in slots, sample images or video, and credit to the original author.'],
       ['list_filters', 'Lists the categories and AI models, with how many prompts each has.'],
+      ['random_prompt', 'Picks one prompt at random, with the same filters, for when you just want an idea.'],
     ] as [string, string][],
     clients: {
       claudeCode: 'Claude Code',
