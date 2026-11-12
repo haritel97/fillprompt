@@ -158,15 +158,19 @@ const cfg = {
           const cat = cfg.cats[r[2]] || r[2];
           if (cat && !seen.has(cat)) {
             const score = words.some((w) => cat.toLowerCase().includes(w)) ? 2 : 0;
-            if (score > 0) chips.push({ text: cat, score });
-            seen.add(cat);
+            if (score > 0) {
+              chips.push({ text: cat, score });
+              seen.add(cat);
+            }
           }
         }
         for (const r of (idx.v || [])) {
           if (r[2] && !seen.has(r[2])) {
             const score = words.some((w) => r[2].toLowerCase().includes(w)) ? 2 : 0;
-            if (score > 0) chips.push({ text: r[2], score });
-            seen.add(r[2]);
+            if (score > 0) {
+              chips.push({ text: r[2], score });
+              seen.add(r[2]);
+            }
           }
         }
         chips.sort((a, b) => b.score - a.score);
