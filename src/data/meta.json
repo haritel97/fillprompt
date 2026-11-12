@@ -63,6 +63,27 @@
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
     },
+    "youmindgptimage2": {
+      "name": "Awesome GPT Image 2",
+      "by": "YouMind OpenLab",
+      "url": "https://github.com/YouMind-OpenLab/awesome-gpt-image-2",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "youmindgptimage15": {
+      "name": "Awesome GPT Image 1.5",
+      "by": "YouMind OpenLab",
+      "url": "https://github.com/YouMind-OpenLab/awesome-gpt-image-1.5",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "youmindseedream": {
+      "name": "Awesome Seedream 4.5",
+      "by": "YouMind OpenLab",
+      "url": "https://github.com/YouMind-OpenLab/awesome-seedream-4.5",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
     "promptschat": {
       "name": "prompts.chat",
       "by": "Fatih Kadir Akın & contributors",

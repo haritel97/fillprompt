@@ -17,7 +17,7 @@ Last updated: ${BUILD_DATE}
 
 ## What the site offers
 
-- Image prompts for Nano Banana, Nano Banana Pro and GPT Image 2, each shown with the image it produced.
+- Image prompts for Nano Banana, Nano Banana Pro, GPT Image 1.5, GPT Image 2 and Seedream 4.5, each shown with the image it produced.
 - Video prompts for Seedance, Grok Imagine and other video models, each with its sample clip.
 - Text prompts for ChatGPT, Claude, Gemini and other chat models.
 - Agent skills: folders of instructions (SKILL.md) that teach an agent such as Claude Code one job, including motion design and interface design.

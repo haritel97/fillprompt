@@ -209,7 +209,7 @@ const en = {
     label: 'For AI agents',
     title: 'fillprompt MCP server',
     metaTitle: 'fillprompt MCP server: AI prompts inside Claude, Cursor and ChatGPT',
-    metaDesc: 'Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search 6,700+ image, video and text prompts and fill them in for you. No sign-in.',
+    metaDesc: 'Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search 7,000+ image, video and text prompts and fill them in for you. No sign-in.',
     lead: 'Connect fillprompt to your AI assistant and ask it for a prompt in plain words. It searches every image, video and text prompt on this site, picks one that fits, and fills it in with your details. Free, read-only, no account or API key.',
     urlLabel: 'Server URL',
     copy: 'Copy',
@@ -284,7 +284,7 @@ const en = {
       ],
       [
         'Which AI models do the prompts work with?',
-        'Image prompts are written for Nano Banana, Nano Banana Pro (Gemini) and GPT Image 2 (ChatGPT). Video prompts are written for Seedance, Grok Imagine and similar video models. Text prompts work in ChatGPT, Claude, Gemini and most other chat models.',
+        'Image prompts are written for Nano Banana and Nano Banana Pro (Gemini), GPT Image 1.5 and GPT Image 2 (ChatGPT) and Seedream 4.5. Video prompts are written for Seedance, Grok Imagine and similar video models. Text prompts work in ChatGPT, Claude, Gemini and most other chat models.',
       ],
       [
         'How do I use a prompt?',

@@ -22,7 +22,7 @@ Pick one, fill in the blanks, paste it into ChatGPT, Gemini, Claude or your vide
 
 | | Count | Written for |
 |---|---:|---|
-| Image prompts | 2,149 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 2 |
+| Image prompts | 2,488 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 |
 | Video prompts | 906 | Seedance, Seedance 2.0 and 2.5, Grok Imagine |
 | Text prompts | 3,657 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
 | Agent skills | 67 | Claude Code and other agents (links to their own repositories) |
@@ -126,6 +126,9 @@ Defined in `scripts/import.mjs` (`SOURCES`) and listed on the site's Credits pag
 | [ZeroLu/awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro) | MIT | image prompts |
 | [freestylefly/awesome-gpt-image-2](https://github.com/freestylefly/awesome-gpt-image-2) | MIT | image prompts |
 | [Evolink-AI/awesome-gpt-image-2-API-Prompts](https://github.com/Evolink-AI/awesome-gpt-image-2-API-Prompts) | CC0 1.0 | image prompts |
+| [YouMind-OpenLab/awesome-gpt-image-2](https://github.com/YouMind-OpenLab/awesome-gpt-image-2) | CC BY 4.0 | image prompts |
+| [YouMind-OpenLab/awesome-gpt-image-1.5](https://github.com/YouMind-OpenLab/awesome-gpt-image-1.5) | CC BY 4.0 | image prompts |
+| [YouMind-OpenLab/awesome-seedream-4.5](https://github.com/YouMind-OpenLab/awesome-seedream-4.5) | CC BY 4.0 | image prompts (Seedream) |
 | [LearnPrompt/awesome-seedance](https://github.com/LearnPrompt/awesome-seedance) | MIT | video prompts |
 | [opensource-works/awesome-seedance-prompts](https://github.com/opensource-works/awesome-seedance-prompts) | MIT | video prompts |
 | [YouMind-OpenLab/awesome-seedance-2-prompts](https://github.com/YouMind-OpenLab/awesome-seedance-2-prompts) | CC BY 4.0 | video prompts |

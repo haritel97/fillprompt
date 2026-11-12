@@ -25,6 +25,9 @@ const FILES = {
   'osw-seedance.json': `${RAW}/opensource-works/awesome-seedance-prompts/main/data/posts.json`,
   'osw-mirror.json': `${RAW}/opensource-works/awesome-seedance-prompts/main/data/mirror.json`,
   'youmind-gemini3.md': `${RAW}/YouMind-OpenLab/awesome-gemini-3-prompts/main/README.md`,
+  'youmind-gptimage2.md': `${RAW}/YouMind-OpenLab/awesome-gpt-image-2/main/README.md`,
+  'youmind-gptimage15.md': `${RAW}/YouMind-OpenLab/awesome-gpt-image-1.5/main/README.md`,
+  'youmind-seedream.md': `${RAW}/YouMind-OpenLab/awesome-seedream-4.5/main/README.md`,
   'youmind-grok.md': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/README.md`,
   'youmind-grok-videos.json': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/video-urls.json`,
 };
@@ -158,6 +161,27 @@ export const SOURCES = {
     name: 'Awesome Grok Imagine Prompts',
     by: 'YouMind OpenLab',
     url: 'https://github.com/YouMind-OpenLab/awesome-grok-imagine-prompts',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  youmindgptimage2: {
+    name: 'Awesome GPT Image 2',
+    by: 'YouMind OpenLab',
+    url: 'https://github.com/YouMind-OpenLab/awesome-gpt-image-2',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  youmindgptimage15: {
+    name: 'Awesome GPT Image 1.5',
+    by: 'YouMind OpenLab',
+    url: 'https://github.com/YouMind-OpenLab/awesome-gpt-image-1.5',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  youmindseedream: {
+    name: 'Awesome Seedream 4.5',
+    by: 'YouMind OpenLab',
+    url: 'https://github.com/YouMind-OpenLab/awesome-seedream-4.5',
     license: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
   },
@@ -359,7 +383,8 @@ function importJau123(raw) {
   }));
 }
 
-function importYoumind(md) {
+// YouMind's image collections share one README layout; each is imported with its own model and source.
+function importYoumind(md, { model = 'Nano Banana Pro', source = 'youmind', prefix = 'y' } = {}) {
   const parts = md.split(/^### No\. \d+: /m).slice(1);
   return parts.map((p) => {
     const heading = p.slice(0, p.indexOf('\n')).trim();
@@ -370,23 +395,25 @@ function importYoumind(md) {
     let prompt = (p.match(/#### 📝 Prompt\s+```[^\n]*\n([\s\S]*?)\n```\s*\n+#### /) || [])[1] || '';
     const images = [...p.matchAll(/<img src="([^"]+)"/g)].map((m) => m[1]);
     const author = p.match(/\*\*Author:\*\* \[([^\]]+)\]\(([^)]+)\)/);
-    const sourceUrl = (p.match(/\*\*Source:\*\* \[[^\]]+\]\(([^)]+)\)/) || [])[1] || '';
+    // Some entries list their source as "(null)"; those have no link.
+    const sourceUrl = (p.match(/\*\*Source:\*\* \[[^\]]+\]\((https?:[^)]+)\)/) || [])[1] || '';
     const published = (p.match(/\*\*Published:\*\* (.+)/) || [])[1] || '';
     const d = published ? new Date(published + ' UTC') : null;
     return {
-      id: `y${tweetId(sourceUrl) || slugify(title)}`,
+      id: `${prefix}${tweetId(sourceUrl) || slugify(title)}`,
       title,
       desc,
       prompt: prompt.trim(),
       images,
-      cats: [catFor(catLabel || title)],
-      model: 'Nano Banana Pro',
+      // Newer YouMind collections have no category in the heading, so the description helps place them.
+      cats: [catFor(catLabel || (source === 'youmind' ? title : `${title} ${desc}`))],
+      model,
       author: author?.[1] || '',
       authorUrl: author?.[2] || '',
       sourceUrl,
       date: d && !isNaN(d) ? d.toISOString().slice(0, 10) : '',
       likes: 0,
-      source: 'youmind',
+      source,
     };
   });
 }
@@ -923,6 +950,9 @@ let images = [
   ...importJau123(await read('jau123.json')).sort((a, b) => b.likes - a.likes),
   ...importFreestylefly(await read('freestylefly.json')),
   ...importEvolink(await read('evolink.md')),
+  ...importYoumind(await read('youmind-gptimage2.md'), { model: 'GPT Image 2', source: 'youmindgptimage2', prefix: 'u' }),
+  ...importYoumind(await read('youmind-seedream.md'), { model: 'Seedream 4.5', source: 'youmindseedream', prefix: 'r' }),
+  ...importYoumind(await read('youmind-gptimage15.md'), { model: 'GPT Image 1.5', source: 'youmindgptimage15', prefix: 'o' }),
 ];
 const counts = { raw: images.length };
 const seenKey = new Set();
