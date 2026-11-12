@@ -61,7 +61,7 @@ const cfg = {
       a.href = cfg.base + slug;
       return a;
     };
-    const videoCard = ([title, slug, model, poster]) => {
+    const videoCard = ([title, slug, model, poster, , clip]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.base + slug;
       const frame = el('span', 'tile-img aspect-video overflow-hidden');
@@ -73,6 +73,16 @@ const cfg = {
         im.referrerPolicy = 'no-referrer';
         im.onerror = () => (im.style.visibility = 'hidden');
         frame.append(im);
+      } else if (clip) {
+        // No poster: show a frame of the clip.
+        const vid = el('video', 'h-full w-full object-cover');
+        vid.src = clip + '#t=0.5';
+        vid.muted = true;
+        vid.playsInline = true;
+        vid.preload = 'metadata';
+        vid.tabIndex = -1;
+        vid.setAttribute('aria-hidden', 'true');
+        frame.append(vid);
       }
       frame.append(el('span', 'absolute bottom-0 left-0 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper', model));
       a.append(frame, el('span', 'mt-2.5 line-clamp-2 block text-[15px] font-semibold leading-snug', title));

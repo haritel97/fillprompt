@@ -84,6 +84,27 @@
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
     },
+    "devanshug": {
+      "name": "Awesome AI Image Prompts",
+      "by": "devanshug2307",
+      "url": "https://github.com/devanshug2307/Awesome-AI-Image-Prompts",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/devanshug2307/Awesome-AI-Image-Prompts/blob/main/LICENSE"
+    },
+    "evolinkh3": {
+      "name": "Awesome MiniMax H3 Prompts",
+      "by": "EvoLink AI",
+      "url": "https://github.com/Evolink-AI/awesome-minimax-H3-prompts",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "atlasomni": {
+      "name": "Awesome Gemini Omni Prompts",
+      "by": "Atlas Cloud",
+      "url": "https://github.com/AtlasCloudAI/awesome-gemini-omni-prompts",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
     "promptschat": {
       "name": "prompts.chat",
       "by": "Fatih Kadir Akın & contributors",

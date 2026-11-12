@@ -28,6 +28,9 @@ const FILES = {
   'youmind-gptimage2.md': `${RAW}/YouMind-OpenLab/awesome-gpt-image-2/main/README.md`,
   'youmind-gptimage15.md': `${RAW}/YouMind-OpenLab/awesome-gpt-image-1.5/main/README.md`,
   'youmind-seedream.md': `${RAW}/YouMind-OpenLab/awesome-seedream-4.5/main/README.md`,
+  'devanshug.md': `${RAW}/devanshug2307/Awesome-AI-Image-Prompts/main/README.md`,
+  'evolink-h3.md': `${RAW}/Evolink-AI/awesome-minimax-H3-prompts/main/README.md`,
+  'atlas-omni.json': `${RAW}/AtlasCloudAI/awesome-gemini-omni-prompts/main/data/prompts_by_locale/en-US.json`,
   'youmind-grok.md': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/README.md`,
   'youmind-grok-videos.json': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/video-urls.json`,
 };
@@ -184,6 +187,27 @@ export const SOURCES = {
     url: 'https://github.com/YouMind-OpenLab/awesome-seedream-4.5',
     license: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  devanshug: {
+    name: 'Awesome AI Image Prompts',
+    by: 'devanshug2307',
+    url: 'https://github.com/devanshug2307/Awesome-AI-Image-Prompts',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/devanshug2307/Awesome-AI-Image-Prompts/blob/main/LICENSE',
+  },
+  evolinkh3: {
+    name: 'Awesome MiniMax H3 Prompts',
+    by: 'EvoLink AI',
+    url: 'https://github.com/Evolink-AI/awesome-minimax-H3-prompts',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  atlasomni: {
+    name: 'Awesome Gemini Omni Prompts',
+    by: 'Atlas Cloud',
+    url: 'https://github.com/AtlasCloudAI/awesome-gemini-omni-prompts',
+    license: 'CC0 1.0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
   },
   promptschat: {
     name: 'prompts.chat',
@@ -509,6 +533,105 @@ function importEvolink(md) {
     });
   });
   return out.filter((x) => english(x.prompt) && english(x.title));
+}
+
+function importDevanshug(md) {
+  // Numbered sections hold "### 1.2. Title" items: image, one-line summary, prompt (often JSON), X source.
+  // The collection names no model per prompt, so it is read from the text when one is mentioned.
+  const out = [];
+  for (const sec of md.split(/^## (?=\d+\. )/m).slice(1)) {
+    const secTitle = sec.slice(0, sec.indexOf('\n')).replace(/^\d+\.\s*/, '').replace(/[^\w &-]/g, '').trim();
+    for (const p of sec.split(/^### \d+\.\d+\.? /m).slice(1)) {
+      const title = p.slice(0, p.indexOf('\n')).trim();
+      const images = [...p.matchAll(/!\[[^\]]*\]\((https?:[^)\s]+)\)/g)].map((m) => m[1]);
+      const desc = (p.match(/!\[[^\]]*\]\([^)]+\)\s*\n+([^\n*!#`][^\n]+)/) || [])[1]?.trim() || '';
+      const prompt = (p.match(/\*\*Prompt:\*\*\s*\n+```[^\n]*\n([\s\S]*?)\n```/) || [])[1] || '';
+      const src = p.match(/\*\*Source:\*\* \[([^\]]+)\]\((https?:[^)]+)\)/);
+      const text = `${title} ${desc} ${prompt}`;
+      const model = /nano banana pro/i.test(text)
+        ? 'Nano Banana Pro'
+        : /nano banana/i.test(text)
+          ? 'Nano Banana'
+          : /gpt[- ]?image/i.test(text)
+            ? 'GPT Image'
+            : 'Any image model';
+      out.push({
+        id: `d${tweetId(src?.[2]) || slugify(title)}`,
+        title,
+        desc,
+        prompt: prompt.trim(),
+        images,
+        cats: [catFor(`${secTitle} ${title}`)],
+        model,
+        author: src?.[1] || '',
+        authorUrl: src?.[2]?.match(/^https:\/\/x\.com\/[^/]+/)?.[0] || '',
+        sourceUrl: src?.[2] || '',
+        date: '',
+        likes: 0,
+        source: 'devanshug',
+      });
+    }
+  }
+  return out.filter((x) => english(x.prompt) && english(x.title));
+}
+
+// EvoLink's video collections: "### Case N: [Title](link) (by [author](url)) `mode`", a clip, then the prompt.
+// `only` keeps cases whose mode matches, e.g. text-to-video, since the others need the user's own input media.
+function importEvolinkVideos(md, { model, source, prefix, only }) {
+  return md
+    .split(/^### Case \d+: /m)
+    .slice(1)
+    .map((p) => {
+      const head = p.slice(0, p.indexOf('\n'));
+      const m = head.match(/^\[(.+?)\]\((\S+?)\)(?: \(by \[([^\]]+)\]\(([^)]+)\)\))?\s*(?:`([^`]*)`)?/);
+      if (!m || (only && !only.test(m[5] || ''))) return null;
+      const prompt = (p.match(/\*\*Prompt:\*\*[\s\S]*?```[^\n]*\n([\s\S]*?)\n```/) || [])[1] || '';
+      const video = (p.match(/<video src="([^"]+)"/) || p.match(/href="([^"]+\.mp4)"/) || [])[1] || '';
+      const onX = /^https:\/\/(x|twitter)\.com\//.test(m[2]);
+      return {
+        id: `${prefix}${tweetId(m[2]) || slugify(m[1])}`,
+        title: m[1].trim(),
+        desc: '',
+        prompt: prompt.trim(),
+        cats: [videoCatFor(m[1], '', prompt)],
+        poster: '',
+        video,
+        model,
+        author: m[3] || '',
+        authorUrl: m[4] || '',
+        sourceUrl: onX ? m[2] : '',
+        date: '',
+        likes: 0,
+        source,
+      };
+    })
+    .filter((x) => x && english(x.prompt) && english(x.title));
+}
+
+function importAtlasOmni(raw) {
+  // Only the collection's own text-to-video examples: its "Twitter Community" entries are post text, not
+  // prompts, and the others edit a video or image the user supplies.
+  const j = JSON.parse(raw);
+  const list = Array.isArray(j) ? j : j.prompts || Object.values(j)[0];
+  return list
+    .filter((x) => x.video_url && x.category === 'Atlas Generated T2V' && x.prompt && x.title)
+    .map((x) => ({
+      id: `a${x.id}`,
+      title: x.title.trim(),
+      desc: (x.description || '').trim(),
+      prompt: x.prompt.trim(),
+      cats: [videoCatFor(x.title, x.description || '', x.prompt)],
+      poster: '',
+      video: x.video_url,
+      model: 'Gemini Omni',
+      author: 'Atlas Cloud',
+      authorUrl: 'https://www.atlascloud.ai',
+      sourceUrl: '',
+      date: '',
+      likes: 0,
+      source: 'atlasomni',
+    }))
+    .filter((x) => english(x.prompt) && english(x.title));
 }
 
 function importLearnPrompt(raw) {
@@ -953,11 +1076,24 @@ let images = [
   ...importYoumind(await read('youmind-gptimage2.md'), { model: 'GPT Image 2', source: 'youmindgptimage2', prefix: 'u' }),
   ...importYoumind(await read('youmind-seedream.md'), { model: 'Seedream 4.5', source: 'youmindseedream', prefix: 'r' }),
   ...importYoumind(await read('youmind-gptimage15.md'), { model: 'GPT Image 1.5', source: 'youmindgptimage15', prefix: 'o' }),
+  ...importDevanshug(await read('devanshug.md')),
 ];
+// Sample images that no longer load (checked by hand when the collection was added); those prompts are left out.
+const DEAD_IMAGES = new Set([
+  'https://pbs.twimg.com/media/G85m2KtagAAUNTc.jpg',
+  'https://pbs.twimg.com/media/G9E6OtNXMAA-_qN.jpg',
+  'https://pbs.twimg.com/media/G9vv-NzaEAApngM.jpg',
+  'https://pbs.twimg.com/media/G9upjP8WUAAhiS6.jpg',
+  'https://pbs.twimg.com/media/G9prmuIWIAARf3B.jpg',
+  'https://pbs.twimg.com/media/G9pTHvaWgAE_my0.jpg',
+  'https://pbs.twimg.com/media/G9bAlkCWgAArw7M.jpg',
+  'https://pbs.twimg.com/media/G9aBRlXbkAAEyv0.jpg',
+  'https://pbs.twimg.com/media/G9VHZCnW4AARq2C.jpg',
+]);
 const counts = { raw: images.length };
 const seenKey = new Set();
 images = images.filter((x) => {
-  if (!x.prompt || x.prompt.length < 20 || !x.images.length) return false;
+  if (!x.prompt || x.prompt.length < 20 || !x.images.length || x.images.every((u) => DEAD_IMAGES.has(u))) return false;
   if (BLOCK.test(x.prompt) || BLOCK.test(x.title)) return false;
   const key = tweetId(x.sourceUrl) || x.id;
   if (seenKey.has(key)) return false;
@@ -1014,12 +1150,19 @@ let videos = [
     source: 'youmindgrok',
     prefix: 'g',
   }),
+  ...importEvolinkVideos(await read('evolink-h3.md'), { model: 'MiniMax Hailuo 3', source: 'evolinkh3', prefix: 'h', only: /Text→Video/ }),
+  ...importAtlasOmni(await read('atlas-omni.json')),
 ];
+// Clips that no longer load from the collection's server (checked by hand); their prompts are left out.
+const DEAD_CLIPS = new Set([
+  'https://pub-62cf7640cd0f4066b60933bd2e9b85ef.r2.dev/github-repo-media/awesome-hailuo-3-prompts/assets/media/4cb51113a9afa5746d43b34ab1c3386660e0cdf3be64a5124be6453f830245b0-15-16-9-538390013432676361.mp4',
+  'https://pub-62cf7640cd0f4066b60933bd2e9b85ef.r2.dev/github-repo-media/awesome-hailuo-3-prompts/assets/media/c56d7b71b17c955b57570c1c7fc2bd8bc18a61364bfd762f20665baa981ee0ff-20260728-175157.mp4',
+]);
 const rawVideos = videos.length;
 const seenVideo = new Set();
 videos = videos.filter((x) => {
   // A video prompt is listed only when it has both a playable clip and its prompt.
-  if (!x.title || x.prompt.length < 20 || !x.video) return false;
+  if (!x.title || x.prompt.length < 20 || !x.video || DEAD_CLIPS.has(x.video)) return false;
   if (BLOCK.test(x.prompt) || BLOCK.test(x.title)) return false;
   const key = tweetId(x.sourceUrl) || x.id;
   if (seenVideo.has(key)) return false;

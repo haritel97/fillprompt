@@ -284,7 +284,7 @@ const en = {
       ],
       [
         'Which AI models do the prompts work with?',
-        'Image prompts are written for Nano Banana and Nano Banana Pro (Gemini), GPT Image 1.5 and GPT Image 2 (ChatGPT) and Seedream 4.5. Video prompts are written for Seedance, Grok Imagine and similar video models. Text prompts work in ChatGPT, Claude, Gemini and most other chat models.',
+        'Image prompts are written for Nano Banana and Nano Banana Pro (Gemini), GPT Image 1.5 and GPT Image 2 (ChatGPT) and Seedream 4.5. Video prompts are written for Seedance, Gemini Omni, MiniMax Hailuo, Grok Imagine and similar video models. Text prompts work in ChatGPT, Claude, Gemini and most other chat models.',
       ],
       [
         'How do I use a prompt?',

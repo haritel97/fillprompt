@@ -12,7 +12,7 @@ const { v, lang, eager = false } = Astro.props;
 <a href={href(lang, `/video/${v.slug}`)} class="tile group block">
   <span class="tile-img aspect-video overflow-hidden">
     {
-      v.poster && (
+      v.poster ? (
         <img
           src={v.poster}
           alt={v.title}
@@ -22,6 +22,9 @@ const { v, lang, eager = false } = Astro.props;
           class="h-full w-full object-cover"
           onerror="this.style.visibility='hidden'"
         />
+      ) : (
+        // Some collections publish no poster image: show a frame of the clip instead.
+        v.video && <video src={`${v.video}#t=0.5`} muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" class="h-full w-full object-cover" />
       )
     }
     <span class="absolute bottom-0 left-0 flex items-center gap-1.5 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper">

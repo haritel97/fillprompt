@@ -22,8 +22,8 @@ Pick one, fill in the blanks, paste it into ChatGPT, Gemini, Claude or your vide
 
 | | Count | Written for |
 |---|---:|---|
-| Image prompts | 2,488 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 |
-| Video prompts | 906 | Seedance, Seedance 2.0 and 2.5, Grok Imagine |
+| Image prompts | 2,646 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 |
+| Video prompts | 933 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
 | Text prompts | 3,657 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
 | Agent skills | 67 | Claude Code and other agents (links to their own repositories) |
 
@@ -129,10 +129,13 @@ Defined in `scripts/import.mjs` (`SOURCES`) and listed on the site's Credits pag
 | [YouMind-OpenLab/awesome-gpt-image-2](https://github.com/YouMind-OpenLab/awesome-gpt-image-2) | CC BY 4.0 | image prompts |
 | [YouMind-OpenLab/awesome-gpt-image-1.5](https://github.com/YouMind-OpenLab/awesome-gpt-image-1.5) | CC BY 4.0 | image prompts |
 | [YouMind-OpenLab/awesome-seedream-4.5](https://github.com/YouMind-OpenLab/awesome-seedream-4.5) | CC BY 4.0 | image prompts (Seedream) |
+| [devanshug2307/Awesome-AI-Image-Prompts](https://github.com/devanshug2307/Awesome-AI-Image-Prompts) | MIT | image prompts |
 | [LearnPrompt/awesome-seedance](https://github.com/LearnPrompt/awesome-seedance) | MIT | video prompts |
 | [opensource-works/awesome-seedance-prompts](https://github.com/opensource-works/awesome-seedance-prompts) | MIT | video prompts |
 | [YouMind-OpenLab/awesome-seedance-2-prompts](https://github.com/YouMind-OpenLab/awesome-seedance-2-prompts) | CC BY 4.0 | video prompts |
 | [YouMind-OpenLab/awesome-grok-imagine-prompts](https://github.com/YouMind-OpenLab/awesome-grok-imagine-prompts) | CC BY 4.0 | video prompts |
+| [Evolink-AI/awesome-minimax-H3-prompts](https://github.com/Evolink-AI/awesome-minimax-H3-prompts) | CC BY 4.0 | video prompts (text to video only) |
+| [AtlasCloudAI/awesome-gemini-omni-prompts](https://github.com/AtlasCloudAI/awesome-gemini-omni-prompts) | CC0 1.0 | video prompts (its own text-to-video examples only) |
 | [f/prompts.chat](https://github.com/f/prompts.chat) | CC0 1.0 (prompts) | text prompts (ChatGPT) |
 | [mustvlad/ChatGPT-System-Prompts](https://github.com/mustvlad/ChatGPT-System-Prompts) | MIT | text prompts (ChatGPT) |
 | [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) | MIT | agent prompts (Claude) |

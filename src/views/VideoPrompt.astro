@@ -45,12 +45,13 @@ const src = sources[v.source];
             <video
               controls
               playsinline
-              preload="none"
+              preload={v.poster ? 'none' : 'metadata'}
               poster={v.poster || undefined}
               class="block w-full border border-ink/15 bg-ink"
               aria-label={v.title}
             >
-              <source src={v.video} type="video/mp4" />
+              {/* Without a poster, load just enough to show the first frame. */}
+              <source src={v.poster ? v.video : `${v.video}#t=0.5`} type={/\.webm(\?|$)/i.test(v.video) ? 'video/webm' : 'video/mp4'} />
             </video>
           ) : (
             <a href={v.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" class="relative block border border-ink/15 bg-line/50">
