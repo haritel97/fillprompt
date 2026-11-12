@@ -1,7 +1,12 @@
-name: Suggest a prompt collection
-description: An open-source prompt collection that could be added to the site.
+name: Share a prompt collection
+description: Add your open-source prompt collection (or one you know) to fillprompt.com, with credit and a link back.
+title: 'Collection: '
 labels: [source]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing! Every collection on fillprompt.com is credited by name on each prompt, on the [Credits page](https://fillprompt.com/credits) and in the README, with a link back to the repository.
   - type: input
     id: repo
     attributes:
@@ -9,11 +14,20 @@ body:
       placeholder: https://github.com/owner/repo
     validations:
       required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Is this your collection?
+      options:
+        - Yes, I maintain it
+        - No, I found it
+    validations:
+      required: true
   - type: input
     id: license
     attributes:
       label: License
-      description: The collection must allow redistribution, for example CC0, CC BY or MIT.
+      description: It must allow redistribution, for example CC0, CC BY 4.0, MIT or Apache 2.0, and be stated in the repository.
       placeholder: CC BY 4.0
     validations:
       required: true
@@ -24,11 +38,32 @@ body:
       multiple: true
       options:
         - Image
-        - Video (with the clip it produced)
+        - Video
         - Text
         - Agent skills
     validations:
       required: true
+  - type: input
+    id: models
+    attributes:
+      label: AI models the prompts are written for
+      placeholder: Midjourney v7, Flux, Kling 3, Veo 3
+  - type: input
+    id: size
+    attributes:
+      label: Roughly how many prompts
+      placeholder: '150'
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: What the site needs
+      description: Collections that meet all of these can be added quickly. If yours does not yet, share it anyway and say what is missing.
+      options:
+        - label: Image and video prompts show the result they produced (an image, or a clip for video)
+        - label: The images or clips load from a public URL (GitHub user-attachment links only play on github.com)
+        - label: The prompts are in English
+        - label: Each prompt credits its author where known
+        - label: Prompt text is in a form a script can read (Markdown, JSON or CSV)
   - type: textarea
     id: notes
     attributes:

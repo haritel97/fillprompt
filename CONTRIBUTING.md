@@ -44,6 +44,10 @@ Both must pass; GitHub Actions runs them again on every pull request. `npm test`
 
 ## Adding a source collection
 
+To suggest one without writing code, open a [Share a prompt collection](https://github.com/haritel97/fillprompt/issues/new?template=collection.yml) issue.
+
+What a collection needs: a license that allows redistribution, English prompts, author credit where known, and for image and video prompts the result each prompt produced, served from a public URL. GitHub user-attachment links only play on github.com, so clips hosted that way cannot be used. For video, only prompts that work from text alone are added; prompts that edit the user's own image or clip are left out.
+
 1. Confirm the collection's license allows redistribution, and note its license URL.
 2. Add it to `SOURCES` in `scripts/import.mjs` with its name, author, URL and license.
 3. Write an import function that maps its entries to the existing prompt shape. Keep prompt text unchanged and keep author credit.
