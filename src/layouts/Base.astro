@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Logo from '../components/Logo.astro';
 import { ui, href, barePath, type Lang } from '../i18n';
 import { SITE, url } from '../lib/seo';
+// Cloudflare Web Analytics (free, no cookies): counted on the live site only, not in local builds or previews
+const cfBeacon = process.env.VERCEL_ENV === 'production' ? JSON.stringify({ token: 'a2c023ea16904f84917c4522e5ca63d8' }) : null;
 
 interface Props {
   lang: Lang;
@@ -295,5 +297,6 @@ const isOn = (p: string) =>
         sync();
       })();
     </script>
+    {cfBeacon && <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={cfBeacon}></script>}
   </body>
 </html>
