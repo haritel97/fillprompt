@@ -209,7 +209,7 @@ const en = {
     label: 'For AI agents',
     title: 'fillprompt MCP server',
     metaTitle: 'fillprompt MCP server: AI prompts inside Claude, Cursor and ChatGPT',
-    metaDesc: 'Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search 7,000+ image, video and text prompts and fill them in for you. No sign-in.',
+    metaDesc: 'Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search 9,500+ image, video and text prompts and fill them in for you. No sign-in.',
     lead: 'Connect fillprompt to your AI assistant and ask it for a prompt in plain words. It searches every image, video and text prompt on this site, picks one that fits, and fills it in with your details. Free, read-only, no account or API key.',
     urlLabel: 'Server URL',
     copy: 'Copy',
@@ -225,7 +225,7 @@ const en = {
     ],
     tools: [
       ['search_prompts', 'Searches image, video and text prompts by what you want to make, with filters for type, AI model and category.'],
-      ['get_prompt', 'Returns the full prompt, its fill-in slots, sample images or video, and credit to the original author.'],
+      ['get_prompt', 'Returns the full prompt, its fill-in slots, sample images or video, and credit to its collection and original author.'],
       ['list_filters', 'Lists the categories and AI models, with how many prompts each has.'],
       ['random_prompt', 'Picks one prompt at random, with the same filters, for when you just want an idea.'],
     ] as [string, string][],

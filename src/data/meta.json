@@ -98,6 +98,13 @@
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
     },
+    "youmindskill": {
+      "name": "AI Image Prompts",
+      "by": "YouMind OpenLab",
+      "url": "https://github.com/YouMind-OpenLab/ai-image-prompts-skill",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/YouMind-OpenLab/ai-image-prompts-skill/blob/main/LICENSE"
+    },
     "atlasomni": {
       "name": "Awesome Gemini Omni Prompts",
       "by": "Atlas Cloud",

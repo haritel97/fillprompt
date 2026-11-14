@@ -29,7 +29,7 @@ const mcp = createMcpHandler(
       {
         title: 'Search prompts',
         description:
-          'Search over 7,000 free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.',
+          'Search over 9,500 free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.',
         inputSchema: z.object({
           query: z.string().optional().describe('What the prompt should make, in plain words, e.g. "coffee product photo on marble" or "code review agent".'),
           type: z.enum(KINDS).optional().describe('Only image, video or text prompts.'),

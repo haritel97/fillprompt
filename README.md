@@ -22,16 +22,16 @@ Pick one, fill in the blanks, paste it into ChatGPT, Gemini, Claude or your vide
 
 | | Count | Written for |
 |---|---:|---|
-| Image prompts | 2,646 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 |
+| Image prompts | 5,002 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 and any image model |
 | Video prompts | 933 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
 | Text prompts | 3,657 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
 | Agent skills | 67 | Claude Code and other agents (links to their own repositories) |
 
 - **Sample results.** Image and video prompts show the output they produced, loaded from the original collection.
 - **Fill in the blanks.** Placeholders such as `[OBJECT]` or `{argument name="subject"}` become input fields, and the copy button gives the finished prompt.
-- **Credit on every prompt.** Each one names its author, links to the original post and states the collection's license.
+- **Credit on every prompt.** Each one names the collection it came from and its license, and its author and original post wherever the collection records them.
 - **Built for agents too.** A free MCP server and a Claude Code plugin let your AI assistant search the library and fill a prompt in for you.
-- **Fast and light.** A static site of about 7,000 pages, with a sitemap per content type and `llms.txt` for AI search.
+- **Fast and light.** A static site of about 10,000 pages, with a sitemap per content type and `llms.txt` for AI search.
 
 ## Use it from your AI assistant (MCP)
 
@@ -130,6 +130,7 @@ Defined in `scripts/import.mjs` (`SOURCES`) and listed on the site's Credits pag
 | [YouMind-OpenLab/awesome-gpt-image-1.5](https://github.com/YouMind-OpenLab/awesome-gpt-image-1.5) | CC BY 4.0 | image prompts |
 | [YouMind-OpenLab/awesome-seedream-4.5](https://github.com/YouMind-OpenLab/awesome-seedream-4.5) | CC BY 4.0 | image prompts (Seedream) |
 | [devanshug2307/Awesome-AI-Image-Prompts](https://github.com/devanshug2307/Awesome-AI-Image-Prompts) | MIT | image prompts |
+| [YouMind-OpenLab/ai-image-prompts-skill](https://github.com/YouMind-OpenLab/ai-image-prompts-skill) | MIT | image prompts (7 of its categories) |
 | [LearnPrompt/awesome-seedance](https://github.com/LearnPrompt/awesome-seedance) | MIT | video prompts |
 | [opensource-works/awesome-seedance-prompts](https://github.com/opensource-works/awesome-seedance-prompts) | MIT | video prompts |
 | [YouMind-OpenLab/awesome-seedance-2-prompts](https://github.com/YouMind-OpenLab/awesome-seedance-2-prompts) | CC BY 4.0 | video prompts |

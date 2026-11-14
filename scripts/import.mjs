@@ -12,6 +12,18 @@ const OUT = path.join(ROOT, 'src', 'data');
 const RAW = 'https://raw.githubusercontent.com';
 const FETCH = process.argv.includes('--fetch');
 
+// Categories taken from YouMind's ai-image-prompts-skill data, and the site category each maps to.
+// The collection's larger categories (product marketing, avatars, social posts) are left for later.
+const YM_SKILL_CATS = [
+  ['app-web-design.json', 'infographic-ui'],
+  ['comic-storyboard.json', 'comic-anime'],
+  ['ecommerce-main-image.json', 'product-brand'],
+  ['game-asset.json', 'illustration-3d'],
+  ['infographic-edu-visual.json', 'infographic-ui'],
+  ['poster-flyer.json', 'poster'],
+  ['youtube-thumbnail.json', 'social-media'],
+];
+
 const FILES = {
   'promptschat.csv': `${RAW}/f/prompts.chat/main/prompts.csv`,
   'jau123.json': `${RAW}/jau123/nanobanana-trending-prompts/main/prompts/prompts.json`,
@@ -30,6 +42,9 @@ const FILES = {
   'youmind-seedream.md': `${RAW}/YouMind-OpenLab/awesome-seedream-4.5/main/README.md`,
   'devanshug.md': `${RAW}/devanshug2307/Awesome-AI-Image-Prompts/main/README.md`,
   'evolink-h3.md': `${RAW}/Evolink-AI/awesome-minimax-H3-prompts/main/README.md`,
+  ...Object.fromEntries(
+    YM_SKILL_CATS.map(([file]) => [`youmind-skill-${file}`, `${RAW}/YouMind-OpenLab/ai-image-prompts-skill/main/references/${file}`]),
+  ),
   'atlas-omni.json': `${RAW}/AtlasCloudAI/awesome-gemini-omni-prompts/main/data/prompts_by_locale/en-US.json`,
   'youmind-grok.md': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/README.md`,
   'youmind-grok-videos.json': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/video-urls.json`,
@@ -201,6 +216,13 @@ export const SOURCES = {
     url: 'https://github.com/Evolink-AI/awesome-minimax-H3-prompts',
     license: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  },
+  youmindskill: {
+    name: 'AI Image Prompts',
+    by: 'YouMind OpenLab',
+    url: 'https://github.com/YouMind-OpenLab/ai-image-prompts-skill',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/YouMind-OpenLab/ai-image-prompts-skill/blob/main/LICENSE',
   },
   atlasomni: {
     name: 'Awesome Gemini Omni Prompts',
@@ -630,6 +652,30 @@ function importAtlasOmni(raw) {
       date: '',
       likes: 0,
       source: 'atlasomni',
+    }))
+    .filter((x) => english(x.prompt) && english(x.title));
+}
+
+function importYoumindSkill(raw, cat) {
+  // Community prompts collected by YouMind, each with the image it made. The data names no author or
+  // model, so the collection is credited and the model is left open. Prompts that need the user's own
+  // reference image are left out.
+  return JSON.parse(raw)
+    .filter((x) => !x.needReferenceImages && x.content && x.title && x.sourceMedia?.length)
+    .map((x) => ({
+      id: `p${x.id}`,
+      title: x.title.trim(),
+      desc: (x.description || '').trim(),
+      prompt: x.content.trim(),
+      images: x.sourceMedia.filter((u) => /\.(jpe?g|png|webp)(\?|$)/i.test(u)),
+      cats: [cat],
+      model: 'Any image model',
+      author: '',
+      authorUrl: '',
+      sourceUrl: '',
+      date: '',
+      likes: 0,
+      source: 'youmindskill',
     }))
     .filter((x) => english(x.prompt) && english(x.title));
 }
@@ -1077,6 +1123,7 @@ let images = [
   ...importYoumind(await read('youmind-seedream.md'), { model: 'Seedream 4.5', source: 'youmindseedream', prefix: 'r' }),
   ...importYoumind(await read('youmind-gptimage15.md'), { model: 'GPT Image 1.5', source: 'youmindgptimage15', prefix: 'o' }),
   ...importDevanshug(await read('devanshug.md')),
+  ...(await Promise.all(YM_SKILL_CATS.map(async ([file, cat]) => importYoumindSkill(await read(`youmind-skill-${file}`), cat)))).flat(),
 ];
 // Sample images that no longer load (checked by hand when the collection was added); those prompts are left out.
 const DEAD_IMAGES = new Set([
@@ -1092,12 +1139,18 @@ const DEAD_IMAGES = new Set([
 ]);
 const counts = { raw: images.length };
 const seenKey = new Set();
+// YouMind's skill data repeats prompts from collections above without their post IDs: match on the text.
+const promptKey = (p) => p.replace(/\s+/g, ' ').trim().slice(0, 300).toLowerCase();
+const seenPrompt = new Set();
 images = images.filter((x) => {
   if (!x.prompt || x.prompt.length < 20 || !x.images.length || x.images.every((u) => DEAD_IMAGES.has(u))) return false;
   if (BLOCK.test(x.prompt) || BLOCK.test(x.title)) return false;
   const key = tweetId(x.sourceUrl) || x.id;
   if (seenKey.has(key)) return false;
+  const pk = promptKey(x.prompt);
+  if (x.source === 'youmindskill' && seenPrompt.has(pk)) return false;
   seenKey.add(key);
+  seenPrompt.add(pk);
   return true;
 });
 images = finalize(images, (x) => `${slugify(x.title) || 'prompt'}-${x.id.slice(-6)}`).map(({ id, ...x }) => x);
