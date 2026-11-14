@@ -109,6 +109,11 @@ const en = {
     catMetaDesc: (c: number, label: string) => `${n(c)} free AI image prompts in ${label}, each with a sample result.`,
     catLead: (c: number) => `${n(c)} prompts in this category.`,
     count: (c: number) => `×${c}`,
+    byModel: 'AI model',
+    modelMetaTitle: (model: string) => `${model} prompts`,
+    modelMetaDesc: (c: number, model: string) => `${n(c)} free ${model} image prompts, each with its sample result and the full prompt to copy.`,
+    modelLead: (c: number, model: string) => `${n(c)} prompts written for ${model}, each with its sample result.`,
+    crumbModel: 'model',
   },
 
   prompt: {

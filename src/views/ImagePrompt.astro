@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import PromptBox from '../components/PromptBox.astro';
-import { sources, excerpt, metaDescOf, fmt, type ImagePrompt } from '../lib/data';
+import { sources, excerpt, metaDescOf, fmt, imageModelSlug, type ImagePrompt } from '../lib/data';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { clip, imagePromptSchema } from '../lib/seo';
 
@@ -16,6 +16,7 @@ const t = ui[lang];
 const tp = t.prompt;
 const cat = categoryLabels[lang];
 const src = sources[p.source];
+const modelSlug = imageModelSlug(p.model);
 ---
 
 <Base
@@ -33,7 +34,7 @@ const src = sources[p.source];
     </p>
     <h1 class="display mt-3 max-w-4xl text-3xl sm:text-5xl">{p.title}</h1>
     <dl class="mt-5 flex flex-wrap gap-x-8 gap-y-2 border-y border-ink py-3 font-mono text-xs">
-      <div><dt class="inline text-muted">{tp.model} </dt><dd class="inline font-bold">{p.model}</dd></div>
+      <div><dt class="inline text-muted">{tp.model} </dt><dd class="inline font-bold">{modelSlug ? <a href={href(lang, `/image-model/${modelSlug}`)} class="link">{p.model}</a> : p.model}</dd></div>
       <div>
         <dt class="inline text-muted">{tp.category} </dt>
         <dd class="inline font-bold">

@@ -1,10 +1,10 @@
 ---
-// Paginated image prompt grid: the full list, or one category when `cat` is set.
+// Paginated image prompt grid: the full list, one category when `cat` is set, or one AI model when `model` (a slug) is set.
 import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import CategoryChips from '../components/CategoryChips.astro';
 import Pagination from '../components/Pagination.astro';
-import { images } from '../lib/data';
+import { images, imageModels, fmt } from '../lib/data';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { itemList } from '../lib/seo';
 
@@ -12,31 +12,61 @@ interface Props {
   lang: Lang;
   page: any;
   cat?: string;
+  model?: string;
 }
-const { lang, page, cat } = Astro.props;
+const { lang, page, cat, model } = Astro.props;
 const t = ui[lang];
+const ti = t.images;
 const label = cat ? categoryLabels[lang][cat] : '';
+const current = imageModels.find((m) => m.slug === model);
 const suffix = page.currentPage > 1 ? `, ${t.page(page.currentPage)}` : '';
-const title = (cat ? t.images.catMetaTitle(label) : t.images.metaTitle) + suffix;
-const crumbs: [string, string][] = cat ? [[t.images.title, '/images'], [label, `/category/${cat}`]] : [[t.images.title, '/images']];
+const title = (current ? ti.modelMetaTitle(current.label) : cat ? ti.catMetaTitle(label) : ti.metaTitle) + suffix;
+const crumbs: [string, string][] = current
+  ? [[ti.title, '/images'], [current.label, `/image-model/${current.slug}`]]
+  : cat
+    ? [[ti.title, '/images'], [label, `/category/${cat}`]]
+    : [[ti.title, '/images']];
 const schema = [itemList(lang, page.data.map((p) => `/prompt/${p.slug}`))];
-const description = cat ? t.images.catMetaDesc(page.total, label) : t.images.metaDesc(images.length);
+const description = current
+  ? ti.modelMetaDesc(current.count, current.label)
+  : cat
+    ? ti.catMetaDesc(page.total, label)
+    : ti.metaDesc(images.length);
 ---
 
 <Base lang={lang} title={title} description={description} crumbs={crumbs} schema={schema}>
   <div class="wrap pt-10">
     {
-      cat ? (
+      cat || current ? (
         <p class="label">
-          <a href={href(lang, '/images')} class="hover:text-ink">{t.images.title}</a> / {t.images.crumbCategory}
+          <a href={href(lang, '/images')} class="hover:text-ink">{ti.title}</a> / {current ? ti.crumbModel : ti.crumbCategory}
         </p>
       ) : (
         <p class="label">{t.collection}</p>
       )
     }
-    <h1 class="display mt-2 text-4xl sm:text-6xl">{cat ? label : t.images.title}</h1>
-    <p class="mt-3 max-w-xl text-muted">{cat ? t.images.catLead(page.total) : t.images.lead(images.length)}</p>
-    <div class="mt-6"><CategoryChips lang={lang} active={cat} /></div>
+    <h1 class="display mt-2 text-4xl sm:text-6xl">{current ? current.label : cat ? label : ti.title}</h1>
+    <p class="mt-3 max-w-xl text-muted">
+      {current ? ti.modelLead(current.count, current.label) : cat ? ti.catLead(page.total) : ti.lead(images.length)}
+    </p>
+    {!current && <div class="mt-6"><CategoryChips lang={lang} active={cat} /></div>}
+    {
+      !cat && (
+        <>
+          <p class="label mt-6">{ti.byModel}</p>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <a href={href(lang, '/images')} class:list={['chip', !current && 'chip-on']}>
+              {t.all} <span class="n">{fmt(images.length)}</span>
+            </a>
+            {imageModels.map((m) => (
+              <a href={href(lang, `/image-model/${m.slug}`)} class:list={['chip', m.slug === model && 'chip-on']}>
+                {m.label} <span class="n">{fmt(m.count)}</span>
+              </a>
+            ))}
+          </div>
+        </>
+      )
+    }
     <div class="masonry mt-8 border-t border-ink pt-6">
       {page.data.map((p, i) => <ImageCard p={p} lang={lang} eager={i < 4} />)}
     </div>

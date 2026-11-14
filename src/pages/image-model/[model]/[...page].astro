@@ -1,0 +1,9 @@
+---
+// Image prompts for one AI model. The page body lives in src/views/ImageList.astro.
+import View from '../../../views/ImageList.astro';
+import { imageModelPaths } from '../../../lib/paths';
+
+export const getStaticPaths = ({ paginate }) => imageModelPaths(paginate);
+---
+
+<View lang="en" page={Astro.props.page} model={Astro.params.model} />

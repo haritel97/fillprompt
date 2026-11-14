@@ -59,13 +59,11 @@ const cfg = {
     const $ = (id) => document.getElementById(id);
     const input = $('q');
     const MAX = 48;
-    let idx;
-    try {
-      idx = await (await fetch('/search-index.json')).json();
-    } catch {
-      $('status').textContent = cfg.loadFailed;
-      return;
-    }
+    // One file per kind, fetched in parallel; each section fills in as its file arrives.
+    const idx = { i: [], v: [], t: [] };
+    let ready = false;
+    let pending = 3;
+    const loadingText = $('status').textContent;
     const suggest = $('suggest');
     const el = (tag, cls, text) => {
       const e = document.createElement(tag);
@@ -126,6 +124,7 @@ const cfg = {
       return a;
     };
     const run = () => {
+      if (!ready) return;
       const q = input.value.trim().toLowerCase();
       const words = q.split(/\s+/).filter(Boolean);
       history.replaceState(null, '', q ? '?q=' + encodeURIComponent(q) : location.pathname);
@@ -138,12 +137,13 @@ const cfg = {
       }
       const hit = (s) => words.every((w) => s.includes(w));
       const im = idx.i.filter((r) => hit((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4]).toLowerCase()));
-      const vd = (idx.v || []).filter((r) => hit((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase()));
+      const vd = idx.v.filter((r) => hit((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase()));
       const tx = idx.t.filter((r) => hit(r[0].toLowerCase()));
       const total = im.length + vd.length + tx.length;
-      $('status').textContent = total ? '' : cfg.none + ' "' + input.value.trim() + '".';
+      // Until every file is in, an empty result may only mean "not loaded yet".
+      $('status').textContent = total ? '' : pending ? loadingText : cfg.none + ' "' + input.value.trim() + '".';
       suggest.replaceChildren();
-      if (!total) {
+      if (!total && !pending) {
         const label = document.createElement('span');
         label.className = 'text-xs text-muted uppercase tracking-[0.1em]';
         label.textContent = cfg.suggest;
@@ -156,7 +156,7 @@ const cfg = {
           const hitShort = (s) => words.slice(0, -1).every((w) => s.includes(w));
           const shorterTotal =
             idx.i.filter((r) => hitShort((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4]).toLowerCase())).length +
-            (idx.v || []).filter((r) => hitShort((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase())).length +
+            idx.v.filter((r) => hitShort((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase())).length +
             idx.t.filter((r) => hitShort(r[0].toLowerCase())).length;
           if (shorterTotal > 0) {
             chips.push({ text: shorter, score: 3 });
@@ -174,7 +174,7 @@ const cfg = {
             }
           }
         }
-        for (const r of (idx.v || [])) {
+        for (const r of idx.v) {
           if (r[2] && !seen.has(r[2])) {
             const score = words.some((w) => r[2].toLowerCase().includes(w)) ? 2 : 0;
             if (score > 0) {
@@ -226,6 +226,20 @@ const cfg = {
       clearTimeout(timer);
       timer = setTimeout(run, 150);
     });
-    run();
+    let failed = 0;
+    for (const kind of ['i', 'v', 't']) {
+      fetch('/search/' + kind + '.json')
+        .then((r) => r.json())
+        .then((rows) => {
+          idx[kind] = rows;
+          ready = true;
+        })
+        .catch(() => failed++)
+        .finally(() => {
+          pending--;
+          if (failed === 3) $('status').textContent = cfg.loadFailed;
+          else run();
+        });
+    }
   })();
 </script>

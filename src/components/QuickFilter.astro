@@ -6,7 +6,7 @@ import { ui, href, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
-  /** Which rows of /search-index.json to search: 't' text prompts, 'v' video prompts. */
+  /** Which search file to load (/search/<kind>.json): 't' text prompts, 'v' video prompts. */
   kind: 't' | 'v';
   /** Only rows whose model has this label (videos). */
   model?: string;
@@ -51,8 +51,7 @@ const cfg = {
     };
     const load = async () => {
       if (rows) return rows;
-      const idx = await (await fetch('/search-index.json')).json();
-      rows = idx[cfg.kind] || [];
+      rows = await (await fetch('/search/' + cfg.kind + '.json')).json();
       if (cfg.model) rows = rows.filter((r) => r[2] === cfg.model);
       return rows;
     };

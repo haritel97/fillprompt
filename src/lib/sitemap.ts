@@ -1,5 +1,5 @@
 // URL lists for the sitemaps. Split by kind so Search Console reports indexing for each one.
-import { images, texts, videos, catSlugs, catCounts, videoModels, textModels, TEXT_FILTERS, textFilterCounts } from './data';
+import { images, texts, videos, catSlugs, catCounts, imageModels, videoModels, textModels, TEXT_FILTERS, textFilterCounts } from './data';
 import { IMAGE_PAGE, TEXT_PAGE, VIDEO_PAGE } from './paths';
 import { url } from './seo';
 
@@ -18,6 +18,7 @@ export const SITEMAPS: Record<string, () => Entry[]> = {
       '/',
       ...paged('/images', images.length, IMAGE_PAGE),
       ...catSlugs.flatMap((c) => paged(`/category/${c}`, catCounts[c], IMAGE_PAGE)),
+      ...imageModels.flatMap((m) => paged(`/image-model/${m.slug}`, m.count, IMAGE_PAGE)),
       ...paged('/videos', videos.length, VIDEO_PAGE),
       ...videoModels.flatMap((m) => paged(`/video-model/${m.slug}`, m.count, VIDEO_PAGE)),
       ...paged('/text', texts.length, TEXT_PAGE),

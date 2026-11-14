@@ -96,6 +96,15 @@ export const videoModels = Object.entries(
   .map(([label, count]) => ({ slug: slugOf(label), label, count }))
   .sort((a, b) => b.count - a.count);
 
+/** Image models with their own page, most prompts first. Prompts that work in any model have none. */
+export const imageModels = Object.entries(
+  images.reduce<Record<string, number>>((a, p) => (p.model !== 'Any image model' && (a[p.model] = (a[p.model] || 0) + 1), a), {}),
+)
+  .map(([label, count]) => ({ slug: slugOf(label), label, count }))
+  .sort((a, b) => b.count - a.count);
+/** The model page for an image prompt's model, or '' when it has none. */
+export const imageModelSlug = (label: string) => imageModels.find((m) => m.label === label)?.slug || '';
+
 /** AI models that have text prompts, in a fixed order: used for the model filter. */
 export const textModels = ['ChatGPT', 'Claude', 'Gemini', 'Any model']
   .map((label) => ({ slug: slugOf(label), label, count: texts.filter((t) => t.model === label).length }))

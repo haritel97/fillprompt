@@ -1,5 +1,5 @@
 // getStaticPaths helpers shared by the English (root) and Malay (/ms) route files.
-import { images, texts, videos, catSlugs, videoModels, textModels, TEXT_FILTERS, inTextFilter, textFilterCounts } from './data';
+import { images, texts, videos, catSlugs, imageModels, videoModels, textModels, TEXT_FILTERS, inTextFilter, textFilterCounts } from './data';
 
 export const IMAGE_PAGE = 48;
 export const TEXT_PAGE = 60;
@@ -12,6 +12,14 @@ export const categoryPaths = (paginate: any) =>
     paginate(
       images.filter((p) => p.cats.includes(cat)),
       { params: { cat }, pageSize: IMAGE_PAGE },
+    ),
+  );
+
+export const imageModelPaths = (paginate: any) =>
+  imageModels.flatMap((m) =>
+    paginate(
+      images.filter((p) => p.model === m.label),
+      { params: { model: m.slug }, pageSize: IMAGE_PAGE },
     ),
   );
 
