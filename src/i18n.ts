@@ -36,7 +36,7 @@ const en = {
   navLabel: 'Main',
   langLabel: 'Language',
   theme: { toDark: 'Switch to dark theme', toLight: 'Switch to light theme' },
-  github: { star: 'Star', starLabel: (n: string) => `Star fillprompt on GitHub, ${n} stars`, source: 'Source code on GitHub' },
+  github: { starLabel: (n: string) => `Star fillprompt on GitHub, ${n} stars`, source: 'Source code on GitHub' },
   filter: {
     label: 'Filter',
     placeholder: 'Type to filter by keyword…',
