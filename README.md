@@ -41,6 +41,9 @@ fillprompt runs a free, read-only remote MCP server, so Claude, Cursor, VS Code,
 https://fillprompt.com/api/mcp
 ```
 
+[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=fillprompt&config=eyJ1cmwiOiJodHRwczovL2ZpbGxwcm9tcHQuY29tL2FwaS9tY3AifQ==)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_MCP_server-0098FF?logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=fillprompt&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Ffillprompt.com%2Fapi%2Fmcp%22%7D)
+
 **Claude Code**
 
 ```bash
