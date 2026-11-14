@@ -136,7 +136,7 @@ const cfg = {
         return;
       }
       const hit = (s) => words.every((w) => s.includes(w));
-      const im = idx.i.filter((r) => hit((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4]).toLowerCase()));
+      const im = idx.i.filter((r) => hit((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4] + ' ' + (r[5] || '')).toLowerCase()));
       const vd = idx.v.filter((r) => hit((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase()));
       const tx = idx.t.filter((r) => hit(r[0].toLowerCase()));
       const total = im.length + vd.length + tx.length;
@@ -155,7 +155,7 @@ const cfg = {
           const shorter = words.slice(0, -1).join(' ');
           const hitShort = (s) => words.slice(0, -1).every((w) => s.includes(w));
           const shorterTotal =
-            idx.i.filter((r) => hitShort((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4]).toLowerCase())).length +
+            idx.i.filter((r) => hitShort((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4] + ' ' + (r[5] || '')).toLowerCase())).length +
             idx.v.filter((r) => hitShort((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase())).length +
             idx.t.filter((r) => hitShort(r[0].toLowerCase())).length;
           if (shorterTotal > 0) {

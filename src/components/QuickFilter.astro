@@ -2,21 +2,25 @@
 // Keyword filter for a list page. Typing searches every prompt of this kind (not just the page
 // on screen) through the shared search index, and swaps the paginated list for the matches.
 // Wrap the static list and its pagination in an element with id="filter-static".
-import { ui, href, type Lang } from '../i18n';
+import { ui, href, categoryLabels, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
-  /** Which search file to load (/search/<kind>.json): 't' text prompts, 'v' video prompts. */
-  kind: 't' | 'v';
-  /** Only rows whose model has this label (videos). */
+  /** Which search file to load (/search/<kind>.json): 'i' image, 't' text, 'v' video prompts. */
+  kind: 'i' | 't' | 'v';
+  /** Only rows whose model has this label. */
   model?: string;
+  /** Only image rows in this category (slug). */
+  cat?: string;
 }
-const { lang, kind, model = '' } = Astro.props;
+const { lang, kind, model = '', cat = '' } = Astro.props;
 const t = ui[lang];
 const cfg = {
   kind,
   model,
-  base: href(lang, kind === 't' ? '/text-prompt/' : '/video/'),
+  cat,
+  cats: kind === 'i' ? categoryLabels[lang] : {},
+  base: href(lang, { i: '/prompt/', t: '/text-prompt/', v: '/video/' }[kind]),
   none: t.filter.none,
 };
 ---
@@ -52,7 +56,9 @@ const cfg = {
     const load = async () => {
       if (rows) return rows;
       rows = await (await fetch('/search/' + cfg.kind + '.json')).json();
-      if (cfg.model) rows = rows.filter((r) => r[2] === cfg.model);
+      // Image rows keep the model in column 5 and the categories in 2 and 6; others keep the model in 2.
+      if (cfg.model) rows = rows.filter((r) => (cfg.kind === 'i' ? r[5] : r[2]) === cfg.model);
+      if (cfg.cat) rows = rows.filter((r) => r[2] === cfg.cat || r[6] === cfg.cat);
       return rows;
     };
     const textRow = ([title, slug]) => {
@@ -87,6 +93,25 @@ const cfg = {
       a.append(frame, el('span', 'mt-2.5 line-clamp-2 block text-[15px] font-semibold leading-snug', title));
       return a;
     };
+    const imageCard = ([title, slug, cat, img, , model]) => {
+      const a = el('a', 'tile group block');
+      a.href = cfg.base + slug;
+      const frame = el('span', 'tile-img');
+      const im = el('img', 'block min-h-20 w-full');
+      im.src = img;
+      im.alt = title;
+      im.loading = 'lazy';
+      im.referrerPolicy = 'no-referrer';
+      im.onerror = () => (a.style.display = 'none');
+      frame.append(im);
+      const cap = el('span', 'mt-2.5 block');
+      cap.append(
+        el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title),
+        el('span', 'label mt-1 block', (cfg.cats[cat] || cat) + ' / ' + (model || 'Any image model')),
+      );
+      a.append(frame, cap);
+      return a;
+    };
     const run = async () => {
       const words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
       if (!words.length) {
@@ -102,19 +127,21 @@ const cfg = {
         return;
       }
       const hits = all.filter((r) => {
-        const hay = (r[0] + ' ' + (r[2] || '') + ' ' + (r[4] || '')).toLowerCase();
+        const hay = (
+          r[0] + ' ' + (cfg.kind === 'i' ? (cfg.cats[r[2]] || '') + ' ' + (r[5] || '') : r[2] || '') + ' ' + (r[4] || '')
+        ).toLowerCase();
         return words.every((w) => hay.includes(w));
       });
       count.textContent = hits.length.toLocaleString('en-US');
       fixedList()?.classList.add('hidden');
       results.classList.remove('hidden');
-      results.className =
-        cfg.kind === 'v'
-          ? 'mt-8 grid grid-cols-2 gap-x-5 gap-y-7 border-t border-ink pt-6 md:grid-cols-3 lg:grid-cols-4'
-          : 'mt-8 grid border-t border-ink md:grid-cols-2 md:gap-x-10';
-      results.replaceChildren(
-        ...(hits.length ? hits.slice(0, MAX).map(cfg.kind === 'v' ? videoCard : textRow) : [el('p', 'col-span-full py-6 text-muted', cfg.none)]),
-      );
+      results.className = {
+        i: 'masonry mt-8 border-t border-ink pt-6',
+        v: 'mt-8 grid grid-cols-2 gap-x-5 gap-y-7 border-t border-ink pt-6 md:grid-cols-3 lg:grid-cols-4',
+        t: 'mt-8 grid border-t border-ink md:grid-cols-2 md:gap-x-10',
+      }[cfg.kind];
+      const card = { i: imageCard, v: videoCard, t: textRow }[cfg.kind];
+      results.replaceChildren(...(hits.length ? hits.slice(0, MAX).map(card) : [el('p', 'col-span-full py-6 text-muted', cfg.none)]));
     };
     let timer;
     input.addEventListener('input', () => {

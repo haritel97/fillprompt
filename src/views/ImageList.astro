@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import CategoryChips from '../components/CategoryChips.astro';
 import Pagination from '../components/Pagination.astro';
+import QuickFilter from '../components/QuickFilter.astro';
 import { images, imageModels, fmt } from '../lib/data';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { itemList } from '../lib/seo';
@@ -67,9 +68,13 @@ const description = current
         </>
       )
     }
-    <div class="masonry mt-8 border-t border-ink pt-6">
-      {page.data.map((p, i) => <ImageCard p={p} lang={lang} eager={i < 4} />)}
+    <QuickFilter lang={lang} kind="i" model={current?.label} cat={cat} />
+
+    <div id="filter-static">
+      <div class="masonry mt-8 border-t border-ink pt-6">
+        {page.data.map((p, i) => <ImageCard p={p} lang={lang} eager={i < 4} />)}
+      </div>
+      <Pagination page={page} lang={lang} />
     </div>
-    <Pagination page={page} lang={lang} />
   </div>
 </Base>
