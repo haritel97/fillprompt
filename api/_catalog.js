@@ -1,45 +1,70 @@
-// The prompt catalog behind the MCP server: loads the site's data once per instance and searches it.
-// Plain JavaScript so it runs as-is on Vercel and in local tests.
+// The prompt catalog behind the MCP server.
+// Loads a slim gzipped search index first; full prompt bodies load per kind on demand.
+// Built by `node scripts/mcp-catalog.mjs` into src/data/mcp/.
 import { readFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
 
 export const SITE = 'https://fillprompt.com';
-const DATA = path.join(process.cwd(), 'src', 'data');
-const read = (f) => JSON.parse(readFileSync(path.join(DATA, f), 'utf8'));
-
 export const KINDS = ['image', 'video', 'text'];
 const PATHS = { image: '/prompt/', video: '/video/', text: '/text-prompt/' };
+const MCP = path.join(process.cwd(), 'src', 'data', 'mcp');
 
 const words = (s) => (s.toLowerCase().match(/[a-z0-9]+/g) || []).filter((w) => w.length > 1);
-const clip = (s, n) => {
-  const t = s.replace(/\s+/g, ' ').trim();
-  return t.length > n ? t.slice(0, n).replace(/\s+\S*$/, '') + '…' : t;
-};
+const readGz = (f) => JSON.parse(gunzipSync(readFileSync(path.join(MCP, f))));
 
-let cache;
-/** All prompts as one flat list, with a lower-cased search text per field. */
-export function catalog() {
-  if (cache) return cache;
-  const meta = read('meta.json');
-  const items = [];
-  for (const p of read('image-prompts.json'))
-    items.push({ kind: 'image', ...p, tags: p.cats, media: p.images.slice(0, 2) });
-  for (const v of read('video-prompts.json'))
-    items.push({ kind: 'video', ...v, tags: v.cats || [], media: [v.poster, v.video].filter(Boolean) });
-  for (const t of read('text-prompts.json'))
-    items.push({ kind: 'text', ...t, tags: [t.type, ...(t.forDevs ? ['developer'] : [])], media: [], likes: 0 });
-  for (const x of items) {
-    x.url = SITE + PATHS[x.kind] + x.slug;
-    x.idx = {
-      title: ' ' + words(x.title).join(' ') + ' ',
-      tags: ' ' + [...x.tags, x.model].map((s) => words(s).join(' ')).join(' ') + ' ',
-      desc: (x.desc || '').toLowerCase(),
-      prompt: x.prompt.slice(0, 4000).toLowerCase(),
-    };
+let metaCache;
+const searchCache = Object.create(null);
+const fullCache = Object.create(null);
+
+function meta() {
+  if (!metaCache) metaCache = readGz('meta.json.gz');
+  return metaCache;
+}
+
+function searchRows(kind) {
+  if (!searchCache[kind]) {
+    const rows = readGz(`search-${kind}.json.gz`);
+    for (const x of rows) {
+      x.kind = kind;
+      x.url = SITE + PATHS[kind] + x.slug;
+    }
+    searchCache[kind] = rows;
   }
-  const bySlug = new Map(items.map((x) => [x.kind + ':' + x.slug, x]));
-  cache = { items, bySlug, sources: meta.sources, categories: meta.categories };
-  return cache;
+  return searchCache[kind];
+}
+
+function fullMap(kind) {
+  if (!fullCache[kind]) fullCache[kind] = readGz(`full-${kind}.json.gz`);
+  return fullCache[kind];
+}
+
+/** Search rows for the given kinds (default: all). */
+function rowsFor(type) {
+  const kinds = type && KINDS.includes(type) ? [type] : KINDS;
+  return kinds.flatMap(searchRows);
+}
+
+/** Hydrate one search hit (or slug) into the full prompt record used by get/random. */
+function hydrate(kind, slug) {
+  const body = fullMap(kind)[slug];
+  if (!body) return;
+  return {
+    kind,
+    slug,
+    url: SITE + PATHS[kind] + slug,
+    title: body.title,
+    desc: body.desc || '',
+    prompt: body.prompt,
+    model: body.model,
+    tags: body.tags,
+    media: body.media || [],
+    author: body.author || '',
+    authorUrl: body.authorUrl || '',
+    sourceUrl: body.sourceUrl || '',
+    source: body.source,
+    likes: body.likes || 0,
+  };
 }
 
 const norm = (s) => words(s || '').join(' ');
@@ -54,7 +79,7 @@ function filter({ type, model, category }) {
 
 /** Ranked search: title hits weigh most, then category/model, summary and prompt text. */
 export function search({ query = '', type, model, category, limit = 8 }) {
-  const { items } = catalog();
+  const items = rowsFor(type);
   const terms = [...new Set(words(query))];
   const keep = filter({ type, model, category });
   const scored = [];
@@ -82,19 +107,23 @@ export function search({ query = '', type, model, category, limit = 8 }) {
 
 /** One prompt picked at random from those that pass the same filters as search(); undefined if none do. */
 export function random({ type, model, category } = {}, pick = Math.random) {
-  const matches = catalog().items.filter(filter({ type, model, category }));
-  return matches.length ? matches[Math.floor(pick() * matches.length)] : undefined;
+  const matches = rowsFor(type).filter(filter({ type, model, category }));
+  if (!matches.length) return;
+  const hit = matches[Math.floor(pick() * matches.length)];
+  return hydrate(hit.kind, hit.slug);
 }
 
 /** Find a prompt by its page URL or slug. */
 export function find(ref, type) {
-  const { bySlug } = catalog();
   const s = String(ref).trim().replace(/[?#].*$/, '').replace(/\/+$/, '');
   const m = s.match(/\/(prompt|video|text-prompt)\/([^/]+)$/);
-  if (m) return bySlug.get({ prompt: 'image', video: 'video', 'text-prompt': 'text' }[m[1]] + ':' + m[2]);
+  if (m) {
+    const kind = { prompt: 'image', video: 'video', 'text-prompt': 'text' }[m[1]];
+    return hydrate(kind, m[2]);
+  }
   const slug = s.split('/').pop();
   for (const k of type ? [type] : KINDS) {
-    const x = bySlug.get(k + ':' + slug);
+    const x = hydrate(k, slug);
     if (x) return x;
   }
 }
@@ -110,7 +139,7 @@ export function slots(prompt) {
 }
 
 export const credit = (x) => {
-  const src = catalog().sources[x.source];
+  const src = meta().sources[x.source];
   return {
     author: x.author || undefined,
     authorUrl: x.authorUrl || undefined,
@@ -127,20 +156,11 @@ export const summary = (x) => ({
   model: x.model,
   tags: x.tags,
   url: x.url,
-  preview: clip(x.desc || x.prompt, 180),
-  ...(x.media[0] ? { sample: x.media[0] } : {}),
+  preview: x.preview,
+  ...(x.sample ? { sample: x.sample } : {}),
 });
 
 /** Counts for the filters, so an agent can pick valid values. */
 export function filters() {
-  const { items, categories } = catalog();
-  const count = (list) => list.reduce((a, k) => ((a[k] = (a[k] || 0) + 1), a), {});
-  const of = (kind, f) => count(items.filter((x) => x.kind === kind).flatMap(f));
-  const cats = of('image', (x) => x.tags);
-  const vcats = of('video', (x) => x.tags);
-  return {
-    image: { total: items.filter((x) => x.kind === 'image').length, categories: Object.fromEntries(categories.filter((c) => cats[c]).map((c) => [c, cats[c]])), models: of('image', (x) => [x.model]) },
-    video: { total: items.filter((x) => x.kind === 'video').length, categories: Object.fromEntries(Object.entries(vcats).filter(([c]) => c)), models: of('video', (x) => [x.model]) },
-    text: { total: items.filter((x) => x.kind === 'text').length, categories: of('text', (x) => x.tags), models: of('text', (x) => [x.model]) },
-  };
+  return meta().filters;
 }

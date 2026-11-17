@@ -17,17 +17,17 @@ create or replace function public.mt_mcp_bump(t text, k text default '', zero bo
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if t not in ('search_prompts', 'get_prompt', 'list_filters', 'random_prompt') or coalesce(k, '') not in ('', 'image', 'video', 'text') then
     return;
   end if;
-  insert into mt_mcp_usage (day, tool, kind, calls, empty)
+  insert into public.mt_mcp_usage (day, tool, kind, calls, empty)
   values (current_date, t, coalesce(k, ''), 1, case when zero then 1 else 0 end)
   on conflict (day, tool, kind) do update
-    set calls = mt_mcp_usage.calls + 1,
-        empty = mt_mcp_usage.empty + excluded.empty;
+    set calls = public.mt_mcp_usage.calls + 1,
+        empty = public.mt_mcp_usage.empty + excluded.empty;
 end;
 $$;
 
@@ -37,15 +37,18 @@ returns table (day date, tool text, kind text, calls integer, empty integer)
 language sql
 stable
 security definer
-set search_path = public
+set search_path = ''
 as $$
-  select day, tool, kind, calls, empty
-  from mt_mcp_usage
-  where day > current_date - least(greatest(days, 1), 366)
-  order by day desc, tool, kind;
+  select u.day, u.tool, u.kind, u.calls, u.empty
+  from public.mt_mcp_usage u
+  where u.day > current_date - least(greatest(days, 1), 366)
+  order by u.day desc, u.tool, u.kind;
 $$;
 
 revoke all on function public.mt_mcp_bump(text, text, boolean) from public;
 revoke all on function public.mt_mcp_stats(integer) from public;
 grant execute on function public.mt_mcp_bump(text, text, boolean) to anon, authenticated;
 grant execute on function public.mt_mcp_stats(integer) to anon, authenticated;
+
+-- Direct table access is not used; RPC only (see harden-grants.sql).
+revoke all on table public.mt_mcp_usage from anon, authenticated, public;

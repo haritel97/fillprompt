@@ -28,6 +28,8 @@ export interface VideoPrompt {
   poster: string;
   /** Direct link to the sample clip on the original collection's server; empty when only a poster exists. */
   video: string;
+  /** Topic tags from the source collection, when present. */
+  cats?: string[];
   model: string;
   author: string;
   authorUrl: string;

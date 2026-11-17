@@ -1,0 +1,23 @@
+name: MCP monitor
+
+on:
+  schedule:
+    # Daily 08:00 UTC — catches empty-search spikes without needing a paid alert product.
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: MCP usage health (last 7 days)
+        run: node scripts/mcp-stats.mjs --check --json 7
+      - name: Live MCP smoke (production)
+        run: npm run mcp:smoke

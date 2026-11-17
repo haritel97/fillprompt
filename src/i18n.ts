@@ -131,7 +131,7 @@ const en = {
     by: 'by',
     imageNote: 'Sample images belong to the original author.',
     takedown: 'Request removal',
-    sameCategory: 'In the same category',
+    sameCategory: 'Related prompts',
   },
 
   videos: {
@@ -165,7 +165,7 @@ const en = {
     detailMeta: (title: string) => `${title} · AI text prompt`,
     contributor: 'Contributor',
     collection: 'Collection',
-    others: 'Other prompts',
+    others: 'Related prompts',
     byType: 'Type',
     byModel: 'Written for',
     model: 'Written for',

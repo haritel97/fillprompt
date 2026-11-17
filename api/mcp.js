@@ -8,6 +8,19 @@ import { recordUsage } from './_usage.js';
 const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }], structuredContent: data });
 const readOnly = { readOnlyHint: true, openWorldHint: false };
 
+/** Timing line for Vercel runtime logs — no PII, just tool name and milliseconds. */
+const timed = async (tool, kind, run) => {
+  const t0 = Date.now();
+  try {
+    return await run();
+  } finally {
+    // Quiet in local tests (MCP_USAGE=off); keep lines in production for latency debugging.
+    if (process.env.MCP_USAGE !== 'off') {
+      console.log(JSON.stringify({ mcp: tool, kind: kind || '', ms: Date.now() - t0 }));
+    }
+  }
+};
+
 /** The full form of one prompt, as get_prompt and random_prompt return it. */
 const full = (x) => ({
   title: x.title,
@@ -39,11 +52,12 @@ const mcp = createMcpHandler(
         }),
         annotations: readOnly,
       },
-      async (args) => {
-        const { total, results } = search(args);
-        recordUsage('search_prompts', args.type, total === 0);
-        return json({ total, results: results.map(summary) });
-      },
+      async (args) =>
+        timed('search_prompts', args.type, async () => {
+          const { total, results } = search(args);
+          recordUsage('search_prompts', args.type, total === 0);
+          return json({ total, results: results.map(summary) });
+        }),
     );
 
     server.registerTool(
@@ -58,12 +72,13 @@ const mcp = createMcpHandler(
         }),
         annotations: readOnly,
       },
-      async ({ ref, type }) => {
-        const x = find(ref, type);
-        recordUsage('get_prompt', x?.kind);
-        if (!x) return { isError: true, content: [{ type: 'text', text: `No prompt found for "${ref}". Use search_prompts to find one.` }] };
-        return json(full(x));
-      },
+      async ({ ref, type }) =>
+        timed('get_prompt', type, async () => {
+          const x = find(ref, type);
+          recordUsage('get_prompt', x?.kind);
+          if (!x) return { isError: true, content: [{ type: 'text', text: `No prompt found for "${ref}". Use search_prompts to find one.` }] };
+          return json(full(x));
+        }),
     );
 
     server.registerTool(
@@ -79,12 +94,13 @@ const mcp = createMcpHandler(
         }),
         annotations: readOnly,
       },
-      async (args) => {
-        const x = random(args);
-        recordUsage('random_prompt', x?.kind ?? args.type, !x);
-        if (!x) return { isError: true, content: [{ type: 'text', text: 'No prompt matches these filters. Use list_filters to see the valid values.' }] };
-        return json(full(x));
-      },
+      async (args) =>
+        timed('random_prompt', args.type, async () => {
+          const x = random(args);
+          recordUsage('random_prompt', x?.kind ?? args.type, !x);
+          if (!x) return { isError: true, content: [{ type: 'text', text: 'No prompt matches these filters. Use list_filters to see the valid values.' }] };
+          return json(full(x));
+        }),
     );
 
     server.registerTool(
@@ -95,10 +111,11 @@ const mcp = createMcpHandler(
         inputSchema: z.object({}),
         annotations: readOnly,
       },
-      async () => {
-        recordUsage('list_filters');
-        return json(filters());
-      },
+      async () =>
+        timed('list_filters', '', async () => {
+          recordUsage('list_filters');
+          return json(filters());
+        }),
     );
   },
   {

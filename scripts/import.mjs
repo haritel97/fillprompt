@@ -1241,3 +1241,7 @@ console.log(`text prompts: ${texts.length}`, texts.reduce((a, x) => ((a[`${x.mod
 console.log(`video prompts: ${videos.length} of ${rawVideos} raw`, videos.reduce((a, x) => ((a[x.source] = (a[x.source] || 0) + 1), a), {}), 'with clip:', videos.filter((x) => x.video).length);
 console.log(`community skills: ${community.length}`, community.map((s) => `${s.by}/${s.name}=${s.license}`).join(', '));
 console.log(`skills: ${skills.length}`, skills.map((s) => `${s.name}=${s.license}`).join(', '));
+
+const { buildMcpCatalog } = await import('./mcp-catalog.mjs');
+await buildMcpCatalog();
+

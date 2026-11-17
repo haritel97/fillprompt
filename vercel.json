@@ -4,8 +4,8 @@
   "trailingSlash": false,
   "functions": {
     "api/mcp.js": {
-      "includeFiles": "src/data/*.json",
-      "maxDuration": 30
+      "includeFiles": "src/data/mcp/**",
+      "maxDuration": 60
     }
   },
   "redirects": [

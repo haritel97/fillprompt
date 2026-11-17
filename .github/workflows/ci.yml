@@ -18,6 +18,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Rebuild MCP catalog (must match committed src/data/mcp)
+        run: |
+          npm run mcp:catalog
+          git diff --exit-code -- src/data/mcp
       - name: Tests (data and MCP server)
         run: npm test
       - name: Build the site
