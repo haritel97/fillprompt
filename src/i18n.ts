@@ -66,6 +66,7 @@ const en = {
     packs: 'Curated packs',
     agentSkills: 'Agent skills',
     mcp: 'MCP server for AI agents',
+    rss: 'RSS feed',
     sources: 'Sources, licenses & credits',
     takedown: 'Request content removal',
     donate: 'Support this site',

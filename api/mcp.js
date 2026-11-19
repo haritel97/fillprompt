@@ -4,6 +4,7 @@ import { createMcpHandler } from 'mcp-handler';
 import { z } from 'zod';
 import { search, find, random, slots, credit, summary, filters, KINDS, SITE } from './_catalog.js';
 import { recordUsage } from './_usage.js';
+import { PACK_DEFS } from '../src/lib/pack-build.mjs';
 
 const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }], structuredContent: data });
 const readOnly = { readOnlyHint: true, openWorldHint: false };
@@ -107,21 +108,29 @@ const mcp = createMcpHandler(
       'list_filters',
       {
         title: 'List filters',
-        description: 'List the image categories, text prompt types and AI models on fillprompt.com, with how many prompts each has. Use the values with search_prompts.',
+        description: 'List the image categories, text prompt types, AI models and curated packs on fillprompt.com, with how many prompts each has. Use filter values with search_prompts; open pack URLs for themed collections.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
       async () =>
         timed('list_filters', '', async () => {
           recordUsage('list_filters');
-          return json(filters());
+          return json({
+            ...filters(),
+            packs: PACK_DEFS.map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              blurb: p.blurb,
+              url: `${SITE}/packs/${p.slug}`,
+            })),
+          });
         }),
     );
   },
   {
     serverInfo: { name: 'fillprompt', version: '1.0.0', title: 'fillprompt.com prompts', websiteUrl: SITE },
     instructions:
-      'fillprompt.com is a free library of AI prompts for images, video and text. Use search_prompts to find candidates (or random_prompt for an idea when there is no query), get_prompt to read one in full, then fill its slots with the user\'s details. Link the prompt page and credit the author when you share a prompt.',
+      'fillprompt.com is a free library of AI prompts for images, video and text, plus curated packs at https://fillprompt.com/packs (e-commerce, YouTube thumbnails, agents, Seedance, and more). Use search_prompts to find candidates (or random_prompt for an idea when there is no query), get_prompt to read one in full, then fill its slots with the user\'s details. Link the prompt page and credit the author when you share a prompt.',
   },
 );
 

@@ -6,6 +6,7 @@ import CategoryChips from '../components/CategoryChips.astro';
 import Pagination from '../components/Pagination.astro';
 import QuickFilter from '../components/QuickFilter.astro';
 import { images, imageModels, fmt } from '../lib/data';
+import { packs } from '../lib/packs';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { itemList } from '../lib/seo';
 
@@ -20,6 +21,7 @@ const t = ui[lang];
 const ti = t.images;
 const label = cat ? categoryLabels[lang][cat] : '';
 const current = imageModels.find((m) => m.slug === model);
+const relatedPacks = cat ? packs.filter((p) => p.cats?.includes(cat)).slice(0, 3) : [];
 const suffix = page.currentPage > 1 ? `, ${t.page(page.currentPage)}` : '';
 const title = (current ? ti.modelMetaTitle(current.label) : cat ? ti.catMetaTitle(label) : ti.metaTitle) + suffix;
 const crumbs: [string, string][] = current
@@ -51,6 +53,21 @@ const description = current
       {current ? ti.modelLead(current.count, current.label) : cat ? ti.catLead(page.total) : ti.lead(images.length)}
     </p>
     {!current && <div class="mt-6"><CategoryChips lang={lang} active={cat} /></div>}
+    {
+      relatedPacks.length > 0 && page.currentPage === 1 && (
+        <p class="mt-4 text-sm text-muted">
+          {t.packs.title}:{' '}
+          {relatedPacks.map((p, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={href(lang, `/packs/${p.slug}`)} class="link font-semibold">
+                {p.title}
+              </a>
+            </>
+          ))}
+        </p>
+      )
+    }
     {
       !cat && (
         <>

@@ -121,6 +121,8 @@ test('list_filters counts every kind', async () => {
   const f = (await call('list_filters', {})).structuredContent;
   for (const k of ['image', 'video', 'text']) assert.ok(f[k].total > 0, `${k} has prompts`);
   assert.ok(Object.keys(f.image.categories).length > 0);
+  assert.ok(Array.isArray(f.packs) && f.packs.length >= 6);
+  assert.match(f.packs[0].url, /^https:\/\/fillprompt\.com\/packs\//);
 });
 
 test('search_prompts filters video prompts by category', async () => {
