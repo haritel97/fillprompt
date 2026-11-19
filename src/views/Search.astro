@@ -123,6 +123,23 @@ const cfg = {
       a.href = cfg.textBase + slug;
       return a;
     };
+    const ALIAS = {
+      photo: ['photograph', 'shot', 'picture'],
+      photograph: ['photo', 'shot'],
+      thumbnail: ['thumb', 'youtube'],
+      thumb: ['thumbnail'],
+      ecommerce: ['product', 'packaging', 'shopify'],
+      product: ['ecommerce', 'packaging'],
+      poster: ['flyer', 'advert'],
+      flyer: ['poster'],
+      logo: ['brand', 'wordmark'],
+      cinematic: ['film', 'movie', 'drone'],
+      agent: ['assistant', 'system'],
+      ui: ['interface', 'dashboard', 'wireframe'],
+      food: ['menu', 'dish', 'restaurant'],
+      coffee: ['cafe', 'latte'],
+    };
+    const wordHit = (s, w) => s.includes(w) || (ALIAS[w] || []).some((a) => s.includes(a));
     const run = () => {
       if (!ready) return;
       const q = input.value.trim().toLowerCase();
@@ -135,7 +152,7 @@ const cfg = {
         $('sec-t').classList.add('hidden');
         return;
       }
-      const hit = (s) => words.every((w) => s.includes(w));
+      const hit = (s) => words.every((w) => wordHit(s, w));
       const im = idx.i.filter((r) => hit((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4] + ' ' + (r[5] || '')).toLowerCase()));
       const vd = idx.v.filter((r) => hit((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase()));
       const tx = idx.t.filter((r) => hit(r[0].toLowerCase()));

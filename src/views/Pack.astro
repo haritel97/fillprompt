@@ -1,0 +1,103 @@
+---
+import Base from '../layouts/Base.astro';
+import ImageCard from '../components/ImageCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import { images, videos, excerpt, fmt } from '../lib/data';
+import { type Pack } from '../lib/packs';
+import { ui, href, type Lang } from '../i18n';
+import { itemList } from '../lib/seo';
+
+interface Props {
+  lang: Lang;
+  pack: Pack;
+}
+const { lang, pack } = Astro.props;
+const t = ui[lang];
+const tp = t.packs;
+const bySlug = {
+  image: Object.fromEntries(images.map((p) => [p.slug, p])),
+  video: Object.fromEntries(videos.map((v) => [v.slug, v])),
+};
+const imageItems = pack.items.filter((i) => i.kind === 'image');
+const videoItems = pack.items.filter((i) => i.kind === 'video');
+const textItems = pack.items.filter((i) => i.kind === 'text');
+const og = pack.items.find((i) => i.sample)?.sample;
+---
+
+<Base
+  lang={lang}
+  title={tp.detailMeta(pack.title)}
+  description={pack.blurb}
+  image={og}
+  crumbs={[[tp.title, '/packs'], [pack.title, `/packs/${pack.slug}`]]}
+  schema={[itemList(lang, pack.items.map((i) => i.href))]}
+>
+  <div class="wrap pt-10">
+    <p class="label">
+      <a href={href(lang, '/packs')} class="hover:text-ink">{tp.title}</a> / {pack.tag}
+    </p>
+    <h1 class="display mt-2 max-w-4xl text-4xl sm:text-6xl">{pack.title}</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{pack.blurb}</p>
+    <p class="mt-3 font-mono text-xs text-muted">{fmt(pack.items.length)} {tp.prompts}</p>
+
+    {
+      imageItems.length > 0 && (
+        <section class="pt-12">
+          <div class="sec">
+            <span class="label">{tp.images}</span>
+            <h2>{tp.imageHeading}</h2>
+          </div>
+          <div class="masonry mt-6">
+            {imageItems.map((i) => {
+              const p = bySlug.image[i.slug];
+              return p ? <ImageCard p={p} lang={lang} /> : null;
+            })}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      videoItems.length > 0 && (
+        <section class="pt-12">
+          <div class="sec">
+            <span class="label">{tp.videos}</span>
+            <h2>{tp.videoHeading}</h2>
+          </div>
+          <div class="mt-6 grid grid-cols-2 gap-x-5 gap-y-7 md:grid-cols-4">
+            {videoItems.map((i) => {
+              const v = bySlug.video[i.slug];
+              return v ? <VideoCard v={v} lang={lang} /> : null;
+            })}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      textItems.length > 0 && (
+        <section class="pt-12">
+          <div class="sec">
+            <span class="label">{tp.text}</span>
+            <h2>{tp.textHeading}</h2>
+          </div>
+          <div class="mt-2 grid md:grid-cols-2 md:gap-x-10">
+            {textItems.map((i) => (
+              <a href={href(lang, i.href)} class="row grid grid-cols-[1fr] gap-x-2 px-1">
+                <span>
+                  <span class="block font-semibold">{i.title}</span>
+                  <span class="mt-1 line-clamp-2 block text-sm text-muted">{excerpt(i.preview, 150)}</span>
+                  <span class="mt-1 block font-mono text-[11px] text-muted">{i.model}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <p class="mt-16 text-sm text-muted">
+      <a href={href(lang, '/packs')} class="link font-semibold">{tp.back}</a>
+    </p>
+  </div>
+</Base>

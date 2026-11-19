@@ -69,6 +69,26 @@ function hydrate(kind, slug) {
 
 const norm = (s) => words(s || '').join(' ');
 
+/** Light synonym map so everyday words still hit library phrasing. */
+const ALIAS = {
+  photo: ['photograph', 'shot', 'picture'],
+  photograph: ['photo', 'shot'],
+  thumbnail: ['thumb', 'youtube'],
+  thumb: ['thumbnail'],
+  ecommerce: ['product', 'packaging', 'shopify'],
+  product: ['ecommerce', 'packaging'],
+  poster: ['flyer', 'advert'],
+  flyer: ['poster'],
+  logo: ['brand', 'wordmark'],
+  cinematic: ['film', 'movie', 'drone'],
+  agent: ['assistant', 'system'],
+  ui: ['interface', 'dashboard', 'wireframe'],
+  food: ['menu', 'dish', 'restaurant'],
+  coffee: ['cafe', 'latte'],
+};
+
+const variants = (w) => [w, ...(ALIAS[w] || [])];
+
 /** The type, model and category filters search() and random() share: a test for one item. */
 function filter({ type, model, category }) {
   const m = norm(model);
@@ -89,10 +109,12 @@ export function search({ query = '', type, model, category, limit = 8 }) {
     let hits = 0;
     for (const w of terms) {
       let s = 0;
-      if (x.idx.title.includes(' ' + w)) s += 6;
-      if (x.idx.tags.includes(' ' + w)) s += 3;
-      if (x.idx.desc.includes(w)) s += 2;
-      if (x.idx.prompt.includes(w)) s += 1;
+      for (const a of variants(w)) {
+        if (x.idx.title.includes(' ' + a)) s = Math.max(s, 6);
+        if (x.idx.tags.includes(' ' + a)) s = Math.max(s, 3);
+        if (x.idx.desc.includes(a)) s = Math.max(s, 2);
+        if (x.idx.prompt.includes(a)) s = Math.max(s, 1);
+      }
       if (s) hits++;
       score += s;
     }

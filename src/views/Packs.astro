@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import { packs } from '../lib/packs';
+import { ui, href, type Lang } from '../i18n';
+import { fmt } from '../lib/data';
+import { itemList } from '../lib/seo';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+const tp = t.packs;
+---
+
+<Base
+  lang={lang}
+  title={tp.metaTitle}
+  description={tp.metaDesc}
+  crumbs={[[tp.title, '/packs']]}
+  schema={[itemList(lang, packs.map((p) => `/packs/${p.slug}`))]}
+>
+  <div class="wrap pt-10">
+    <p class="label">{tp.label}</p>
+    <h1 class="display mt-2 text-4xl sm:text-6xl">{tp.title}</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{tp.lead}</p>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        packs.map((p) => (
+          <a href={href(lang, `/packs/${p.slug}`)} class="group flex flex-col border border-ink bg-surface transition-colors hover:bg-mark/50">
+            <div class="grid grid-cols-3 gap-px border-b border-ink bg-ink/10">
+              {p.items
+                .filter((i) => i.sample)
+                .slice(0, 3)
+                .map((i) => (
+                  <span class="aspect-square overflow-hidden bg-line">
+                    <img src={i.sample} alt="" loading="lazy" referrerpolicy="no-referrer" class="size-full object-cover" onerror="this.style.visibility='hidden'" />
+                  </span>
+                ))}
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <span class="label">{p.tag}</span>
+              <h2 class="display mt-2 text-2xl group-hover:underline">{p.title}</h2>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-muted">{p.blurb}</p>
+              <p class="mt-4 font-mono text-xs text-muted">{fmt(p.items.length)} {tp.prompts}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Base>

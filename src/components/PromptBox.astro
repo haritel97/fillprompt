@@ -2,7 +2,7 @@
 // Shows a prompt with a copy button. Placeholders such as [OBJECT] or
 // {argument name="x" default="y"} become input fields that fill the prompt live,
 // and stay highlighted in the text so the reader sees what is theirs to change.
-import { ui, type Lang } from '../i18n';
+import { ui, href, type Lang } from '../i18n';
 import { COUNTER } from '../lib/counter';
 interface Props {
   prompt: string;
@@ -12,6 +12,7 @@ interface Props {
 }
 const { prompt, lang, id } = Astro.props;
 const t = ui[lang].box;
+const support = ui[lang].support;
 const json = JSON.stringify(prompt).replace(/</g, '\\u003c');
 ---
 
@@ -42,6 +43,9 @@ const json = JSON.stringify(prompt).replace(/</g, '\\u003c');
     <div class="var-list mt-3 grid gap-3 sm:grid-cols-2"></div>
   </div>
   <pre class="out max-h-[34rem] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-[13px] leading-[1.7]">{prompt}</pre>
+  <p class="thanks hidden border-t border-ink px-4 py-2 text-xs text-muted">
+    <a href={href(lang, '/donate')} class="link font-semibold text-ink">{support.afterCopy}</a>
+  </p>
   <script type="application/json" class="src" set:html={json} />
 </div>
 
@@ -124,12 +128,14 @@ const json = JSON.stringify(prompt).replace(/</g, '\\u003c');
     };
     const btn = box.querySelector('.copy');
     const status = box.querySelector('#copy-status');
+    const thanks = box.querySelector('.thanks');
     btn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(out.textContent);
         btn.textContent = box.dataset.copied;
         status.textContent = box.dataset.copied;
         bump();
+        thanks?.classList.remove('hidden');
       } catch {
         btn.textContent = box.dataset.failed;
         status.textContent = box.dataset.failed;

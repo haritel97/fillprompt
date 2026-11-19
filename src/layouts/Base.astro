@@ -35,6 +35,7 @@ const nav = [
   ['/images', t.nav.images],
   ['/videos', t.nav.videos],
   ['/text', t.nav.text],
+  ['/packs', t.nav.packs],
   ['/skills', t.nav.skills],
   ['/credits', t.nav.credits],
   ['/donate', t.nav.donate],
@@ -83,9 +84,10 @@ if (crumbs.length) {
 const ld = graphs.map((g) => JSON.stringify(g).replace(/</g, '\\u003c'));
 const isOn = (p: string) =>
   bare.startsWith(p) ||
-  (p === '/images' && /^\/(category|prompt)\//.test(bare)) ||
-  (p === '/videos' && bare.startsWith('/video/')) ||
-  (p === '/text' && bare.startsWith('/text-prompt'));
+  (p === '/images' && /^\/(category|prompt|image-model)\//.test(bare)) ||
+  (p === '/videos' && /^\/(video|video-model)\//.test(bare)) ||
+  (p === '/text' && /^\/(text-prompt|text-model|text-type)\//.test(bare)) ||
+  (p === '/packs' && bare.startsWith('/packs'));
 ---
 
 <!doctype html>
@@ -131,6 +133,7 @@ const isOn = (p: string) =>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
+    <link rel="alternate" type="application/rss+xml" title="fillprompt.com" href="/rss.xml" />
     <link rel="help" type="text/plain" href="/llms.txt" title="llms.txt" />
     {!noindex && ld.map((json) => <script type="application/ld+json" set:html={json} />)}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -232,6 +235,7 @@ const isOn = (p: string) =>
             <li><a class="hover:text-mark" href={href(lang, '/images')}>{t.footer.imagePrompts}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/videos')}>{t.footer.videoPrompts}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/text')}>{t.footer.textPrompts}</a></li>
+            <li><a class="hover:text-mark" href={href(lang, '/packs')}>{t.footer.packs}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/skills')}>{t.footer.agentSkills}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/mcp')}>{t.footer.mcp}</a></li>
           </ul>

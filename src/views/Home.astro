@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import { images, texts, videos, skills, communitySkills, catSlugs, catCounts, excerpt, fmt, pad } from '../lib/data';
+import { packs } from '../lib/packs';
+import { promptOfTheDay, todayKey } from '../lib/daily';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { COUNTER } from '../lib/counter';
 import { faqSchema } from '../lib/seo';
@@ -16,6 +18,9 @@ const cat = categoryLabels[lang];
 
 const byLikes = [...images].sort((a, b) => b.likes - a.likes);
 const popular = byLikes.slice(0, 12);
+const daily = promptOfTheDay();
+const dailyDate = todayKey();
+const packTeasers = packs.slice(0, 6);
 // One strong example from each of four everyday categories for the hero sheet.
 // Skip prompts about people: the hero should not show a real person's likeness.
 const heroCats = ['product-brand', 'food-drink', 'poster', 'infographic-ui'];
@@ -117,8 +122,55 @@ const stats: [number, string, string][] = [
   </section>
 
   <section class="wrap pt-14">
+    <div class="grid gap-6 border border-ink bg-surface lg:grid-cols-[1.1fr_1fr]">
+      <a href={href(lang, `/prompt/${daily.slug}`)} class="group relative block overflow-hidden border-b border-ink lg:border-b-0 lg:border-r">
+        <img
+          src={daily.images[0]}
+          alt={daily.title}
+          referrerpolicy="no-referrer"
+          class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.02] lg:aspect-auto lg:h-full lg:min-h-[18rem]"
+          onerror="this.style.visibility='hidden'"
+        />
+        <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-5 pt-16 text-paper">
+          <span class="label !text-paper/70">{t.daily.label} · {t.daily.date(dailyDate)}</span>
+          <span class="display mt-2 block text-2xl sm:text-3xl">{daily.title}</span>
+          <span class="mt-2 inline-block text-sm font-semibold text-mark">{t.daily.cta}</span>
+        </span>
+      </a>
+      <div class="flex flex-col justify-center p-6 sm:p-8">
+        <span class="label">{t.daily.label}</span>
+        <h2 class="display mt-2 text-3xl sm:text-4xl">{t.daily.title}</h2>
+        <p class="mt-4 leading-relaxed text-muted">{excerpt(daily.desc || daily.prompt, 180)}</p>
+        <p class="mt-3 font-mono text-xs text-muted">{daily.model} · {cat[daily.cats[0]]}</p>
+        <a href={href(lang, `/prompt/${daily.slug}`)} class="btn mt-6 self-start">{t.daily.cta}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap pt-14">
+    <div class="sec justify-between">
+      <div class="flex items-baseline gap-4">
+        <span class="label">01</span>
+        <h2>{t.secPacks}</h2>
+      </div>
+      <a href={href(lang, '/packs')} class="link text-sm font-semibold">{t.allPacks}</a>
+    </div>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        packTeasers.map((p) => (
+          <a href={href(lang, `/packs/${p.slug}`)} class="row flex flex-col items-start gap-1 px-3 !py-4 hover:bg-mark/60">
+            <span class="label">{p.tag}</span>
+            <span class="font-display text-xl font-bold tracking-[-0.02em]">{p.title}</span>
+            <span class="text-sm text-muted">{fmt(p.items.length)} prompts</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap pt-14">
     <div class="sec">
-      <span class="label">01</span>
+      <span class="label">02</span>
       <h2>{t.secCategories}</h2>
     </div>
     <div class="mt-4 grid sm:grid-cols-2 sm:gap-x-10">
@@ -136,7 +188,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-16">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">02</span>
+        <span class="label">03</span>
         <h2>{t.secPopular}</h2>
       </div>
       <a href={href(lang, '/images')} class="link text-sm font-semibold">{t.allImages}</a>
@@ -149,7 +201,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-12">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">03</span>
+        <span class="label">04</span>
         <h2>{t.secVideos}</h2>
       </div>
       <a href={href(lang, '/videos')} class="link text-sm font-semibold">{t.allVideos}</a>
@@ -161,7 +213,7 @@ const stats: [number, string, string][] = [
 
   <section class="wrap pt-12">
     <div class="sec">
-      <span class="label">04</span>
+      <span class="label">05</span>
       <h2>{t.secCurated}</h2>
     </div>
     <div class="masonry mt-6">
@@ -172,7 +224,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-12">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">05</span>
+        <span class="label">06</span>
         <h2>{t.secText}</h2>
       </div>
       <a href={href(lang, '/text')} class="link text-sm font-semibold">{t.allText}</a>
@@ -195,7 +247,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-16">
     <div class="grid border border-ink bg-surface md:grid-cols-[1fr_1.2fr]">
       <div class="border-b border-ink p-6 sm:p-8 md:border-b-0 md:border-r">
-        <span class="label">06</span>
+        <span class="label">07</span>
         <h2 class="display mt-3 text-3xl sm:text-4xl">{t.skillsTeaser.title}</h2>
         <p class="mt-4 max-w-md leading-relaxed text-muted">{t.skillsTeaser.body}</p>
         <a href={href(lang, '/skills')} class="btn mt-6">{t.skillsTeaser.cta(skills.length + communitySkills.length)}</a>
@@ -217,7 +269,7 @@ const stats: [number, string, string][] = [
 
   <section class="wrap pt-16">
     <div class="sec">
-      <span class="label">07</span>
+      <span class="label">08</span>
       <h2>{t.faq.title}</h2>
     </div>
     <div class="mt-2 max-w-3xl">
