@@ -267,6 +267,17 @@ const stats: [number, string, string][] = [
     </div>
   </section>
 
+  <section class="wrap pt-10">
+    <div class="flex flex-col gap-5 border border-ink bg-ink p-6 text-paper sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div>
+        <span class="label !text-paper/60">MCP</span>
+        <h2 class="display mt-2 text-2xl sm:text-3xl">{t.mcpTeaser.title}</h2>
+        <p class="mt-2 max-w-xl leading-relaxed text-paper/75">{t.mcpTeaser.body}</p>
+      </div>
+      <a href={href(lang, '/mcp')} class="btn shrink-0 !bg-mark !text-ink hover:!bg-paper">{t.mcpTeaser.cta}</a>
+    </div>
+  </section>
+
   <section class="wrap pt-16">
     <div class="sec">
       <span class="label">08</span>

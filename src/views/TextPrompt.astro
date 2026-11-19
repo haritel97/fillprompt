@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PromptBox from '../components/PromptBox.astro';
+import ShareLink from '../components/ShareLink.astro';
 import { sources, textModels, excerpt, metaDescOf, type TextPrompt } from '../lib/data';
 import { ui, href, type Lang } from '../i18n';
 import { clip, textPromptSchema } from '../lib/seo';
@@ -45,6 +46,7 @@ const typeLabel = tt.types[x.type] ?? x.type;
           <a href={href(lang, `/text-type/${x.type}`)} class="link">{typeLabel}</a>{x.forDevs && x.type !== 'agent' && `, ${tt.dev}`}
         </dd>
       </div>
+      <div class="ml-auto flex items-center"><ShareLink lang={lang} /></div>
     </dl>
     {x.desc && <p class="mt-6 max-w-3xl text-lg leading-relaxed text-muted">{x.desc}</p>}
 

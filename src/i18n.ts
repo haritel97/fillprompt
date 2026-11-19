@@ -124,6 +124,15 @@ const en = {
     body: 'A skill is a folder of instructions that teaches an agent such as Claude to do one job properly: produce a PDF, build slides, design an interface.',
     cta: (c: number) => `See ${c} skills`,
   },
+  mcpTeaser: {
+    title: 'Use fillprompt from your AI assistant',
+    body: 'Connect the free MCP server to Claude, Cursor, VS Code or ChatGPT. Ask in plain words; it searches the library and fills the blanks for you.',
+    cta: 'Set up MCP',
+  },
+  share: {
+    copyLink: 'Copy link',
+    copiedLink: 'Link copied',
+  },
 
   images: {
     title: 'Image prompts',

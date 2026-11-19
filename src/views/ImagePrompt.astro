@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import PromptBox from '../components/PromptBox.astro';
+import ShareLink from '../components/ShareLink.astro';
 import { sources, excerpt, metaDescOf, fmt, imageModelSlug, type ImagePrompt } from '../lib/data';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 import { clip, imagePromptSchema } from '../lib/seo';
@@ -43,6 +44,7 @@ const modelSlug = imageModelSlug(p.model);
       </div>
       {p.likes > 0 && <div><dt class="inline text-muted">{tp.likes} </dt><dd class="inline font-bold">{fmt(p.likes)}</dd></div>}
       {p.date && <div><dt class="inline text-muted">{tp.date} </dt><dd class="inline font-bold">{p.date}</dd></div>}
+      <div class="ml-auto flex items-center"><ShareLink lang={lang} /></div>
     </dl>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_1.05fr] lg:gap-12">

@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import VideoCard from '../components/VideoCard.astro';
 import PromptBox from '../components/PromptBox.astro';
+import ShareLink from '../components/ShareLink.astro';
 import { sources, excerpt, metaDescOf, fmt, type VideoPrompt } from '../lib/data';
 import { ui, href, type Lang } from '../i18n';
 import { clip, videoPromptSchema } from '../lib/seo';
@@ -35,6 +36,7 @@ const src = sources[v.source];
       <div><dt class="inline text-muted">{tp.model} </dt><dd class="inline font-bold">{v.model}</dd></div>
       {v.likes > 0 && <div><dt class="inline text-muted">{tv.engagement} </dt><dd class="inline font-bold">{fmt(v.likes)}</dd></div>}
       {v.date && <div><dt class="inline text-muted">{tp.date} </dt><dd class="inline font-bold">{v.date}</dd></div>}
+      <div class="ml-auto flex items-center"><ShareLink lang={lang} /></div>
     </dl>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_1.05fr] lg:gap-12">

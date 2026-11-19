@@ -1,0 +1,33 @@
+---
+import { ui, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = ui[lang].share;
+---
+
+<button
+  type="button"
+  class="share-link cursor-pointer font-mono text-xs font-bold uppercase tracking-[0.12em] text-muted hover:text-ink"
+  data-copy={s.copyLink}
+  data-copied={s.copiedLink}
+>
+  {s.copyLink}
+</button>
+
+<script is:inline>
+  document.querySelectorAll('.share-link').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const label = btn.dataset.copy;
+      try {
+        await navigator.clipboard.writeText(location.href);
+        btn.textContent = btn.dataset.copied;
+      } catch {
+        btn.textContent = label;
+      }
+      setTimeout(() => (btn.textContent = label), 1600);
+    });
+  });
+</script>
