@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { packs } from '../lib/packs';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
 
 interface Props {
@@ -14,6 +15,8 @@ const cfg = {
   imageBase: href(lang, '/prompt/'),
   textBase: href(lang, '/text-prompt/'),
   videoBase: href(lang, '/video/'),
+  packsUrl: href(lang, '/packs'),
+  packsLabel: t.packs.title,
   loadFailed: s.loadFailed,
   start: s.start,
   none: s.none,
@@ -227,6 +230,11 @@ const cfg = {
           });
           suggest.appendChild(c);
         }
+        const pack = document.createElement('a');
+        pack.href = cfg.packsUrl;
+        pack.className = 'label border border-ink bg-mark px-2.5 py-1 text-sm hover:bg-paper transition-colors';
+        pack.textContent = cfg.packsLabel;
+        suggest.appendChild(pack);
       }
       const show = (key, list, card) => {
         $('sec-' + key).classList.toggle('hidden', !list.length);
