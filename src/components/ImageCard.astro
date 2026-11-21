@@ -1,5 +1,5 @@
 ---
-import type { ImagePrompt } from '../lib/data';
+import { sources, type ImagePrompt } from '../lib/data';
 import { categoryLabels, href, ui, type Lang } from '../i18n';
 interface Props {
   p: ImagePrompt;
@@ -7,6 +7,8 @@ interface Props {
   eager?: boolean;
 }
 const { p, lang, eager = false } = Astro.props;
+const srcName = sources[p.source]?.name;
+const meta = [categoryLabels[lang][p.cats[0]], p.model, srcName].filter(Boolean).join(' / ');
 ---
 
 <a href={href(lang, `/prompt/${p.slug}`)} class="tile group block">
@@ -18,7 +20,7 @@ const { p, lang, eager = false } = Astro.props;
       decoding="async"
       referrerpolicy="no-referrer"
       class="block min-h-20 w-full"
-      onerror="this.closest('a').style.display='none'"
+      onerror="this.removeAttribute('src'); this.parentElement.classList.add('min-h-28','bg-line/60')"
     />
     {
       p.images.length > 1 && (
@@ -30,6 +32,6 @@ const { p, lang, eager = false } = Astro.props;
   </span>
   <span class="mt-2.5 block">
     <span class="line-clamp-2 block text-[15px] font-semibold leading-snug">{p.title}</span>
-    <span class="label mt-1 block">{categoryLabels[lang][p.cats[0]]} / {p.model}</span>
+    <span class="label mt-1 block">{meta}</span>
   </span>
 </a>
