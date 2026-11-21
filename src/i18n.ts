@@ -146,6 +146,8 @@ const en = {
     back: '← All collections',
     filterLabel: 'Filter collections by kind',
     filterAll: 'All',
+    filterSummary: (shown: number, kind: string) =>
+      `${n(shown)} collection${shown === 1 ? '' : 's'} with ${kind} prompts.`,
     kindImage: 'Image',
     kindVideo: 'Video',
     kindText: 'Text',

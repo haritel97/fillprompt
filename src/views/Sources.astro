@@ -68,7 +68,14 @@ const filters = [
         ))
       }
     </div>
-    <p id="source-summary" class="mt-6 text-sm text-muted">
+    <p
+      id="source-summary"
+      class="mt-6 text-sm text-muted"
+      data-all={`${fmt(sourceStats.reduce((a, x) => a + x.total, 0))} prompts across ${fmt(sourceStats.length)} collections.`}
+      data-image={s.filterSummary(sourceStats.filter((x) => x.images).length, s.kindImage.toLowerCase())}
+      data-video={s.filterSummary(sourceStats.filter((x) => x.videos).length, s.kindVideo.toLowerCase())}
+      data-text={s.filterSummary(sourceStats.filter((x) => x.texts).length, s.kindText.toLowerCase())}
+    >
       {fmt(sourceStats.reduce((a, x) => a + x.total, 0))} prompts across {fmt(sourceStats.length)} collections.
     </p>
   </div>
@@ -93,13 +100,9 @@ const filters = [
         if (ok) shown++;
       }
       if (summary) {
-        summary.textContent =
-          kind === 'all'
-            ? summary.dataset.all || summary.textContent
-            : shown + ' collection' + (shown === 1 ? '' : 's') + ' with ' + kind + ' prompts.';
+        summary.textContent = kind === 'all' ? summary.dataset.all : summary.dataset[kind] || summary.dataset.all;
       }
     };
-    if (summary) summary.dataset.all = summary.textContent;
     box.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-kind]');
       if (btn) apply(btn.dataset.kind);
