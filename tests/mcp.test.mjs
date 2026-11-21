@@ -164,6 +164,7 @@ test('search_prompts matches collection display names', async () => {
   assert.ok(r.total > 0, 'display-name / key tokens find prompts');
   assert.ok(r.results.some((x) => x.source === 'hodios'));
   assert.ok(r.results.some((x) => /Hodios/i.test(x.collection || '')));
+  assert.ok(r.results.some((x) => /\/source\/hodios$/.test(x.collectionUrl || '')));
 });
 
 test('get_prompt returns the full body for oversized text prompts', async () => {

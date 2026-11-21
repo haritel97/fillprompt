@@ -186,6 +186,7 @@ export const summary = (x) => {
     tags: x.tags,
     source: x.source,
     ...(src?.name ? { collection: src.name } : {}),
+    ...(x.source ? { collectionUrl: `${SITE}/source/${x.source}` } : {}),
     url: x.url,
     preview: x.preview,
     ...(x.sample ? { sample: x.sample } : {}),
