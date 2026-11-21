@@ -19,6 +19,7 @@
     "import": "node scripts/import.mjs",
     "import:fresh": "node scripts/import.mjs --fetch",
     "mcp:catalog": "node scripts/mcp-catalog.mjs",
+    "mcp:verify": "node scripts/mcp-catalog-verify.mjs",
     "mcp:smoke": "node scripts/mcp-smoke.mjs",
     "media:check": "node scripts/sample-media.mjs",
     "brand": "node scripts/og.mjs",
