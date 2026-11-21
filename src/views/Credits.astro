@@ -29,7 +29,7 @@ const rows: [string, string][] = [
   ...['evolinkh3', 'atlasomni'].map(
     (k) => [k, c.usedVideos(videos.filter((v) => v.source === k).length)] as [string, string],
   ),
-  ...['promptschat', 'mustvlad', 'voltagent', 'wshobson', 'geminisubagents', 'youmindgemini', 'fabric', 'llmpromptlibrary', 'superdesign', 'zsky'].map(
+  ...['promptschat', 'mustvlad', 'voltagent', 'wshobson', 'geminisubagents', 'youmindgemini', 'fabric', 'llmpromptlibrary', 'superdesign', 'zsky', 'hodios'].map(
     (k) => [k, c.usedText(texts.filter((x) => x.source === k).length)] as [string, string],
   ),
   ['anthropic', c.usedSkills(skills.length)],

@@ -309,6 +309,13 @@ export const SOURCES = {
     license: 'MIT',
     licenseUrl: 'https://github.com/samuxbuilds/awesome-prompts/blob/main/LICENSE',
   },
+  hodios: {
+    name: 'Hodios (curated)',
+    by: 'Hermes IDE',
+    url: 'https://github.com/hermes-hq/hodios-dist',
+    license: 'CC0 1.0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+  },
   anthropic: {
     name: 'Anthropic Skills',
     by: 'Anthropic',
@@ -898,6 +905,7 @@ const TEXT_REPOS = {
   'repo-fabric': ['danielmiessler/Fabric', 'data/patterns'],
   'repo-zsky-ai_zsky-prompt-library': ['zsky-ai/zsky-prompt-library', 'categories'],
   'repo-samuxbuilds_awesome-prompts': ['samuxbuilds/awesome-prompts', 'prompts'],
+  'repo-hermes-hq_hodios-dist': ['hermes-hq/hodios-dist', 'paste'],
 };
 
 async function fetchTextRepos() {
@@ -1049,6 +1057,34 @@ async function importFabric() {
         source: 'fabric',
         forDevs: /code|git|commit|pull_request|api|sql|regex|script|coding|software/.test(e.name),
         sourceUrl: `https://github.com/danielmiessler/Fabric/tree/main/data/patterns/${e.name}`,
+      }),
+    );
+  }
+  return out;
+}
+
+/** Hodios curated paste prompts (CC0): one markdown file per workflow/rule under paste/. */
+async function importHodios() {
+  const root = path.join(SRC, 'repo-hermes-hq_hodios-dist', 'paste');
+  if (!(await exists(root))) return [];
+  const out = [];
+  for (const rel of await walkMd(root)) {
+    const prompt = (await readFile(path.join(root, rel), 'utf8')).replace(/\r\n/g, '\n').trim();
+    const name = rel.replace(/\.md$/, '').split('/').pop();
+    const title = humanize(name);
+    if (prompt.length < 40 || !english(prompt) || !english(title)) continue;
+    const head = prompt.slice(0, 800);
+    out.push(
+      textEntry({
+        title,
+        prompt,
+        type: /<(task|context|role|instructions)\b/i.test(head) ? 'structured' : 'text',
+        forDevs: /\b(code|api|sql|git|pull request|typescript|javascript|react|debug|refactor|unit test|cli)\b/i.test(
+          `${title} ${head}`,
+        ),
+        model: 'Any model',
+        source: 'hodios',
+        sourceUrl: `https://github.com/hermes-hq/hodios-dist/blob/main/paste/${rel.split('/').map(encodeURIComponent).join('/')}`,
       }),
     );
   }
@@ -1261,6 +1297,7 @@ async function importAllTexts() {
     ...(await importLlmPromptLibrary()),
     ...importSuperdesign(await read('superdesign.json')),
     ...(await importZsky()),
+    ...(await importHodios()),
   ];
   return { chat, added };
 }

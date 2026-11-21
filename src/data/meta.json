@@ -189,6 +189,13 @@
       "license": "MIT",
       "licenseUrl": "https://github.com/samuxbuilds/awesome-prompts/blob/main/LICENSE"
     },
+    "hodios": {
+      "name": "Hodios (curated)",
+      "by": "Hermes IDE",
+      "url": "https://github.com/hermes-hq/hodios-dist",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
     "anthropic": {
       "name": "Anthropic Skills",
       "by": "Anthropic",
