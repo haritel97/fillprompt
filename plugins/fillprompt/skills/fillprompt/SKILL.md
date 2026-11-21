@@ -11,7 +11,7 @@ fillprompt.com is a free library of over 12,800 AI prompts collected from open-s
 
 1. **Orient (optional).** Call `list_filters` when you need valid `model`, `category`, `source` keys, or pack URLs.
 2. **Search.** Call `search_prompts` with what the user wants to make, in plain words. Narrow with `type` (`image`, `video`, `text`), `model`, `category`, or `source` (e.g. `hodios`, `samux`, `superdesign`) when the user named one. Use `random_prompt` only when they want a surprise idea with no query.
-3. **Choose.** Pick the two or three results closest to the user's goal. Prefer ones written for the model the user will use. Show them briefly (title, link, sample image) when the choice is not obvious.
+3. **Choose.** Pick the two or three results closest to the user's goal. Prefer ones written for the model the user will use. Show them briefly (title, link, `collection` / `source`, sample image) when the choice is not obvious.
 4. **Read.** Call `get_prompt` with the chosen result's `url`.
 5. **Fill.** Replace each entry in `slots` (and any other subject, brand, product or style the prompt names) with the user's details. Keep the structure, camera, lighting and style wording that makes the prompt work. Ask only for details you cannot reasonably infer.
 6. **Hand over.** Give the filled prompt in a code block, ready to paste, then one line naming the model it was written for, the prompt page link and the original author/collection from `credit` (include `collectionUrl` when present).
