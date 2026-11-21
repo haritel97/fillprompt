@@ -72,7 +72,9 @@ const typeLabel = tt.types[x.type] ?? x.type;
         <div class="grid grid-cols-[7.5rem_1fr]">
           <dt class="text-muted">{tt.collection}</dt>
           <dd>
-            <a href={src.url} target="_blank" rel="noopener noreferrer" class="link font-semibold">{src.name}</a>
+            <a href={href(lang, `/source/${x.source}`)} class="link font-semibold">{src.name}</a>
+            <span class="text-muted"> · </span>
+            <a href={src.url} target="_blank" rel="noopener noreferrer" class="link text-xs text-muted">{t.sources.repo}</a>
             {tp.by} {src.by} (<a href={src.licenseUrl} target="_blank" rel="noopener noreferrer" class="link">{src.license}</a>)
           </dd>
         </div>

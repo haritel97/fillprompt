@@ -39,7 +39,7 @@ const en = {
   github: { starLabel: (n: string) => `Star fillprompt on GitHub, ${n} stars`, source: 'Source code on GitHub' },
   filter: {
     label: 'Filter',
-    placeholder: 'Type to filter by keyword…',
+    placeholder: 'Filter by keyword or source:hodios…',
     showing: (c: number, total: number) => `${n(c)} of ${n(total)}`,
     none: 'Nothing matches that filter.',
     clear: 'Clear',

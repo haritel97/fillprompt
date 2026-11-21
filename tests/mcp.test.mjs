@@ -78,6 +78,7 @@ test('get_prompt returns the full prompt, slots and credit', async () => {
   assert.ok(p.prompt.length > 20);
   assert.ok(Array.isArray(p.slots));
   assert.ok(p.credit.collection || p.credit.author, 'has a credit');
+  assert.match(p.credit.collectionUrl || '', /^https:\/\/fillprompt\.com\/source\//);
 
   const bySlug = (await call('get_prompt', { ref: first.url.split('/').pop() })).structuredContent;
   assert.equal(bySlug.url, first.url);

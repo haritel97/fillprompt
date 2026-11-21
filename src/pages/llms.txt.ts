@@ -34,7 +34,7 @@ Last updated: ${BUILD_DATE}
 
 ## Main pages
 
-- [Home](${SITE}/): overview, prompt of the day, packs, most liked prompts and search
+- [Home](${SITE}/): overview, prompt of the day, packs, open-source collections, most liked prompts and search
 - [Image prompts](${SITE}/images): all ${fmt(images.length)} image prompts
 - [Video prompts](${SITE}/videos): all ${fmt(videos.length)} video prompts
 - [Text prompts](${SITE}/text): all ${fmt(texts.length)} text prompts

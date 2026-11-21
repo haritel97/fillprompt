@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
-import { images, videos, texts } from '../lib/data';
+import { images, videos, texts, sources } from '../lib/data';
 import { ALIAS } from '../lib/synonyms.mjs';
 
 interface Props {
@@ -11,10 +11,12 @@ const { lang } = Astro.props;
 const t = ui[lang];
 const s = t.searchPage;
 const promptTotal = images.length + videos.length + texts.length;
+const sourceNames = Object.fromEntries(Object.entries(sources).map(([k, x]) => [k, x.name]));
 // Everything the client script needs, in the page's language.
 const cfg = {
   cats: categoryLabels[lang],
   alias: ALIAS,
+  sourceNames,
   imageBase: href(lang, '/prompt/'),
   textBase: href(lang, '/text-prompt/'),
   videoBase: href(lang, '/video/'),
@@ -80,6 +82,7 @@ const cfg = {
       if (text != null) e.textContent = text;
       return e;
     };
+    const sourceLabel = (key) => (key && cfg.sourceNames[key]) || key || '';
     const imageCard = ([title, slug, cat, img, , , source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.imageBase + slug;
@@ -92,7 +95,7 @@ const cfg = {
       im.onerror = () => (a.style.display = 'none');
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');
-      const meta = [cfg.cats[cat] || cat, source].filter(Boolean).join(' · ');
+      const meta = [cfg.cats[cat] || cat, sourceLabel(source)].filter(Boolean).join(' · ');
       cap.append(
         el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title),
         el('span', 'label mt-1 block', meta),
@@ -124,7 +127,7 @@ const cfg = {
         frame.append(vid);
       }
       const cap = el('span', 'mt-2.5 block');
-      const meta = [model, source].filter(Boolean).join(' · ');
+      const meta = [model, sourceLabel(source)].filter(Boolean).join(' · ');
       cap.append(el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title), el('span', 'label mt-1 block', meta));
       a.append(frame, cap);
       return a;
@@ -133,7 +136,7 @@ const cfg = {
       const a = el('a', 'row flex flex-col items-start gap-1 px-1 !py-3');
       a.href = cfg.textBase + slug;
       a.append(el('span', 'font-semibold', title));
-      const meta = [model, source].filter(Boolean).join(' · ');
+      const meta = [model, sourceLabel(source)].filter(Boolean).join(' · ');
       if (meta) a.append(el('span', 'label', meta));
       return a;
     };

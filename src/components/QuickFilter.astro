@@ -3,6 +3,7 @@
 // on screen) through the shared search index, and swaps the paginated list for the matches.
 // Wrap the static list and its pagination in an element with id="filter-static".
 import { ui, href, categoryLabels, type Lang } from '../i18n';
+import { sources } from '../lib/data';
 import { ALIAS } from '../lib/synonyms.mjs';
 
 interface Props {
@@ -22,6 +23,7 @@ const cfg = {
   cat,
   alias: ALIAS,
   cats: kind === 'i' ? categoryLabels[lang] : {},
+  sourceNames: Object.fromEntries(Object.entries(sources).map(([k, x]) => [k, x.name])),
   base: href(lang, { i: '/prompt/', t: '/text-prompt/', v: '/video/' }[kind]),
   none: t.filter.none,
 };
@@ -55,6 +57,8 @@ const cfg = {
       if (text != null) e.textContent = text;
       return e;
     };
+    const sourceLabel = (key) => (key && cfg.sourceNames[key]) || key || '';
+    const sourceOf = (r) => (cfg.kind === 't' ? r[4] : r[6]);
     const load = async () => {
       if (rows) return rows;
       rows = await (await fetch('/search/' + cfg.kind + '.json')).json();
@@ -64,12 +68,25 @@ const cfg = {
       return rows;
     };
     const wordHit = (s, w) => s.includes(w) || (cfg.alias[w] || []).some((a) => s.includes(a));
-    const textRow = ([title, slug]) => {
-      const a = el('a', 'row px-1 !py-3 font-semibold', title);
+    const parseQuery = (q) => {
+      const sources = [];
+      const words = [];
+      for (const part of q.split(/\s+/).filter(Boolean)) {
+        const m = part.match(/^(?:source|in):([a-z0-9_-]+)$/i);
+        if (m) sources.push(m[1].toLowerCase());
+        else words.push(part);
+      }
+      return { words, sources };
+    };
+    const textRow = ([title, slug, model, , source]) => {
+      const a = el('a', 'row flex flex-col items-start gap-1 px-1 !py-3');
       a.href = cfg.base + slug;
+      a.append(el('span', 'font-semibold', title));
+      const meta = [model, sourceLabel(source)].filter(Boolean).join(' · ');
+      if (meta) a.append(el('span', 'label', meta));
       return a;
     };
-    const videoCard = ([title, slug, model, poster, , clip]) => {
+    const videoCard = ([title, slug, model, poster, , clip, source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.base + slug;
       const frame = el('span', 'tile-img aspect-video overflow-hidden');
@@ -92,11 +109,12 @@ const cfg = {
         vid.setAttribute('aria-hidden', 'true');
         frame.append(vid);
       }
-      frame.append(el('span', 'absolute bottom-0 left-0 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper', model));
+      const badge = [model, sourceLabel(source)].filter(Boolean).join(' · ');
+      frame.append(el('span', 'absolute bottom-0 left-0 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper', badge));
       a.append(frame, el('span', 'mt-2.5 line-clamp-2 block text-[15px] font-semibold leading-snug', title));
       return a;
     };
-    const imageCard = ([title, slug, cat, img, , model]) => {
+    const imageCard = ([title, slug, cat, img, , model, source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.base + slug;
       const frame = el('span', 'tile-img');
@@ -108,16 +126,17 @@ const cfg = {
       im.onerror = () => (a.style.display = 'none');
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');
+      const meta = [(cfg.cats[cat] || cat), model || 'Any image model', sourceLabel(source)].filter(Boolean).join(' / ');
       cap.append(
         el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title),
-        el('span', 'label mt-1 block', (cfg.cats[cat] || cat) + ' / ' + (model || 'Any image model')),
+        el('span', 'label mt-1 block', meta),
       );
       a.append(frame, cap);
       return a;
     };
     const run = async () => {
-      const words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      if (!words.length) {
+      const { words, sources } = parseQuery(input.value.trim().toLowerCase());
+      if (!words.length && !sources.length) {
         results.classList.add('hidden');
         fixedList()?.classList.remove('hidden');
         count.textContent = '';
@@ -130,6 +149,8 @@ const cfg = {
         return;
       }
       const hits = all.filter((r) => {
+        if (sources.length && !sources.includes(String(sourceOf(r) || '').toLowerCase())) return false;
+        if (!words.length) return true;
         const hay = (
           cfg.kind === 'i'
             ? r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '')
