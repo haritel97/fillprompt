@@ -1,4 +1,4 @@
-// getStaticPaths helpers shared by the English (root) and Malay (/ms) route files.
+// getStaticPaths helpers for list, category, model and source routes.
 import {
   images,
   texts,
