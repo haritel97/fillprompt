@@ -40,6 +40,11 @@ const showSamples = page.data.some((x: { sample?: string }) => x.sample);
       <a href={source.url} target="_blank" rel="noopener noreferrer" class="link">{s.repo}</a>
     </p>
     <p class="mt-2 font-mono text-xs text-muted">{s.counts(source.images, source.videos, source.texts)}</p>
+    <p class="mt-4">
+      <a href={href(lang, `/search?q=${encodeURIComponent(`source:${source.key}`)}`)} class="btn-line text-sm">
+        {s.searchCollection}
+      </a>
+    </p>
 
     <div class="mt-8 grid border-t border-ink md:grid-cols-2 md:gap-x-10">
       {

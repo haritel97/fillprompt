@@ -26,6 +26,7 @@ const cfg = {
   sourceNames: Object.fromEntries(Object.entries(sources).map(([k, x]) => [k, x.name])),
   base: href(lang, { i: '/prompt/', t: '/text-prompt/', v: '/video/' }[kind]),
   none: t.filter.none,
+  loadFailed: t.searchPage.loadFailed,
 };
 ---
 
@@ -123,7 +124,10 @@ const cfg = {
       im.alt = title;
       im.loading = 'lazy';
       im.referrerPolicy = 'no-referrer';
-      im.onerror = () => (a.style.display = 'none');
+      im.onerror = () => {
+        im.removeAttribute('src');
+        frame.classList.add('min-h-28', 'bg-line/60');
+      };
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');
       const meta = [(cfg.cats[cat] || cat), model || 'Any image model', sourceLabel(source)].filter(Boolean).join(' / ');
@@ -146,6 +150,11 @@ const cfg = {
       try {
         all = await load();
       } catch {
+        results.classList.remove('hidden');
+        results.className = 'mt-8 border-t border-ink pt-6';
+        fixedList()?.classList.add('hidden');
+        count.textContent = '';
+        results.replaceChildren(el('p', 'py-6 text-muted', cfg.loadFailed));
         return;
       }
       const hits = all.filter((r) => {
@@ -153,10 +162,10 @@ const cfg = {
         if (!words.length) return true;
         const hay = (
           cfg.kind === 'i'
-            ? r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '')
+            ? r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '') + ' ' + sourceLabel(r[6])
             : cfg.kind === 'v'
-              ? r[0] + ' ' + (r[2] || '') + ' ' + (r[4] || '') + ' ' + (r[6] || '')
-              : r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '')
+              ? r[0] + ' ' + (r[2] || '') + ' ' + (r[4] || '') + ' ' + (r[6] || '') + ' ' + sourceLabel(r[6])
+              : r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + sourceLabel(r[4])
         ).toLowerCase();
         return words.every((w) => wordHit(hay, w));
       });

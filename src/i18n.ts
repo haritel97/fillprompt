@@ -142,6 +142,7 @@ const en = {
     detailMeta: (name: string) => `${name} prompts · fillprompt.com`,
     detailLead: (total: number, name: string, license: string) =>
       `${n(total)} prompts from ${name} (${license}), shown with credit to their authors.`,
+    searchCollection: 'Search this collection',
     back: '← All collections',
     kindImage: 'Image',
     kindVideo: 'Video',

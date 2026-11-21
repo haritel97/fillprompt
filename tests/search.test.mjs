@@ -47,9 +47,15 @@ test('Search and QuickFilter wire source: parsing and display names', () => {
   assert.match(search, /sourceNames/);
   assert.match(search, /sourceLabel/);
   assert.match(search, /source\|in/);
+  assert.match(search, /sourceLabel\(r\[6\]\)/);
 
   const qf = readFileSync('src/components/QuickFilter.astro', 'utf8');
   assert.match(qf, /sourceNames/);
   assert.match(qf, /source\|in/);
   assert.match(qf, /parseQuery/);
+  assert.match(qf, /loadFailed/);
+
+  const sourcePage = readFileSync('src/views/Source.astro', 'utf8');
+  assert.match(sourcePage, /searchCollection/);
+  assert.match(sourcePage, /source:\$\{source\.key\}|source:\$\{encodeURIComponent/);
 });

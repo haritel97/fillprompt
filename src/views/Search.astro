@@ -92,7 +92,10 @@ const cfg = {
       im.alt = title;
       im.loading = 'lazy';
       im.referrerPolicy = 'no-referrer';
-      im.onerror = () => (a.style.display = 'none');
+      im.onerror = () => {
+        im.removeAttribute('src');
+        frame.classList.add('min-h-28', 'bg-line/60');
+      };
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');
       const meta = [cfg.cats[cat] || cat, sourceLabel(source)].filter(Boolean).join(' · ');
@@ -152,9 +155,23 @@ const cfg = {
       return { words, sources };
     };
     const hayI = (r) =>
-      (r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '')).toLowerCase();
-    const hayV = (r) => (r[0] + ' ' + r[2] + ' ' + (r[4] || '') + ' ' + (r[6] || '')).toLowerCase();
-    const hayT = (r) => (r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '')).toLowerCase();
+      (
+        r[0] +
+        ' ' +
+        (cfg.cats[r[2]] || '') +
+        ' ' +
+        (r[4] || '') +
+        ' ' +
+        (r[5] || '') +
+        ' ' +
+        (r[6] || '') +
+        ' ' +
+        sourceLabel(r[6])
+      ).toLowerCase();
+    const hayV = (r) =>
+      (r[0] + ' ' + r[2] + ' ' + (r[4] || '') + ' ' + (r[6] || '') + ' ' + sourceLabel(r[6])).toLowerCase();
+    const hayT = (r) =>
+      (r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + sourceLabel(r[4])).toLowerCase();
     const matchRow = (hay, source, words, sources) => {
       if (sources.length && !sources.includes(String(source || '').toLowerCase())) return false;
       return !words.length || words.every((w) => wordHit(hay, w));
@@ -218,16 +235,18 @@ const cfg = {
             }
           }
         }
-        // 3. Suggest a source: filter when the query matches a collection key.
+        // 3. Suggest a source: filter when the query matches a collection key or name.
         const sourceKeys = new Set();
         for (const r of idx.i) if (r[6]) sourceKeys.add(r[6]);
         for (const r of idx.v) if (r[6]) sourceKeys.add(r[6]);
         for (const r of idx.t) if (r[4]) sourceKeys.add(r[4]);
         for (const key of sourceKeys) {
-          if (seen.has(cfg.hintSource + key)) continue;
-          if (words.some((w) => key.includes(w) || w.includes(key))) {
-            chips.push({ text: cfg.hintSource + key, score: 2.5 });
-            seen.add(cfg.hintSource + key);
+          const chip = cfg.hintSource + key;
+          if (seen.has(chip)) continue;
+          const name = sourceLabel(key).toLowerCase();
+          if (words.some((w) => key.includes(w) || w.includes(key) || (name && name.includes(w)))) {
+            chips.push({ text: chip, score: 2.5 });
+            seen.add(chip);
           }
         }
         chips.sort((a, b) => b.score - a.score);
