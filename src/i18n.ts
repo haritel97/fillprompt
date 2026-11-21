@@ -92,6 +92,8 @@ const en = {
   secPopular: 'Most liked',
   secCurated: 'Curated picks',
   secPacks: 'Curated packs',
+  secSources: 'Open-source collections',
+  allSources: 'All collections',
   allPacks: 'All packs →',
   secVideos: 'Video prompts',
   allVideos: 'All video prompts →',

@@ -18,6 +18,7 @@ const suffix = page.currentPage > 1 ? `, ${t.page(page.currentPage)}` : '';
 const title = s.detailMeta(source.name) + suffix;
 const description = s.detailLead(source.total, source.name, source.license);
 const kindLabel = { image: s.kindImage, video: s.kindVideo, text: s.kindText } as const;
+const showSamples = page.data.some((x: { sample?: string }) => x.sample);
 ---
 
 <Base
@@ -43,22 +44,29 @@ const kindLabel = { image: s.kindImage, video: s.kindVideo, text: s.kindText } a
     <div class="mt-8 grid border-t border-ink md:grid-cols-2 md:gap-x-10">
       {
         page.data.map((x: any, i: number) => (
-          <a href={href(lang, x.href)} class="row grid grid-cols-[3.25rem_1fr] gap-x-2 px-1 sm:grid-cols-[3.25rem_4.5rem_1fr]">
+          <a
+            href={href(lang, x.href)}
+            class:list={[
+              'row grid gap-x-2 px-1',
+              showSamples ? 'grid-cols-[3.25rem_1fr] sm:grid-cols-[3.25rem_4.5rem_1fr]' : 'grid-cols-[3.25rem_1fr]',
+            ]}
+          >
             <span class="label pt-1">{pad((page.currentPage - 1) * SOURCE_PAGE + i + 1, 4)}</span>
-            {x.sample ? (
-              <span class="hidden aspect-square overflow-hidden border border-line bg-surface sm:block">
-                <img
-                  src={x.sample}
-                  alt=""
-                  loading="lazy"
-                  referrerpolicy="no-referrer"
-                  class="size-full object-cover"
-                  onerror="this.parentElement.style.visibility='hidden'"
-                />
-              </span>
-            ) : (
-              <span class="hidden sm:block" aria-hidden="true" />
-            )}
+            {showSamples &&
+              (x.sample ? (
+                <span class="hidden aspect-square overflow-hidden border border-line bg-surface sm:block">
+                  <img
+                    src={x.sample}
+                    alt=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    class="size-full object-cover"
+                    onerror="this.parentElement.style.visibility='hidden'"
+                  />
+                </span>
+              ) : (
+                <span class="hidden sm:block" aria-hidden="true" />
+              ))}
             <span>
               <span class="block font-semibold leading-snug">{x.title}</span>
               <span class="mt-1 line-clamp-2 block text-sm text-muted">{excerpt(x.preview, 150)}</span>

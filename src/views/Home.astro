@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ImageCard from '../components/ImageCard.astro';
 import VideoCard from '../components/VideoCard.astro';
-import { images, texts, videos, skills, communitySkills, catSlugs, catCounts, excerpt, fmt, pad } from '../lib/data';
+import { images, texts, videos, skills, communitySkills, catSlugs, catCounts, excerpt, fmt, pad, sourceStats } from '../lib/data';
 import { packs } from '../lib/packs';
 import { promptOfTheDay, todayKey } from '../lib/daily';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
@@ -168,16 +168,33 @@ const stats: [number, string, string][] = [
         ))
       }
     </div>
-    <p class="mt-4 text-sm text-muted">
-      <a href={href(lang, '/sources')} class="link font-semibold text-ink">{t.footer.browseSources}</a>
-      {' · '}
-      <a href={href(lang, '/credits')} class="link">{t.footer.sources}</a>
-    </p>
+  </section>
+
+  <section class="wrap pt-14">
+    <div class="sec justify-between">
+      <div class="flex items-baseline gap-4">
+        <span class="label">02</span>
+        <h2>{t.secSources}</h2>
+      </div>
+      <a href={href(lang, '/sources')} class="link text-sm font-semibold">{t.allSources}</a>
+    </div>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        sourceStats.slice(0, 6).map((x) => (
+          <a href={href(lang, `/source/${x.key}`)} class="row flex flex-col items-start gap-1 px-3 !py-4 hover:bg-mark/60">
+            <span class="font-display text-xl font-bold tracking-[-0.02em]">{x.name}</span>
+            <span class="text-sm text-muted">
+              {t.sources.counts(x.images, x.videos, x.texts)} · {x.license}
+            </span>
+          </a>
+        ))
+      }
+    </div>
   </section>
 
   <section class="wrap pt-14">
     <div class="sec">
-      <span class="label">02</span>
+      <span class="label">03</span>
       <h2>{t.secCategories}</h2>
     </div>
     <div class="mt-4 grid sm:grid-cols-2 sm:gap-x-10">
@@ -195,7 +212,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-16">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">03</span>
+        <span class="label">04</span>
         <h2>{t.secPopular}</h2>
       </div>
       <a href={href(lang, '/images')} class="link text-sm font-semibold">{t.allImages}</a>
@@ -208,7 +225,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-12">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">04</span>
+        <span class="label">05</span>
         <h2>{t.secVideos}</h2>
       </div>
       <a href={href(lang, '/videos')} class="link text-sm font-semibold">{t.allVideos}</a>
@@ -220,8 +237,8 @@ const stats: [number, string, string][] = [
 
   <section class="wrap pt-12">
     <div class="sec">
-      <span class="label">05</span>
-      <h2>{t.secCurated}</h2>
+        <span class="label">06</span>
+        <h2>{t.secCurated}</h2>
     </div>
     <div class="masonry mt-6">
       {curated.map((p) => <ImageCard p={p} lang={lang} />)}
@@ -231,7 +248,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-12">
     <div class="sec justify-between">
       <div class="flex items-baseline gap-4">
-        <span class="label">06</span>
+        <span class="label">07</span>
         <h2>{t.secText}</h2>
       </div>
       <a href={href(lang, '/text')} class="link text-sm font-semibold">{t.allText}</a>
@@ -254,7 +271,7 @@ const stats: [number, string, string][] = [
   <section class="wrap pt-16">
     <div class="grid border border-ink bg-surface md:grid-cols-[1fr_1.2fr]">
       <div class="border-b border-ink p-6 sm:p-8 md:border-b-0 md:border-r">
-        <span class="label">07</span>
+        <span class="label">08</span>
         <h2 class="display mt-3 text-3xl sm:text-4xl">{t.skillsTeaser.title}</h2>
         <p class="mt-4 max-w-md leading-relaxed text-muted">{t.skillsTeaser.body}</p>
         <a href={href(lang, '/skills')} class="btn mt-6">{t.skillsTeaser.cta(skills.length + communitySkills.length)}</a>
@@ -287,7 +304,7 @@ const stats: [number, string, string][] = [
 
   <section class="wrap pt-16">
     <div class="sec">
-      <span class="label">08</span>
+      <span class="label">09</span>
       <h2>{t.faq.title}</h2>
     </div>
     <div class="mt-2 max-w-3xl">
