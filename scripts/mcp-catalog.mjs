@@ -48,7 +48,8 @@ async function readJson(name) {
 
 function writeGz(name, data) {
   const raw = Buffer.from(JSON.stringify(data));
-  const gz = gzipSync(raw, { level: 9 });
+  // mtime: 0 keeps the gzip bytes identical across rebuilds so CI can diff the files.
+  const gz = gzipSync(raw, { level: 9, mtime: 0 });
   return writeFile(path.join(OUT, name), gz).then(() => ({
     name,
     rawMB: +(raw.length / 1e6).toFixed(2),
