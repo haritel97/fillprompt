@@ -80,7 +80,7 @@ const cfg = {
       if (text != null) e.textContent = text;
       return e;
     };
-    const imageCard = ([title, slug, cat, img]) => {
+    const imageCard = ([title, slug, cat, img, , , source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.imageBase + slug;
       const frame = el('span', 'tile-img');
@@ -92,14 +92,15 @@ const cfg = {
       im.onerror = () => (a.style.display = 'none');
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');
+      const meta = [cfg.cats[cat] || cat, source].filter(Boolean).join(' · ');
       cap.append(
         el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title),
-        el('span', 'label mt-1 block', cfg.cats[cat] || cat),
+        el('span', 'label mt-1 block', meta),
       );
       a.append(frame, cap);
       return a;
     };
-    const videoCard = ([title, slug, model, poster, , clip]) => {
+    const videoCard = ([title, slug, model, poster, , clip, source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.videoBase + slug;
       const frame = el('span', 'tile-img aspect-video overflow-hidden');
@@ -123,13 +124,17 @@ const cfg = {
         frame.append(vid);
       }
       const cap = el('span', 'mt-2.5 block');
-      cap.append(el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title), el('span', 'label mt-1 block', model));
+      const meta = [model, source].filter(Boolean).join(' · ');
+      cap.append(el('span', 'line-clamp-2 block text-[15px] font-semibold leading-snug', title), el('span', 'label mt-1 block', meta));
       a.append(frame, cap);
       return a;
     };
-    const textCard = ([title, slug]) => {
-      const a = el('a', 'row px-1 !py-3 font-semibold', title);
+    const textCard = ([title, slug, model, , source]) => {
+      const a = el('a', 'row flex flex-col items-start gap-1 px-1 !py-3');
       a.href = cfg.textBase + slug;
+      a.append(el('span', 'font-semibold', title));
+      const meta = [model, source].filter(Boolean).join(' · ');
+      if (meta) a.append(el('span', 'label', meta));
       return a;
     };
     const wordHit = (s, w) => s.includes(w) || (cfg.alias[w] || []).some((a) => s.includes(a));
