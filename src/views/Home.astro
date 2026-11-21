@@ -20,7 +20,9 @@ const byLikes = [...images].sort((a, b) => b.likes - a.likes);
 const popular = byLikes.slice(0, 12);
 const daily = promptOfTheDay();
 const dailyDate = todayKey();
-const packTeasers = packs.slice(0, 6);
+// Mix classic + new-source packs on the home grid so fresh catalogs stay visible.
+const FEATURED_PACKS = ['ecommerce', 'ui-components', 'cinematic-video', 'writing-workflows', 'miniatures-3d', 'agent-roles'];
+const packTeasers = FEATURED_PACKS.map((slug) => packs.find((p) => p.slug === slug)).filter(Boolean);
 // One strong example from each of four everyday categories for the hero sheet.
 // Skip prompts about people: the hero should not show a real person's likeness.
 const heroCats = ['product-brand', 'food-drink', 'poster', 'infographic-ui'];
