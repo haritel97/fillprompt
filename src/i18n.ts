@@ -200,6 +200,8 @@ const en = {
     imageNote: 'Sample images belong to the original author.',
     takedown: 'Request removal',
     sameCategory: 'Related prompts',
+    inPacks: 'In these packs',
+
   },
 
   videos: {

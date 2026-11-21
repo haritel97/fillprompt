@@ -277,3 +277,17 @@ function buildItems(def, { images, videos, texts }) {
 export function buildPacks({ images, videos, texts, defs = PACK_DEFS }) {
   return defs.map((def) => ({ ...def, items: buildItems(def, { images, videos, texts }) })).filter((p) => p.items.length >= 8);
 }
+
+/** Reverse index: kind → slug → [{ slug, title, tag }]. */
+export function packMembership(packs) {
+  const map = { image: Object.create(null), video: Object.create(null), text: Object.create(null) };
+  for (const p of packs) {
+    const ref = { slug: p.slug, title: p.title, tag: p.tag };
+    for (const item of p.items) {
+      const bucket = map[item.kind];
+      if (!bucket) continue;
+      (bucket[item.slug] ||= []).push(ref);
+    }
+  }
+  return map;
+}

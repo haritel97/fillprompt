@@ -86,15 +86,15 @@ const cfg = {
     const imageCard = ([title, slug, cat, img, , , source]) => {
       const a = el('a', 'tile group block');
       a.href = cfg.imageBase + slug;
-      const frame = el('span', 'tile-img');
-      const im = el('img', 'block min-h-20 w-full');
+      const frame = el('span', 'tile-img aspect-square overflow-hidden');
+      const im = el('img', 'size-full object-cover');
       im.src = img;
       im.alt = title;
       im.loading = 'lazy';
       im.referrerPolicy = 'no-referrer';
       im.onerror = () => {
         im.removeAttribute('src');
-        frame.classList.add('min-h-28', 'bg-line/60');
+        frame.classList.add('bg-line/60');
       };
       frame.append(im);
       const cap = el('span', 'mt-2.5 block');

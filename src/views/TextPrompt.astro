@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PromptBox from '../components/PromptBox.astro';
 import ShareLink from '../components/ShareLink.astro';
 import { sources, textModels, excerpt, metaDescOf, type TextPrompt } from '../lib/data';
+import type { PackRef } from '../lib/packs';
 import { ui, href, type Lang } from '../i18n';
 import { clip, textPromptSchema } from '../lib/seo';
 
@@ -10,8 +11,9 @@ interface Props {
   lang: Lang;
   t: TextPrompt;
   more: TextPrompt[];
+  inPacks?: PackRef[];
 }
-const { lang, t: x, more } = Astro.props;
+const { lang, t: x, more, inPacks = [] } = Astro.props;
 const t = ui[lang];
 const tt = t.text;
 const tp = t.prompt;
@@ -88,6 +90,24 @@ const typeLabel = tt.types[x.type] ?? x.type;
         }
       </dl>
     </div>
+
+    {
+      inPacks.length > 0 && (
+        <section class="pt-14">
+          <div class="sec">
+            <span class="label">{t.collection}</span>
+            <h2>{tp.inPacks}</h2>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {inPacks.map((pack) => (
+              <a href={href(lang, `/packs/${pack.slug}`)} class="btn-line text-sm">
+                {pack.title}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     <section class="pt-16">
       <div class="sec">

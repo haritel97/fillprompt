@@ -14,6 +14,7 @@ import {
   itemsForSource,
 } from './data';
 import { relatedImages, relatedVideos, relatedTexts } from './related';
+import { packsFor } from './packs';
 
 export const IMAGE_PAGE = 48;
 export const TEXT_PAGE = 60;
@@ -41,7 +42,7 @@ export const imageModelPaths = (paginate: any) =>
 export const imagePromptPaths = () =>
   images.map((p) => ({
     params: { slug: p.slug },
-    props: { p, related: relatedImages(p, images) },
+    props: { p, related: relatedImages(p, images), inPacks: packsFor('image', p.slug) },
   }));
 
 export const videoListPaths = (paginate: any) => paginate(videos, { pageSize: VIDEO_PAGE });
@@ -57,7 +58,7 @@ export const videoModelPaths = (paginate: any) =>
 export const videoPromptPaths = () =>
   videos.map((v) => ({
     params: { slug: v.slug },
-    props: { v, related: relatedVideos(v, videos) },
+    props: { v, related: relatedVideos(v, videos), inPacks: packsFor('video', v.slug) },
   }));
 
 export const textListPaths = (paginate: any) => paginate(texts, { pageSize: TEXT_PAGE });
@@ -81,7 +82,7 @@ export const textModelPaths = (paginate: any) =>
 export const textPromptPaths = () =>
   texts.map((t) => ({
     params: { slug: t.slug },
-    props: { t, more: relatedTexts(t, texts) },
+    props: { t, more: relatedTexts(t, texts), inPacks: packsFor('text', t.slug) },
   }));
 
 export const sourceListPaths = (paginate: any) =>

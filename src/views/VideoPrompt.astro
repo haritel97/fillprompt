@@ -4,6 +4,7 @@ import VideoCard from '../components/VideoCard.astro';
 import PromptBox from '../components/PromptBox.astro';
 import ShareLink from '../components/ShareLink.astro';
 import { sources, excerpt, metaDescOf, fmt, type VideoPrompt } from '../lib/data';
+import type { PackRef } from '../lib/packs';
 import { ui, href, type Lang } from '../i18n';
 import { clip, videoPromptSchema } from '../lib/seo';
 
@@ -11,8 +12,9 @@ interface Props {
   lang: Lang;
   v: VideoPrompt;
   related: VideoPrompt[];
+  inPacks?: PackRef[];
 }
-const { lang, v, related } = Astro.props;
+const { lang, v, related, inPacks = [] } = Astro.props;
 const t = ui[lang];
 const tp = t.prompt;
 const tv = t.videos;
@@ -112,6 +114,24 @@ const src = sources[v.source];
         </div>
       </div>
     </div>
+
+    {
+      inPacks.length > 0 && (
+        <section class="pt-14">
+          <div class="sec">
+            <span class="label">{t.collection}</span>
+            <h2>{tp.inPacks}</h2>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {inPacks.map((pack) => (
+              <a href={href(lang, `/packs/${pack.slug}`)} class="btn-line text-sm">
+                {pack.title}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     {
       related.length > 0 && (

@@ -24,16 +24,38 @@ async function rpc(method, params, id = 1) {
   return msg.result;
 }
 
+const parseTool = (result) => {
+  if (result?.isError) throw new Error(`tool error: ${JSON.stringify(result)}`);
+  return result?.structuredContent || JSON.parse(result?.content?.[0]?.text || '{}');
+};
+
 const t0 = Date.now();
-await rpc('initialize', { protocolVersion: VERSION, capabilities: {}, clientInfo: { name: 'smoke', version: '1' } });
-const { tools } = await rpc('tools/list', {}, 2);
+let id = 1;
+await rpc('initialize', { protocolVersion: VERSION, capabilities: {}, clientInfo: { name: 'smoke', version: '1' } }, id++);
+const { tools } = await rpc('tools/list', {}, id++);
 const names = tools.map((t) => t.name).sort();
 const expected = ['get_prompt', 'list_filters', 'random_prompt', 'search_prompts'];
 if (JSON.stringify(names) !== JSON.stringify(expected)) {
   throw new Error(`unexpected tools: ${names.join(', ')}`);
 }
-const call = await rpc('tools/call', { name: 'list_filters', arguments: {} }, 3);
-if (!call?.structuredContent?.image?.total) throw new Error('list_filters returned no image total');
+
+const filters = parseTool(await rpc('tools/call', { name: 'list_filters', arguments: {} }, id++));
+if (!filters?.image?.total) throw new Error('list_filters returned no image total');
+
+const search = parseTool(
+  await rpc('tools/call', { name: 'search_prompts', arguments: { query: 'product photo', type: 'image', limit: 3 } }, id++),
+);
+if (!search?.results?.length) throw new Error('search_prompts returned no results');
+const hit = search.results[0];
+if (!hit.url || !hit.title) throw new Error('search hit missing url/title');
+if (hit.source && !hit.collectionUrl) throw new Error('search hit missing collectionUrl');
+
+const full = parseTool(await rpc('tools/call', { name: 'get_prompt', arguments: { ref: hit.url } }, id++));
+if (!full?.prompt || full.prompt.length < 20) throw new Error('get_prompt returned a short/empty body');
+if (!full.credit?.collectionUrl) throw new Error('get_prompt credit missing collectionUrl');
+
+const random = parseTool(await rpc('tools/call', { name: 'random_prompt', arguments: { type: 'text' } }, id++));
+if (!random?.prompt) throw new Error('random_prompt returned no prompt');
 
 console.log(
   JSON.stringify(
@@ -41,7 +63,9 @@ console.log(
       ok: true,
       url,
       ms: Date.now() - t0,
-      imagePrompts: call.structuredContent.image.total,
+      imagePrompts: filters.image.total,
+      searchHits: search.total,
+      sample: hit.url,
       tools: names,
     },
     null,

@@ -12,7 +12,7 @@ const meta = [categoryLabels[lang][p.cats[0]], p.model, srcName].filter(Boolean)
 ---
 
 <a href={href(lang, `/prompt/${p.slug}`)} class="tile group block">
-  <span class="tile-img">
+  <span class="tile-img aspect-square overflow-hidden">
     <img
       src={p.images[0]}
       alt={p.title}
@@ -20,8 +20,8 @@ const meta = [categoryLabels[lang][p.cats[0]], p.model, srcName].filter(Boolean)
       fetchpriority={eager ? 'high' : 'auto'}
       decoding="async"
       referrerpolicy="no-referrer"
-      class="block min-h-20 w-full"
-      onerror="this.removeAttribute('src'); this.parentElement.classList.add('min-h-28','bg-line/60')"
+      class="size-full object-cover"
+      onerror="this.removeAttribute('src'); this.parentElement.classList.add('bg-line/60')"
     />
     {
       p.images.length > 1 && (
