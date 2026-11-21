@@ -24,7 +24,7 @@ Last updated: ${BUILD_DATE}
 - Image prompts for Nano Banana, Nano Banana Pro, GPT Image 1.5, GPT Image 2 and Seedream 4.5, each shown with the image it produced.
 - Video prompts for Seedance, Gemini Omni, MiniMax Hailuo, Grok Imagine and other video models, each with its sample clip.
 - Text prompts for ChatGPT, Claude, Gemini and other chat models.
-- Curated packs that group prompts by job (e-commerce, YouTube thumbnails, agents, cinematic video).
+- Curated packs that group prompts by job (e-commerce, YouTube thumbnails, UI design, photography, 3D miniatures, writing workflows, agents, cinematic video).
 - A prompt of the day on the home page (${todayKey()}: [${daily.title}](${SITE}/prompt/${daily.slug})).
 - Agent skills: folders of instructions (SKILL.md) that teach an agent such as Claude Code one job, including motion design and interface design.
 - Prompts with placeholders such as [OBJECT] get input fields, so a visitor fills in the blanks and copies the finished prompt.

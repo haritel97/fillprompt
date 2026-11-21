@@ -19,12 +19,15 @@ export function GET() {
       desc: excerpt(daily.desc || daily.prompt, 280),
       date: day,
     },
-    ...packs.slice(0, 6).map((p) => ({
-      title: `Pack · ${p.title}`,
-      link: `${SITE}/packs/${p.slug}`,
-      desc: p.blurb,
-      date: day,
-    })),
+    ...['ecommerce', 'ui-components', 'cinematic-video', 'writing-workflows', 'miniatures-3d', 'agent-roles']
+      .map((slug) => packs.find((p) => p.slug === slug))
+      .filter(Boolean)
+      .map((p) => ({
+        title: `Pack · ${p!.title}`,
+        link: `${SITE}/packs/${p!.slug}`,
+        desc: p!.blurb,
+        date: day,
+      })),
     ...popular.map((p) => ({
       title: p.title,
       link: `${SITE}/prompt/${p.slug}`,
