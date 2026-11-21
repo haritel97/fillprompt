@@ -107,7 +107,7 @@ const en = {
     label: 'Curated',
     title: 'Prompt packs',
     metaTitle: 'Curated AI prompt packs · fillprompt.com',
-    metaDesc: 'Ready-made packs of free AI prompts for e-commerce, YouTube thumbnails, posters, agents and cinematic video.',
+    metaDesc: 'Ready-made packs of free AI prompts for e-commerce, YouTube thumbnails, UI design, photography, 3D miniatures, writing workflows and cinematic video.',
     lead: 'Themed collections cut from the full library. Open a pack, pick a prompt, fill the blanks and copy.',
     prompts: 'prompts',
     images: 'Images',
@@ -249,7 +249,8 @@ const en = {
     label: 'For AI agents',
     title: 'fillprompt MCP server',
     metaTitle: 'fillprompt MCP server: AI prompts inside Claude, Cursor and ChatGPT',
-    metaDesc: 'Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search 9,500+ image, video and text prompts and fill them in for you. No sign-in.',
+    metaDesc: (c: number) =>
+      `Free remote MCP server: let Claude, Claude Code, Cursor, VS Code, Windsurf, Zed, Cline or ChatGPT search ${n(c)}+ image, video and text prompts and fill them in for you. No sign-in.`,
     lead: 'Connect fillprompt to your AI assistant and ask it for a prompt in plain words. It searches every image, video and text prompt on this site, picks one that fits, and fills it in with your details. Free, read-only, no account or API key.',
     urlLabel: 'Server URL',
     copy: 'Copy',

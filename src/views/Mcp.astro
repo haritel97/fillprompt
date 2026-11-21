@@ -13,6 +13,7 @@ const m = t.mcp;
 const c = m.clients;
 const URL = `${SITE}/api/mcp`;
 const total = images.length + videos.length + texts.length;
+const metaDesc = m.metaDesc(total);
 const cursorInstall = `https://cursor.com/en/install-mcp?name=fillprompt&config=${Buffer.from(JSON.stringify({ url: URL })).toString('base64')}`;
 const vscodeInstall = `https://insiders.vscode.dev/redirect/mcp/install?name=fillprompt&config=${encodeURIComponent(JSON.stringify({ type: 'http', url: URL }))}`;
 
@@ -34,7 +35,7 @@ const schema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: m.title,
-  description: m.metaDesc,
+  description: metaDesc,
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Any',
   url: `${SITE}/mcp`,
@@ -43,7 +44,7 @@ const schema = {
 };
 ---
 
-<Base lang={lang} title={m.metaTitle} description={m.metaDesc} crumbs={[[m.title, '/mcp']]} schema={[schema]}>
+<Base lang={lang} title={m.metaTitle} description={metaDesc} crumbs={[[m.title, '/mcp']]} schema={[schema]}>
   <div class="wrap max-w-4xl pt-10">
     <p class="label">{m.label}</p>
     <h1 class="display mt-2 text-4xl sm:text-6xl">{m.title}</h1>
