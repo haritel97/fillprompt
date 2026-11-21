@@ -1,10 +1,10 @@
-// The site is English only. The `lang` plumbing stays so another language can be added later:
-// add its code to LANGS, a dictionary below, and a set of route files under src/pages/<code>/.
+// English-only site. `Lang` plumbing stays so a second locale can be added later
+// (extend LANGS, add a dictionary, and mount routes under src/pages/<code>/).
 export type Lang = 'en';
 export const LANGS: Lang[] = ['en'];
 export const DEFAULT_LANG: Lang = 'en';
 
-/** Root-relative path for the given locale. */
+/** Root-relative path (locale-aware when more languages are added). */
 export const href = (_lang: Lang, path: string) => path;
 
 /** Pathname without a locale prefix. */
