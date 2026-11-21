@@ -118,12 +118,58 @@ export const PACK_DEFS = [
     keywords: ['code', 'api', 'typescript', 'debug', 'architect'],
     limit: 48,
   },
+  {
+    slug: 'ui-components',
+    title: 'UI component design specs',
+    tag: 'UI Design',
+    blurb: 'Structured design-integration prompts for interactive backgrounds, layouts and React UI.',
+    kinds: ['text'],
+    textTypes: ['structured'],
+    sources: ['superdesign'],
+    keywords: ['react', 'component', 'background', 'animation', 'tailwind'],
+    limit: 48,
+  },
+  {
+    slug: 'photo-lighting',
+    title: 'Photography and lighting recipes',
+    tag: 'Photo',
+    blurb: 'Portrait, studio and cinematic lighting prompts ready for any image model.',
+    kinds: ['text', 'image'],
+    textTypes: ['image'],
+    cats: ['photography', 'portrait-avatar'],
+    sources: ['zsky', 'samux'],
+    keywords: ['lighting', 'portrait', 'studio', 'rembrandt', 'cinematic'],
+    limit: 48,
+  },
+  {
+    slug: 'miniatures-3d',
+    title: '3D miniatures and dioramas',
+    tag: '3D',
+    blurb: 'Figurines, isometric scenes and collectible-style 3D renders with sample images.',
+    kinds: ['image'],
+    cats: ['illustration-3d'],
+    sources: ['samux'],
+    keywords: ['miniature', 'figurine', 'diorama', 'isometric', '3d'],
+    limit: 48,
+  },
+  {
+    slug: 'writing-workflows',
+    title: 'Writing and editing workflows',
+    tag: 'Writing',
+    blurb: 'Paste-ready workflows for drafts, edits, academic integrity and clear communication.',
+    kinds: ['text'],
+    textTypes: ['structured', 'text'],
+    sources: ['hodios'],
+    keywords: ['writing', 'edit', 'draft', 'email', 'academic', 'tone'],
+    limit: 48,
+  },
 ];
 
 const hay = (title, desc, prompt) => `${title} ${desc || ''} ${(prompt || '').slice(0, 400)}`.toLowerCase();
 
 const scoreImage = (p, def) => {
   let s = 0;
+  if (def.sources?.includes(p.source)) s += 8;
   if (def.cats?.some((c) => p.cats.includes(c))) s += 6;
   if (def.model && p.model.toLowerCase().includes(def.model.toLowerCase())) s += 4;
   const h = hay(p.title, p.desc, p.prompt);
@@ -144,6 +190,7 @@ const scoreVideo = (v, def) => {
 
 const scoreText = (t, def) => {
   let s = 0;
+  if (def.sources?.includes(t.source)) s += 8;
   if (def.textTypes?.includes(t.type)) s += 6;
   if (def.textTypes?.includes('developer') && t.forDevs) s += 4;
   if (def.model && t.model.toLowerCase().includes(def.model.toLowerCase())) s += 3;
