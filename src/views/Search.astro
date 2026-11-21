@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { packs } from '../lib/packs';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
+import { ALIAS } from '../lib/synonyms.mjs';
 
 interface Props {
   lang: Lang;
@@ -12,15 +12,19 @@ const s = t.searchPage;
 // Everything the client script needs, in the page's language.
 const cfg = {
   cats: categoryLabels[lang],
+  alias: ALIAS,
   imageBase: href(lang, '/prompt/'),
   textBase: href(lang, '/text-prompt/'),
   videoBase: href(lang, '/video/'),
   packsUrl: href(lang, '/packs'),
   packsLabel: t.packs.title,
+  sourcesUrl: href(lang, '/sources'),
+  sourcesLabel: t.sources.title,
   loadFailed: s.loadFailed,
   start: s.start,
   none: s.none,
   suggest: s.suggest,
+  hintSource: s.hintSource,
 };
 ---
 
@@ -126,39 +130,41 @@ const cfg = {
       a.href = cfg.textBase + slug;
       return a;
     };
-    const ALIAS = {
-      photo: ['photograph', 'shot', 'picture'],
-      photograph: ['photo', 'shot'],
-      thumbnail: ['thumb', 'youtube'],
-      thumb: ['thumbnail'],
-      ecommerce: ['product', 'packaging', 'shopify'],
-      product: ['ecommerce', 'packaging'],
-      poster: ['flyer', 'advert'],
-      flyer: ['poster'],
-      logo: ['brand', 'wordmark'],
-      cinematic: ['film', 'movie', 'drone'],
-      agent: ['assistant', 'system'],
-      ui: ['interface', 'dashboard', 'wireframe'],
-      food: ['menu', 'dish', 'restaurant'],
-      coffee: ['cafe', 'latte'],
+    const wordHit = (s, w) => s.includes(w) || (cfg.alias[w] || []).some((a) => s.includes(a));
+    const parseQuery = (q) => {
+      const sources = [];
+      const words = [];
+      for (const part of q.split(/\s+/).filter(Boolean)) {
+        const m = part.match(/^(?:source|in):([a-z0-9_-]+)$/i);
+        if (m) sources.push(m[1].toLowerCase());
+        else words.push(part);
+      }
+      return { words, sources };
     };
-    const wordHit = (s, w) => s.includes(w) || (ALIAS[w] || []).some((a) => s.includes(a));
+    const hayI = (r) =>
+      (r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '')).toLowerCase();
+    const hayV = (r) => (r[0] + ' ' + r[2] + ' ' + (r[4] || '') + ' ' + (r[6] || '')).toLowerCase();
+    const hayT = (r) => (r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '')).toLowerCase();
+    const matchRow = (hay, source, words, sources) => {
+      if (sources.length && !sources.includes(String(source || '').toLowerCase())) return false;
+      return !words.length || words.every((w) => wordHit(hay, w));
+    };
     const run = () => {
       if (!ready) return;
       const q = input.value.trim().toLowerCase();
-      const words = q.split(/\s+/).filter(Boolean);
-      history.replaceState(null, '', q ? '?q=' + encodeURIComponent(q) : location.pathname);
-      if (!words.length) {
+      const { words, sources } = parseQuery(q);
+      history.replaceState(null, '', q ? '?q=' + encodeURIComponent(input.value.trim()) : location.pathname);
+      if (!words.length && !sources.length) {
         $('status').textContent = cfg.start;
         $('sec-i').classList.add('hidden');
         $('sec-v').classList.add('hidden');
         $('sec-t').classList.add('hidden');
+        suggest.replaceChildren();
         return;
       }
-      const hit = (s) => words.every((w) => wordHit(s, w));
-      const im = idx.i.filter((r) => hit((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4] + ' ' + (r[5] || '')).toLowerCase()));
-      const vd = idx.v.filter((r) => hit((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase()));
-      const tx = idx.t.filter((r) => hit(r[0].toLowerCase()));
+      const im = idx.i.filter((r) => matchRow(hayI(r), r[6], words, sources));
+      const vd = idx.v.filter((r) => matchRow(hayV(r), r[6], words, sources));
+      const tx = idx.t.filter((r) => matchRow(hayT(r), r[4], words, sources));
       const total = im.length + vd.length + tx.length;
       // Until every file is in, an empty result may only mean "not loaded yet".
       $('status').textContent = total ? '' : pending ? loadingText : cfg.none + ' "' + input.value.trim() + '".';
@@ -173,11 +179,10 @@ const cfg = {
         // 1. Shorter query first (most likely to help).
         if (words.length > 1) {
           const shorter = words.slice(0, -1).join(' ');
-          const hitShort = (s) => words.slice(0, -1).every((w) => s.includes(w));
           const shorterTotal =
-            idx.i.filter((r) => hitShort((r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + r[4] + ' ' + (r[5] || '')).toLowerCase())).length +
-            idx.v.filter((r) => hitShort((r[0] + ' ' + r[2] + ' ' + r[4]).toLowerCase())).length +
-            idx.t.filter((r) => hitShort(r[0].toLowerCase())).length;
+            idx.i.filter((r) => matchRow(hayI(r), r[6], words.slice(0, -1), sources)).length +
+            idx.v.filter((r) => matchRow(hayV(r), r[6], words.slice(0, -1), sources)).length +
+            idx.t.filter((r) => matchRow(hayT(r), r[4], words.slice(0, -1), sources)).length;
           if (shorterTotal > 0) {
             chips.push({ text: shorter, score: 3 });
             seen.add(shorter);
@@ -203,8 +208,20 @@ const cfg = {
             }
           }
         }
+        // 3. Suggest a source: filter when the query matches a collection key.
+        const sourceKeys = new Set();
+        for (const r of idx.i) if (r[6]) sourceKeys.add(r[6]);
+        for (const r of idx.v) if (r[6]) sourceKeys.add(r[6]);
+        for (const r of idx.t) if (r[4]) sourceKeys.add(r[4]);
+        for (const key of sourceKeys) {
+          if (seen.has(cfg.hintSource + key)) continue;
+          if (words.some((w) => key.includes(w) || w.includes(key))) {
+            chips.push({ text: cfg.hintSource + key, score: 2.5 });
+            seen.add(cfg.hintSource + key);
+          }
+        }
         chips.sort((a, b) => b.score - a.score);
-        // 3. Fill with most popular categories if there is room (max 6 total).
+        // 4. Fill with most popular categories if there is room (max 6 total).
         const catCounts = {};
         for (const r of idx.i) {
           const cat = cfg.cats[r[2]] || r[2];
@@ -235,6 +252,11 @@ const cfg = {
         pack.className = 'label border border-ink bg-mark px-2.5 py-1 text-sm hover:bg-paper transition-colors';
         pack.textContent = cfg.packsLabel;
         suggest.appendChild(pack);
+        const srcs = document.createElement('a');
+        srcs.href = cfg.sourcesUrl;
+        srcs.className = 'label border border-ink bg-surface px-2.5 py-1 text-sm hover:bg-mark transition-colors';
+        srcs.textContent = cfg.sourcesLabel;
+        suggest.appendChild(srcs);
       }
       const show = (key, list, card) => {
         $('sec-' + key).classList.toggle('hidden', !list.length);

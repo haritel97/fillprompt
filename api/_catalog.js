@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
+import { variants } from '../src/lib/synonyms.mjs';
 
 export const SITE = 'https://fillprompt.com';
 export const KINDS = ['image', 'video', 'text'];
@@ -81,26 +82,6 @@ function hydrate(kind, slug) {
 }
 
 const norm = (s) => words(s || '').join(' ');
-
-/** Light synonym map so everyday words still hit library phrasing. */
-const ALIAS = {
-  photo: ['photograph', 'shot', 'picture'],
-  photograph: ['photo', 'shot'],
-  thumbnail: ['thumb', 'youtube'],
-  thumb: ['thumbnail'],
-  ecommerce: ['product', 'packaging', 'shopify'],
-  product: ['ecommerce', 'packaging'],
-  poster: ['flyer', 'advert'],
-  flyer: ['poster'],
-  logo: ['brand', 'wordmark'],
-  cinematic: ['film', 'movie', 'drone'],
-  agent: ['assistant', 'system'],
-  ui: ['interface', 'dashboard', 'wireframe'],
-  food: ['menu', 'dish', 'restaurant'],
-  coffee: ['cafe', 'latte'],
-};
-
-const variants = (w) => [w, ...(ALIAS[w] || [])];
 
 /** The type, model, category and source filters search() and random() share: a test for one item. */
 function filter({ type, model, category, source }) {

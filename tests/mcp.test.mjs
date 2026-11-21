@@ -55,6 +55,12 @@ test('search_prompts finds image prompts on topic', async () => {
   assert.match(JSON.stringify(results[0]).toLowerCase(), /coffee/);
 });
 
+test('search_prompts expands everyday synonyms', async () => {
+  const r = (await call('search_prompts', { query: 'thumb', type: 'image', limit: 5 })).structuredContent;
+  assert.ok(r.total > 0, 'thumb should match thumbnail/youtube prompts');
+  assert.ok(r.results.length > 0);
+});
+
 test('search_prompts honours model and category filters', async () => {
   const video = (await call('search_prompts', { query: 'city at night', model: 'seedance', limit: 3 })).structuredContent;
   assert.ok(video.results.length > 0);

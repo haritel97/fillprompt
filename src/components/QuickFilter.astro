@@ -3,6 +3,7 @@
 // on screen) through the shared search index, and swaps the paginated list for the matches.
 // Wrap the static list and its pagination in an element with id="filter-static".
 import { ui, href, categoryLabels, type Lang } from '../i18n';
+import { ALIAS } from '../lib/synonyms.mjs';
 
 interface Props {
   lang: Lang;
@@ -19,6 +20,7 @@ const cfg = {
   kind,
   model,
   cat,
+  alias: ALIAS,
   cats: kind === 'i' ? categoryLabels[lang] : {},
   base: href(lang, { i: '/prompt/', t: '/text-prompt/', v: '/video/' }[kind]),
   none: t.filter.none,
@@ -56,11 +58,12 @@ const cfg = {
     const load = async () => {
       if (rows) return rows;
       rows = await (await fetch('/search/' + cfg.kind + '.json')).json();
-      // Image rows keep the model in column 5 and the categories in 2 and 6; others keep the model in 2.
+      // Image: model=5, cat0=2, source=6, extra cats from 7. Video/text: model=2.
       if (cfg.model) rows = rows.filter((r) => (cfg.kind === 'i' ? r[5] : r[2]) === cfg.model);
-      if (cfg.cat) rows = rows.filter((r) => r[2] === cfg.cat || r[6] === cfg.cat);
+      if (cfg.cat) rows = rows.filter((r) => r[2] === cfg.cat || r.slice(7).includes(cfg.cat));
       return rows;
     };
+    const wordHit = (s, w) => s.includes(w) || (cfg.alias[w] || []).some((a) => s.includes(a));
     const textRow = ([title, slug]) => {
       const a = el('a', 'row px-1 !py-3 font-semibold', title);
       a.href = cfg.base + slug;
@@ -128,9 +131,13 @@ const cfg = {
       }
       const hits = all.filter((r) => {
         const hay = (
-          r[0] + ' ' + (cfg.kind === 'i' ? (cfg.cats[r[2]] || '') + ' ' + (r[5] || '') : r[2] || '') + ' ' + (r[4] || '')
+          cfg.kind === 'i'
+            ? r[0] + ' ' + (cfg.cats[r[2]] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '') + ' ' + (r[6] || '')
+            : cfg.kind === 'v'
+              ? r[0] + ' ' + (r[2] || '') + ' ' + (r[4] || '') + ' ' + (r[6] || '')
+              : r[0] + ' ' + (r[2] || '') + ' ' + (r[3] || '') + ' ' + (r[4] || '') + ' ' + (r[5] || '')
         ).toLowerCase();
-        return words.every((w) => hay.includes(w));
+        return words.every((w) => wordHit(hay, w));
       });
       count.textContent = hits.length.toLocaleString('en-US');
       fixedList()?.classList.add('hidden');
