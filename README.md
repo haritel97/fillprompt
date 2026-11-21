@@ -22,16 +22,16 @@ Pick one, fill in the blanks, paste it into ChatGPT, Gemini, Claude or your vide
 
 | | Count | Written for |
 |---|---:|---|
-| Image prompts | 5,002 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 and any image model |
-| Video prompts | 933 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
-| Text prompts | 3,657 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
+| Image prompts | 5,705 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 and any image model |
+| Video prompts | 970 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
+| Text prompts | 6,193 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
 | Agent skills | 67 | Claude Code and other agents (links to their own repositories) |
 
 - **Sample results.** Image and video prompts show the output they produced, loaded from the original collection.
 - **Fill in the blanks.** Placeholders such as `[OBJECT]` or `{argument name="subject"}` become input fields, and the copy button gives the finished prompt.
 - **Credit on every prompt.** Each one names the collection it came from and its license, and its author and original post wherever the collection records them.
 - **Built for agents too.** A free MCP server and a Claude Code plugin let your AI assistant search the library and fill a prompt in for you.
-- **Fast and light.** A static site of about 10,000 pages, with a sitemap per content type and `llms.txt` for AI search.
+- **Fast and light.** A static site of about 13,000 pages, with a sitemap per content type and `llms.txt` for AI search.
 
 ## Use it from your AI assistant (MCP)
 
@@ -152,6 +152,10 @@ Defined in `scripts/import.mjs` (`SOURCES`) and listed on the site's Credits pag
 | [YouMind-OpenLab/awesome-gemini-3-prompts](https://github.com/YouMind-OpenLab/awesome-gemini-3-prompts) | CC BY 4.0 | text prompts (Gemini) |
 | [danielmiessler/Fabric](https://github.com/danielmiessler/Fabric) | MIT | text prompts (any model) |
 | [abilzerian/LLM-Prompt-Library](https://github.com/abilzerian/LLM-Prompt-Library) | MIT | text prompts (any model) |
+| [superdesigndev/superdesign-prompts](https://github.com/superdesigndev/superdesign-prompts) | MIT | text prompts (UI / design systems) |
+| [zsky-ai/zsky-prompt-library](https://github.com/zsky-ai/zsky-prompt-library) | MIT | text prompts (any model) |
+| [samuxbuilds/awesome-prompts](https://github.com/samuxbuilds/awesome-prompts) | MIT | image prompts |
+| [hermes-hq/hodios-dist](https://github.com/hermes-hq/hodios-dist) | CC0 1.0 | text prompts (curated) |
 | [anthropics/skills](https://github.com/anthropics/skills) | per skill | links only |
 
 The Skills page also links to community skill repositories; only their names, descriptions and licenses are shown.

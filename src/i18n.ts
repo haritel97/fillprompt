@@ -31,7 +31,7 @@ const en = {
   langName: 'English',
   langShort: 'EN',
   siteDesc: 'A free collection of AI prompts for images, video, text and agent skills. Copy, fill in the blanks, use.',
-  nav: { images: 'Images', videos: 'Videos', text: 'Text', packs: 'Packs', skills: 'Skills', credits: 'Credits', donate: 'Donate' },
+  nav: { images: 'Images', videos: 'Videos', text: 'Text', packs: 'Packs', sources: 'Sources', skills: 'Skills', credits: 'Credits', donate: 'Donate' },
   skip: 'Skip to content',
   navLabel: 'Main',
   langLabel: 'Language',
@@ -332,7 +332,7 @@ const en = {
   searchPage: {
     label: 'Search',
     title: 'Search prompts',
-    metaDesc: 'Search thousands of free AI image, video and text prompts.',
+    metaDesc: (total: number) => `Search ${n(total)} free AI image, video and text prompts.`,
     hint: 'Most prompts are written in English, so English keywords return the most results. Tip: source:hodios or source:samux limits to one collection.',
     hintSource: 'source:',
     loading: 'Loading index…',

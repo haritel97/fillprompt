@@ -36,6 +36,7 @@ const nav = [
   ['/videos', t.nav.videos],
   ['/text', t.nav.text],
   ['/packs', t.nav.packs],
+  ['/sources', t.nav.sources],
   ['/skills', t.nav.skills],
   ['/credits', t.nav.credits],
   ['/donate', t.nav.donate],
@@ -83,12 +84,12 @@ if (crumbs.length) {
 }
 const ld = graphs.map((g) => JSON.stringify(g).replace(/</g, '\\u003c'));
 const isOn = (p: string) =>
-  bare.startsWith(p) ||
+  bare === p ||
+  bare.startsWith(`${p}/`) ||
   (p === '/images' && /^\/(category|prompt|image-model)\//.test(bare)) ||
   (p === '/videos' && /^\/(video|video-model)\//.test(bare)) ||
   (p === '/text' && /^\/(text-prompt|text-model|text-type)\//.test(bare)) ||
-  (p === '/packs' && bare.startsWith('/packs')) ||
-  (p === '/credits' && (bare.startsWith('/source') || bare === '/sources'));
+  (p === '/sources' && bare.startsWith('/source/'));
 ---
 
 <!doctype html>

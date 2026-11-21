@@ -30,8 +30,12 @@ jobs:
           # Lifts the unauthenticated GitHub API limit while listing community skills.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run import:fresh
+      - name: Verify MCP catalog JSON
+        run: npm run mcp:verify
       - name: Tests
         run: npm test
+      - name: Build the site
+        run: npm run build
       - name: Sample media still loads
         run: node scripts/sample-media.mjs --limit 6
       # Requires: repo Settings → Actions → General → allow GitHub Actions to create and approve pull requests.
@@ -51,7 +55,7 @@ jobs:
             Automated weekly import of the open-source prompt collections behind fillprompt.com.
 
             - Ran `npm run import:fresh` (re-download + rebuild `src/data`)
-            - Ran `npm test` and a sample media HEAD check
+            - Ran `npm run mcp:verify`, `npm test`, `npm run build`, and a sample media HEAD check
             - Review the diff for unexpected drops or NSFW filter changes, then merge
 
             Triggered by schedule or workflow_dispatch.
@@ -62,6 +66,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Push local import commits if create-pull-request could not open the PR.
+          if ! git ls-remote --exit-code origin refs/heads/chore/import-refresh; then
+            git push -u origin HEAD:chore/import-refresh || true
+          fi
           git fetch origin chore/import-refresh || true
           if git ls-remote --exit-code origin refs/heads/chore/import-refresh; then
             gh pr create --base main --head chore/import-refresh \

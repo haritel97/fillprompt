@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { ui, href, categoryLabels, type Lang } from '../i18n';
+import { images, videos, texts } from '../lib/data';
 import { ALIAS } from '../lib/synonyms.mjs';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = ui[lang];
 const s = t.searchPage;
+const promptTotal = images.length + videos.length + texts.length;
 // Everything the client script needs, in the page's language.
 const cfg = {
   cats: categoryLabels[lang],
@@ -28,7 +30,7 @@ const cfg = {
 };
 ---
 
-<Base lang={lang} title={s.title} description={s.metaDesc} noindex>
+<Base lang={lang} title={s.title} description={s.metaDesc(promptTotal)} noindex>
   <div class="wrap pt-10">
     <p class="label">{s.label}</p>
     <h1 class="display mt-2 text-4xl sm:text-6xl">{s.title}</h1>

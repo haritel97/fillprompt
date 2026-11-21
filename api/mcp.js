@@ -9,6 +9,12 @@ import { PACK_DEFS } from '../src/lib/pack-build.mjs';
 const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }], structuredContent: data });
 const readOnly = { readOnlyHint: true, openWorldHint: false };
 
+const catalogFilters = filters();
+const PROMPT_TOTAL =
+  (catalogFilters.image?.total || 0) + (catalogFilters.video?.total || 0) + (catalogFilters.text?.total || 0);
+const PROMPT_TOTAL_LABEL = PROMPT_TOTAL.toLocaleString('en-US');
+
+
 /** Timing line for Vercel runtime logs — no PII, just tool name and milliseconds. */
 const timed = async (tool, kind, run) => {
   const t0 = Date.now();
@@ -42,8 +48,7 @@ const mcp = createMcpHandler(
       'search_prompts',
       {
         title: 'Search prompts',
-        description:
-          'Search over 12,000 free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.',
+        description: `Search over ${PROMPT_TOTAL_LABEL} free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.`,
         inputSchema: z.object({
           query: z.string().optional().describe('What the prompt should make, in plain words, e.g. "coffee product photo on marble" or "code review agent".'),
           type: z.enum(KINDS).optional().describe('Only image, video or text prompts.'),

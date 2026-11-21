@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { sources, images, texts, videos, skills, communitySkills, sourceByKey } from '../lib/data';
+import { sources, skills, communitySkills, sourceByKey, sourceStats, type SourceStat } from '../lib/data';
 import { ui, href, type Lang } from '../i18n';
 
 interface Props {
@@ -9,29 +9,21 @@ interface Props {
 const { lang } = Astro.props;
 const t = ui[lang];
 const c = t.credits;
-const count = (key: string) => images.filter((p) => p.source === key).length;
+
+const usedFor = (s: SourceStat) => {
+  if (s.images && !s.videos && !s.texts) return c.usedImages(s.images);
+  if (s.videos && !s.images && !s.texts) return c.usedVideos(s.videos);
+  if (s.texts && !s.images && !s.videos) return c.usedText(s.texts);
+  const parts: string[] = [];
+  if (s.images) parts.push(c.usedImages(s.images));
+  if (s.videos) parts.push(c.usedVideos(s.videos));
+  if (s.texts) parts.push(c.usedText(s.texts));
+  return parts.join(' · ');
+};
+
+// Prompt collections from live counts, then Anthropic skills (links only).
 const rows: [string, string][] = [
-  ['jau123', c.usedImages(count('jau123'))],
-  ['youmind', c.usedImages(count('youmind'))],
-  ['zerolu', c.usedImages(count('zerolu'))],
-  ['freestylefly', c.usedImages(count('freestylefly'))],
-  ['evolink', c.usedImages(count('evolink'))],
-  ['youmindgptimage2', c.usedImages(count('youmindgptimage2'))],
-  ['youmindgptimage15', c.usedImages(count('youmindgptimage15'))],
-  ['youmindseedream', c.usedImages(count('youmindseedream'))],
-  ['devanshug', c.usedImages(count('devanshug'))],
-  ['youmindskill', c.usedImages(count('youmindskill'))],
-  ['samux', c.usedImages(count('samux'))],
-  ['learnprompt', c.usedVideos(videos.filter((v) => v.source === 'learnprompt').length)],
-  ['youmindseedance', c.usedVideos(videos.filter((v) => v.source === 'youmindseedance').length)],
-  ['oswseedance', c.usedVideos(videos.filter((v) => v.source === 'oswseedance').length)],
-  ['youmindgrok', c.usedVideos(videos.filter((v) => v.source === 'youmindgrok').length)],
-  ...['evolinkh3', 'atlasomni'].map(
-    (k) => [k, c.usedVideos(videos.filter((v) => v.source === k).length)] as [string, string],
-  ),
-  ...['promptschat', 'mustvlad', 'voltagent', 'wshobson', 'geminisubagents', 'youmindgemini', 'fabric', 'llmpromptlibrary', 'superdesign', 'zsky', 'hodios'].map(
-    (k) => [k, c.usedText(texts.filter((x) => x.source === k).length)] as [string, string],
-  ),
+  ...sourceStats.map((s) => [s.key, usedFor(s)] as [string, string]),
   ['anthropic', c.usedSkills(skills.length)],
 ];
 ---

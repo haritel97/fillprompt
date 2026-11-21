@@ -1,9 +1,8 @@
-// RSS feed: prompt of the day plus the latest popular image prompts.
-import { images } from '../lib/data';
+// RSS feed: prompt of the day, featured packs, top collections, and popular image prompts.
+import { images, sourceStats, excerpt } from '../lib/data';
 import { packs } from '../lib/packs';
 import { promptOfTheDay, todayKey } from '../lib/daily';
 import { SITE } from '../lib/seo';
-import { excerpt } from '../lib/data';
 
 const xml = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -28,6 +27,12 @@ export function GET() {
         desc: p!.blurb,
         date: day,
       })),
+    ...sourceStats.slice(0, 6).map((s) => ({
+      title: `Collection · ${s.name}`,
+      link: `${SITE}/source/${s.key}`,
+      desc: `${s.total.toLocaleString('en-US')} prompts · ${s.license} · by ${s.by}`,
+      date: day,
+    })),
     ...popular.map((p) => ({
       title: p.title,
       link: `${SITE}/prompt/${p.slug}`,
@@ -41,7 +46,7 @@ export function GET() {
 <channel>
 <title>fillprompt.com</title>
 <link>${SITE}</link>
-<description>Free ready-to-copy AI prompts: prompt of the day, curated packs and popular image prompts.</description>
+<description>Free ready-to-copy AI prompts: prompt of the day, curated packs, open-source collections and popular image prompts.</description>
 <language>en</language>
 ${items
   .map(
