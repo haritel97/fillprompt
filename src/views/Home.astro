@@ -168,6 +168,11 @@ const stats: [number, string, string][] = [
         ))
       }
     </div>
+    <p class="mt-4 text-sm text-muted">
+      <a href={href(lang, '/sources')} class="link font-semibold text-ink">{t.footer.browseSources}</a>
+      {' · '}
+      <a href={href(lang, '/credits')} class="link">{t.footer.sources}</a>
+    </p>
   </section>
 
   <section class="wrap pt-14">

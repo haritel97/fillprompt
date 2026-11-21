@@ -289,11 +289,13 @@ const en = {
       'Give me a Seedance prompt for a cinematic drone shot over a city at night.',
       'I need a system prompt for a code review agent in Claude Code.',
       'Show me three poster prompts for a jazz night, with sample images.',
+      'Search Hodios (source hodios) for a writing workflow I can paste into Claude.',
+      'Pick a random UI component design prompt from SuperDesign.',
     ],
     tools: [
-      ['search_prompts', 'Searches image, video and text prompts by what you want to make, with filters for type, AI model and category.'],
+      ['search_prompts', 'Searches image, video and text prompts by what you want to make, with filters for type, AI model, category and open-source collection (source).'],
       ['get_prompt', 'Returns the full prompt, its fill-in slots, sample images or video, and credit to its collection and original author.'],
-      ['list_filters', 'Lists the categories and AI models, with how many prompts each has.'],
+      ['list_filters', 'Lists categories, AI models, collection keys (sources) and curated packs, with counts and browse URLs.'],
       ['random_prompt', 'Picks one prompt at random, with the same filters, for when you just want an idea.'],
     ] as [string, string][],
     clients: {
@@ -371,8 +373,12 @@ const en = {
         'Packs are curated themes such as e-commerce shots, YouTube thumbnails or agent roles. Open Packs in the menu, pick a theme, then copy any prompt inside it.',
       ],
       [
+        'Where do the prompts come from?',
+        'Every prompt is imported from an open-source collection. Browse by collection on the Sources page, or see licenses on Credits. Search tip: type source:hodios to limit results to one collection.',
+      ],
+      [
         'Can my AI assistant use fillprompt?',
-        'Yes. Connect the free MCP server from the MCP page to Claude, Cursor, VS Code or ChatGPT. It can search prompts and fill in the blanks for you.',
+        'Yes. Connect the free MCP server from the MCP page to Claude, Cursor, VS Code or ChatGPT. It can search prompts, filter by collection, and fill in the blanks for you.',
       ],
     ] as [string, string][],
   },

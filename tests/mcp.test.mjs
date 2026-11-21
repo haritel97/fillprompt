@@ -129,6 +129,9 @@ test('list_filters counts every kind', async () => {
   assert.ok(Object.keys(f.image.categories).length > 0);
   assert.ok(Array.isArray(f.packs) && f.packs.length >= 6);
   assert.match(f.packs[0].url, /^https:\/\/fillprompt\.com\/packs\//);
+  assert.ok(Array.isArray(f.sources) && f.sources.length >= 5);
+  assert.match(f.sources[0].url, /^https:\/\/fillprompt\.com\/source\//);
+  assert.ok(f.sources[0].prompts > 0);
 });
 
 test('search_prompts filters video prompts by category', async () => {

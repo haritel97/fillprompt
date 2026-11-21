@@ -34,7 +34,9 @@ jobs:
         run: npm test
       - name: Sample media still loads
         run: node scripts/sample-media.mjs --limit 6
+      # Requires: repo Settings → Actions → General → allow GitHub Actions to create and approve pull requests.
       - name: Open PR if data changed
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,3 +57,18 @@ jobs:
             Triggered by schedule or workflow_dispatch.
           add-paths: |
             src/data/
+      - name: Fallback PR via gh when Actions cannot open PRs
+        if: steps.cpr.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin chore/import-refresh || true
+          if git ls-remote --exit-code origin refs/heads/chore/import-refresh; then
+            gh pr create --base main --head chore/import-refresh \
+              --title "Refresh open-source prompt catalogs" \
+              --body "Automated weekly import (fallback). Review data diffs, then merge." \
+              || gh pr list --head chore/import-refresh --json url --jq '.[0].url'
+          else
+            echo "No import branch to open a PR from."
+          fi
+          exit 0

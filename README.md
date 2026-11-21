@@ -99,7 +99,7 @@ The site runs at http://localhost:4321. The prompt data is already in `src/data/
 | `npm test` | Data checks and MCP server tests |
 | `npm run stats:mcp` | MCP usage for the last 30 days |
 
-Scheduled GitHub Actions: **CI** on every push, **Media freshness** (weekly sample URL check + MCP smoke), and **Import refresh** (weekly `import:fresh` that opens a PR when catalogs change).
+Scheduled GitHub Actions: **CI** on every push, **Media freshness** (weekly sample URL check + MCP smoke), and **Import refresh** (weekly `import:fresh` that opens a PR when catalogs change). For Import refresh PRs, enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**.
 
 ## Project layout
 

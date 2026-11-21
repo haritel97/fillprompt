@@ -165,6 +165,7 @@ export const credit = (x) => {
     authorUrl: x.authorUrl || undefined,
     original: x.sourceUrl || undefined,
     collection: src ? `${src.name} by ${src.by} (${src.license})` : undefined,
+    collectionUrl: x.source ? `${SITE}/source/${x.source}` : undefined,
     license: src?.licenseUrl,
   };
 };
@@ -175,6 +176,7 @@ export const summary = (x) => ({
   type: x.kind,
   model: x.model,
   tags: x.tags,
+  source: x.source,
   url: x.url,
   preview: x.preview,
   ...(x.sample ? { sample: x.sample } : {}),
@@ -183,4 +185,30 @@ export const summary = (x) => ({
 /** Counts for the filters, so an agent can pick valid values. */
 export function filters() {
   return meta().filters;
+}
+
+/** Open-source collections with browse URLs, for list_filters. */
+export function sourceIndex() {
+  const f = meta().filters;
+  const keys = new Set([
+    ...Object.keys(f.image?.sources || {}),
+    ...Object.keys(f.video?.sources || {}),
+    ...Object.keys(f.text?.sources || {}),
+  ]);
+  return [...keys]
+    .map((key) => {
+      const s = meta().sources[key];
+      const prompts =
+        (f.image?.sources?.[key] || 0) + (f.video?.sources?.[key] || 0) + (f.text?.sources?.[key] || 0);
+      return {
+        key,
+        name: s?.name || key,
+        by: s?.by,
+        license: s?.license,
+        prompts,
+        url: `${SITE}/source/${key}`,
+        repo: s?.url,
+      };
+    })
+    .sort((a, b) => b.prompts - a.prompts);
 }

@@ -2,7 +2,7 @@
 // fillprompt.com. Stateless Streamable HTTP at https://fillprompt.com/api/mcp, read-only, no sign-in.
 import { createMcpHandler } from 'mcp-handler';
 import { z } from 'zod';
-import { search, find, random, slots, credit, summary, filters, KINDS, SITE } from './_catalog.js';
+import { search, find, random, slots, credit, summary, filters, sourceIndex, KINDS, SITE } from './_catalog.js';
 import { recordUsage } from './_usage.js';
 import { PACK_DEFS } from '../src/lib/pack-build.mjs';
 
@@ -110,7 +110,8 @@ const mcp = createMcpHandler(
       'list_filters',
       {
         title: 'List filters',
-        description: 'List the image categories, text prompt types, AI models and curated packs on fillprompt.com, with how many prompts each has. Use filter values with search_prompts; open pack URLs for themed collections.',
+        description:
+          'List image categories, text types, AI models, open-source collection keys (sources), and curated packs on fillprompt.com, with counts. Pass source/category/model values into search_prompts; open pack or source URLs for browsing.',
         inputSchema: z.object({}),
         annotations: readOnly,
       },
@@ -119,6 +120,7 @@ const mcp = createMcpHandler(
           recordUsage('list_filters');
           return json({
             ...filters(),
+            sources: sourceIndex(),
             packs: PACK_DEFS.map((p) => ({
               slug: p.slug,
               title: p.title,
@@ -130,9 +132,9 @@ const mcp = createMcpHandler(
     );
   },
   {
-    serverInfo: { name: 'fillprompt', version: '1.0.0', title: 'fillprompt.com prompts', websiteUrl: SITE },
+    serverInfo: { name: 'fillprompt', version: '1.1.0', title: 'fillprompt.com prompts', websiteUrl: SITE },
     instructions:
-      'fillprompt.com is a free library of AI prompts for images, video and text, plus curated packs at https://fillprompt.com/packs (e-commerce, YouTube thumbnails, agents, Seedance, and more). Use search_prompts to find candidates (or random_prompt for an idea when there is no query), get_prompt to read one in full, then fill its slots with the user\'s details. Link the prompt page and credit the author when you share a prompt.',
+      'fillprompt.com is a free library of AI prompts for images, video and text. Browse curated packs at https://fillprompt.com/packs and open-source collections at https://fillprompt.com/sources. Use list_filters for valid models, categories, packs and source keys; search_prompts (or random_prompt) to find candidates — narrow with type, model, category or source (e.g. hodios, samux); get_prompt for the full text and slots. Fill slots with the user\'s details, link the prompt page, and credit the author/collection.',
   },
 );
 
