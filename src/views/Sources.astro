@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { sourceStats, fmt } from '../lib/data';
+import { ui, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+const s = t.sources;
+---
+
+<Base lang={lang} title={s.metaTitle} description={s.metaDesc} crumbs={[[s.title, '/sources']]}>
+  <div class="wrap max-w-4xl pt-10">
+    <p class="label">{s.label}</p>
+    <h1 class="display mt-2 text-4xl sm:text-6xl">{s.title}</h1>
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{s.lead}</p>
+
+    <div class="mt-10 divide-y divide-line border-t border-ink">
+      {
+        sourceStats.map((x) => (
+          <div class="flex flex-col gap-3 py-5 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0">
+              <a href={href(lang, `/source/${x.key}`)} class="font-display text-xl font-bold tracking-[-0.02em] hover:text-mark">
+                {x.name}
+              </a>
+              <p class="mt-1 text-sm text-muted">
+                {s.by} {x.by} · {x.license}
+              </p>
+              <p class="mt-1 font-mono text-xs text-muted">{s.counts(x.images, x.videos, x.texts)}</p>
+            </div>
+            <div class="flex shrink-0 flex-wrap gap-2">
+              <a href={href(lang, `/source/${x.key}`)} class="btn-line text-sm">
+                {s.browse}
+              </a>
+              <a href={x.url} target="_blank" rel="noopener noreferrer" class="btn-line text-sm">
+                {s.repo}
+              </a>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="mt-6 text-sm text-muted">
+      {fmt(sourceStats.reduce((a, x) => a + x.total, 0))} prompts across {fmt(sourceStats.length)} collections.
+    </p>
+  </div>
+</Base>

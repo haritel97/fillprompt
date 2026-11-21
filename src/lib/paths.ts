@@ -1,10 +1,24 @@
 // getStaticPaths helpers shared by the English (root) and Malay (/ms) route files.
-import { images, texts, videos, catSlugs, imageModels, videoModels, textModels, TEXT_FILTERS, inTextFilter, textFilterCounts } from './data';
+import {
+  images,
+  texts,
+  videos,
+  catSlugs,
+  imageModels,
+  videoModels,
+  textModels,
+  TEXT_FILTERS,
+  inTextFilter,
+  textFilterCounts,
+  sourceStats,
+  itemsForSource,
+} from './data';
 import { relatedImages, relatedVideos, relatedTexts } from './related';
 
 export const IMAGE_PAGE = 48;
 export const TEXT_PAGE = 60;
 export const VIDEO_PAGE = 36;
+export const SOURCE_PAGE = 48;
 
 export const imageListPaths = (paginate: any) => paginate(images, { pageSize: IMAGE_PAGE });
 
@@ -69,3 +83,8 @@ export const textPromptPaths = () =>
     params: { slug: t.slug },
     props: { t, more: relatedTexts(t, texts) },
   }));
+
+export const sourceListPaths = (paginate: any) =>
+  sourceStats.flatMap((s) =>
+    paginate(itemsForSource(s.key), { params: { key: s.key }, pageSize: SOURCE_PAGE }),
+  );

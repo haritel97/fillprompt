@@ -1,0 +1,12 @@
+---
+import View from '../../../views/Source.astro';
+import { sourceListPaths } from '../../../lib/paths';
+import { sourceByKey } from '../../../lib/data';
+
+export const getStaticPaths = ({ paginate }) => sourceListPaths(paginate);
+
+const source = sourceByKey(Astro.params.key!);
+if (!source) throw new Error(`Unknown source ${Astro.params.key}`);
+---
+
+<View lang="en" page={Astro.props.page} source={source} />

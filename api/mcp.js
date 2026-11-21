@@ -43,12 +43,13 @@ const mcp = createMcpHandler(
       {
         title: 'Search prompts',
         description:
-          'Search over 9,500 free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.',
+          'Search over 12,000 free, ready-to-copy AI prompts on fillprompt.com: image prompts (GPT Image, Nano Banana, Seedream and more), video prompts (Seedance, Gemini Omni, Grok Imagine and more) and text prompts (system prompts, agent prompts, roles). Returns titles, page URLs and short previews; call get_prompt for the full text.',
         inputSchema: z.object({
           query: z.string().optional().describe('What the prompt should make, in plain words, e.g. "coffee product photo on marble" or "code review agent".'),
           type: z.enum(KINDS).optional().describe('Only image, video or text prompts.'),
           model: z.string().optional().describe('Only prompts written for this AI model, e.g. "Nano Banana", "Seedance", "Claude". See list_filters.'),
           category: z.string().optional().describe('Image category (e.g. "product-brand", "poster") or text prompt type (e.g. "agent", "developer"). See list_filters.'),
+          source: z.string().optional().describe('Only prompts from one open-source collection key (e.g. "hodios", "samux", "superdesign"). See list_filters text.sources.'),
           limit: z.number().int().min(1).max(20).default(8).describe('How many results to return.'),
         }),
         annotations: readOnly,
@@ -87,11 +88,12 @@ const mcp = createMcpHandler(
       {
         title: 'Random prompt',
         description:
-          'Get one fillprompt.com prompt picked at random, in full (the same shape as get_prompt), for requests like "surprise me" or "give me an idea for a poster" that have no search query. Narrow it with type, model or category.',
+          'Get one fillprompt.com prompt picked at random, in full (the same shape as get_prompt), for requests like "surprise me" or "give me an idea for a poster" that have no search query. Narrow it with type, model, category or source.',
         inputSchema: z.object({
           type: z.enum(KINDS).optional().describe('Only image, video or text prompts.'),
           model: z.string().optional().describe('Only prompts written for this AI model, e.g. "Nano Banana", "Seedance", "Claude". See list_filters.'),
           category: z.string().optional().describe('Image category (e.g. "poster") or text prompt type (e.g. "agent"). See list_filters.'),
+          source: z.string().optional().describe('Only prompts from one open-source collection key (e.g. "hodios", "samux").'),
         }),
         annotations: readOnly,
       },

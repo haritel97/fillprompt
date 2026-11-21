@@ -87,7 +87,8 @@ const isOn = (p: string) =>
   (p === '/images' && /^\/(category|prompt|image-model)\//.test(bare)) ||
   (p === '/videos' && /^\/(video|video-model)\//.test(bare)) ||
   (p === '/text' && /^\/(text-prompt|text-model|text-type)\//.test(bare)) ||
-  (p === '/packs' && bare.startsWith('/packs'));
+  (p === '/packs' && bare.startsWith('/packs')) ||
+  (p === '/credits' && (bare.startsWith('/source') || bare === '/sources'));
 ---
 
 <!doctype html>

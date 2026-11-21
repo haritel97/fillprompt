@@ -165,3 +165,83 @@ export const metaDescOf = (x: { title: string; desc?: string; prompt: string }, 
 
 export const fmt = (n: number) => n.toLocaleString('en-US');
 export const pad = (n: number, w = 2) => String(n).padStart(w, '0');
+
+/** Open-source collections that contribute at least one prompt, with per-kind counts. */
+export type SourceStat = Source & {
+  key: string;
+  images: number;
+  videos: number;
+  texts: number;
+  total: number;
+};
+
+const countBy = <T extends { source: string }>(list: T[]) =>
+  list.reduce<Record<string, number>>((a, x) => ((a[x.source] = (a[x.source] || 0) + 1), a), {});
+
+const imageBySource = countBy(images);
+const videoBySource = countBy(videos);
+const textBySource = countBy(texts);
+
+export const sourceStats: SourceStat[] = Object.entries(sources)
+  .map(([key, s]) => {
+    const ic = imageBySource[key] || 0;
+    const vc = videoBySource[key] || 0;
+    const tc = textBySource[key] || 0;
+    return { key, ...s, images: ic, videos: vc, texts: tc, total: ic + vc + tc };
+  })
+  .filter((s) => s.total > 0)
+  .sort((a, b) => b.total - a.total);
+
+export const sourceByKey = (key: string) => sourceStats.find((s) => s.key === key);
+
+export type SourceItem = {
+  kind: 'image' | 'video' | 'text';
+  slug: string;
+  title: string;
+  href: string;
+  preview: string;
+  model: string;
+  sample?: string;
+  likes: number;
+};
+
+/** All prompts from one collection, images first (by likes), then videos, then texts. */
+export const itemsForSource = (key: string): SourceItem[] => [
+  ...images
+    .filter((p) => p.source === key)
+    .sort((a, b) => b.likes - a.likes)
+    .map((p) => ({
+      kind: 'image' as const,
+      slug: p.slug,
+      title: p.title,
+      href: `/prompt/${p.slug}`,
+      preview: p.desc || p.title,
+      model: p.model,
+      sample: p.images[0],
+      likes: p.likes || 0,
+    })),
+  ...videos
+    .filter((v) => v.source === key)
+    .sort((a, b) => b.likes - a.likes)
+    .map((v) => ({
+      kind: 'video' as const,
+      slug: v.slug,
+      title: v.title,
+      href: `/video/${v.slug}`,
+      preview: v.desc || v.title,
+      model: v.model,
+      sample: v.poster || undefined,
+      likes: v.likes || 0,
+    })),
+  ...texts
+    .filter((t) => t.source === key)
+    .map((t) => ({
+      kind: 'text' as const,
+      slug: t.slug,
+      title: t.title,
+      href: `/text-prompt/${t.slug}`,
+      preview: t.desc || t.prompt.slice(0, 160),
+      model: t.model,
+      likes: 0,
+    })),
+];

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { sources, images, texts, videos, skills, communitySkills } from '../lib/data';
-import { ui, type Lang } from '../i18n';
+import { sources, images, texts, videos, skills, communitySkills, sourceByKey } from '../lib/data';
+import { ui, href, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
@@ -40,7 +40,11 @@ const rows: [string, string][] = [
   <div class="wrap max-w-4xl pt-10">
     <p class="label">{t.about}</p>
     <h1 class="display mt-2 text-4xl sm:text-6xl">{c.title}</h1>
-    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{c.lead}</p>
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
+      {c.lead}
+      {' '}
+      <a href={href(lang, '/sources')} class="link font-semibold">{ui[lang].sources.title}</a>.
+    </p>
 
     <div class="mt-8 overflow-x-auto">
       <table class="w-full border-t border-ink text-left text-sm">
@@ -58,7 +62,17 @@ const rows: [string, string][] = [
               const s = sources[key];
               return (
                 <tr class="border-b border-line">
-                  <td class="py-3 pr-4"><a href={s.url} target="_blank" rel="noopener noreferrer" class="link font-semibold">{s.name}</a></td>
+                  <td class="py-3 pr-4">
+                    {sourceByKey(key) ? (
+                      <>
+                        <a href={href(lang, `/source/${key}`)} class="link font-semibold">{s.name}</a>
+                        <span class="text-muted"> · </span>
+                        <a href={s.url} target="_blank" rel="noopener noreferrer" class="link text-xs text-muted">repo</a>
+                      </>
+                    ) : (
+                      <a href={s.url} target="_blank" rel="noopener noreferrer" class="link font-semibold">{s.name}</a>
+                    )}
+                  </td>
                   <td class="py-3 pr-4">{s.by}</td>
                   <td class="py-3 pr-4">
                     <a href={s.licenseUrl} target="_blank" rel="noopener noreferrer" class="link">{key === 'anthropic' ? c.perSkill : s.license}</a>

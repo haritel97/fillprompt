@@ -12,6 +12,8 @@ const DATA = path.join(ROOT, 'src', 'data');
 const OUT = path.join(DATA, 'mcp');
 
 const KINDS = ['image', 'video', 'text'];
+/** Prompts longer than this live in a side file so the hot full-* catalog stays small. */
+const XL_CHARS = 12_000;
 const words = (s) => (s.toLowerCase().match(/[a-z0-9]+/g) || []).filter((w) => w.length > 1);
 const clip = (s, n) => {
   const t = String(s || '')
@@ -20,12 +22,24 @@ const clip = (s, n) => {
   return t.length > n ? t.slice(0, n).replace(/\s+\S*$/, '') + '…' : t;
 };
 
+/** Unique search tokens: denser than a raw character window, much smaller for long agent prompts. */
+const idxPrompt = (prompt, max = 96) => {
+  const seen = new Set();
+  const out = [];
+  for (const w of words(prompt || '')) {
+    if (seen.has(w)) continue;
+    seen.add(w);
+    out.push(w);
+    if (out.length >= max) break;
+  }
+  return out.join(' ');
+};
+
 const idx = (title, tags, desc, prompt) => ({
   title: ' ' + words(title).join(' ') + ' ',
   tags: ' ' + [...tags].map((s) => words(s).join(' ')).join(' ') + ' ',
-  desc: (desc || '').toLowerCase(),
-  // Prompt text ranks lowest in search; keep a short window to limit catalog size.
-  prompt: (prompt || '').slice(0, 800).toLowerCase(),
+  desc: clip(desc || '', 240).toLowerCase(),
+  prompt: ' ' + idxPrompt(prompt) + ' ',
 });
 
 async function readJson(name) {
@@ -56,16 +70,19 @@ function buildFilters(kinds, categories) {
       total: byKind.image.items.length,
       categories: Object.fromEntries(categories.filter((c) => cats[c]).map((c) => [c, cats[c]])),
       models: of('image', (x) => [x.model]),
+      sources: of('image', (x) => [x.source]),
     },
     video: {
       total: byKind.video.items.length,
       categories: Object.fromEntries(Object.entries(vcats).filter(([c]) => c)),
       models: of('video', (x) => [x.model]),
+      sources: of('video', (x) => [x.source]),
     },
     text: {
       total: byKind.text.items.length,
       categories: of('text', (x) => x.tags),
       models: of('text', (x) => [x.model]),
+      sources: of('text', (x) => [x.source]),
     },
   };
 }
@@ -73,6 +90,7 @@ function buildFilters(kinds, categories) {
 function buildKind(kind, rows, map) {
   const search = [];
   const full = {};
+  const xl = {};
   const items = [];
   for (const row of rows) {
     const x = map(row);
@@ -82,15 +100,15 @@ function buildKind(kind, rows, map) {
       title: x.title,
       model: x.model,
       tags: x.tags,
+      source: x.source,
       likes: x.likes || 0,
-      preview: clip(x.desc || x.prompt, 180),
+      preview: clip(x.desc || x.prompt, kind === 'text' ? 140 : 180),
       ...(x.media[0] ? { sample: x.media[0] } : {}),
       idx: idx(x.title, x.tags, x.desc, x.prompt),
     });
-    full[x.slug] = {
+    const base = {
       title: x.title,
       ...(x.desc ? { desc: x.desc } : {}),
-      prompt: x.prompt,
       model: x.model,
       tags: x.tags,
       media: x.media,
@@ -100,8 +118,14 @@ function buildKind(kind, rows, map) {
       source: x.source,
       likes: x.likes || 0,
     };
+    if ((x.prompt || '').length > XL_CHARS) {
+      xl[x.slug] = { prompt: x.prompt };
+      full[x.slug] = { ...base, prompt: clip(x.prompt, 400), xl: 1 };
+    } else {
+      full[x.slug] = { ...base, prompt: x.prompt };
+    }
   }
-  return { kind, search, full, items };
+  return { kind, search, full, xl, items };
 }
 
 export async function buildMcpCatalog() {
@@ -169,6 +193,7 @@ export async function buildMcpCatalog() {
   for (const k of built) {
     written.push(await writeGz(`search-${k.kind}.json.gz`, k.search));
     written.push(await writeGz(`full-${k.kind}.json.gz`, k.full));
+    if (Object.keys(k.xl).length) written.push(await writeGz(`full-${k.kind}-xl.json.gz`, k.xl));
   }
 
   const totals = KINDS.map((kind) => {

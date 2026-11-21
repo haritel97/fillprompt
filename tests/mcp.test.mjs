@@ -139,6 +139,23 @@ test('search_prompts filters video prompts by category', async () => {
   }
 });
 
+test('search_prompts and get_prompt honour the source filter', async () => {
+  const f = (await call('list_filters', {})).structuredContent;
+  assert.ok(f.text.sources?.hodios > 0, 'hodios is listed');
+  const r = (await call('search_prompts', { type: 'text', source: 'hodios', query: 'writing', limit: 5 })).structuredContent;
+  assert.ok(r.results.length > 0);
+  const p = (await call('get_prompt', { ref: r.results[0].url })).structuredContent;
+  assert.ok(p.prompt.length > 40);
+  assert.match(p.credit.collection || '', /Hodios|Hermes/i);
+});
+
+test('get_prompt returns the full body for oversized text prompts', async () => {
+  const r = (await call('search_prompts', { type: 'text', source: 'superdesign', limit: 5 })).structuredContent;
+  assert.ok(r.results.length > 0);
+  const p = (await call('get_prompt', { ref: r.results[0].url })).structuredContent;
+  assert.ok(p.prompt.length > 500, 'xl shard restores the full SuperDesign body');
+});
+
 test('a browser opening the URL is sent to the setup page', async () => {
   const res = await GET(new Request('http://localhost/api/mcp', { headers: { accept: 'text/html' } }));
   assert.equal(res.status, 302);

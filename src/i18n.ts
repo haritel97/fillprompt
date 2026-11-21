@@ -119,6 +119,31 @@ const en = {
     detailMeta: (title: string) => `${title} · prompt pack`,
     back: '← All packs',
   },
+  sources: {
+    label: 'Open source',
+    title: 'Prompt collections',
+    metaTitle: 'Open-source prompt collections · fillprompt.com',
+    metaDesc: 'Browse the open-source collections behind fillprompt.com, with licenses and every prompt each one contributes.',
+    lead: 'Each collection keeps its own license. Open one to browse its prompts on this site, or visit the original repository.',
+    browse: 'Browse prompts',
+    repo: 'Repository',
+    license: 'License',
+    by: 'By',
+    counts: (images: number, videos: number, texts: number) => {
+      const parts: string[] = [];
+      if (images) parts.push(`${n(images)} image`);
+      if (videos) parts.push(`${n(videos)} video`);
+      if (texts) parts.push(`${n(texts)} text`);
+      return parts.join(' · ');
+    },
+    detailMeta: (name: string) => `${name} prompts · fillprompt.com`,
+    detailLead: (total: number, name: string, license: string) =>
+      `${n(total)} prompts from ${name} (${license}), shown with credit to their authors.`,
+    back: '← All collections',
+    kindImage: 'Image',
+    kindVideo: 'Video',
+    kindText: 'Text',
+  },
   skillsTeaser: {
     title: 'Skills for AI agents',
     body: 'A skill is a folder of instructions that teaches an agent such as Claude to do one job properly: produce a PDF, build slides, design an interface.',

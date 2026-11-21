@@ -16,6 +16,7 @@ const readGz = (f) => JSON.parse(gunzipSync(readFileSync(path.join(MCP, f))));
 let metaCache;
 const searchCache = Object.create(null);
 const fullCache = Object.create(null);
+const xlCache = Object.create(null);
 
 function meta() {
   if (!metaCache) metaCache = readGz('meta.json.gz');
@@ -39,6 +40,17 @@ function fullMap(kind) {
   return fullCache[kind];
 }
 
+function xlMap(kind) {
+  if (xlCache[kind] === undefined) {
+    try {
+      xlCache[kind] = readGz(`full-${kind}-xl.json.gz`);
+    } catch {
+      xlCache[kind] = null;
+    }
+  }
+  return xlCache[kind];
+}
+
 /** Search rows for the given kinds (default: all). */
 function rowsFor(type) {
   const kinds = type && KINDS.includes(type) ? [type] : KINDS;
@@ -49,13 +61,14 @@ function rowsFor(type) {
 function hydrate(kind, slug) {
   const body = fullMap(kind)[slug];
   if (!body) return;
+  const prompt = body.xl ? xlMap(kind)?.[slug]?.prompt || body.prompt : body.prompt;
   return {
     kind,
     slug,
     url: SITE + PATHS[kind] + slug,
     title: body.title,
     desc: body.desc || '',
-    prompt: body.prompt,
+    prompt,
     model: body.model,
     tags: body.tags,
     media: body.media || [],
@@ -89,19 +102,23 @@ const ALIAS = {
 
 const variants = (w) => [w, ...(ALIAS[w] || [])];
 
-/** The type, model and category filters search() and random() share: a test for one item. */
-function filter({ type, model, category }) {
+/** The type, model, category and source filters search() and random() share: a test for one item. */
+function filter({ type, model, category, source }) {
   const m = norm(model);
   const c = norm(category);
+  const src = norm(source);
   return (x) =>
-    (!type || x.kind === type) && (!m || norm(x.model).includes(m)) && (!c || x.tags.some((t) => norm(t) === c));
+    (!type || x.kind === type) &&
+    (!m || norm(x.model).includes(m)) &&
+    (!c || x.tags.some((t) => norm(t) === c)) &&
+    (!src || norm(x.source) === src);
 }
 
 /** Ranked search: title hits weigh most, then category/model, summary and prompt text. */
-export function search({ query = '', type, model, category, limit = 8 }) {
+export function search({ query = '', type, model, category, source, limit = 8 }) {
   const items = rowsFor(type);
   const terms = [...new Set(words(query))];
-  const keep = filter({ type, model, category });
+  const keep = filter({ type, model, category, source });
   const scored = [];
   for (const x of items) {
     if (!keep(x)) continue;
@@ -113,7 +130,7 @@ export function search({ query = '', type, model, category, limit = 8 }) {
         if (x.idx.title.includes(' ' + a)) s = Math.max(s, 6);
         if (x.idx.tags.includes(' ' + a)) s = Math.max(s, 3);
         if (x.idx.desc.includes(a)) s = Math.max(s, 2);
-        if (x.idx.prompt.includes(a)) s = Math.max(s, 1);
+        if (x.idx.prompt.includes(' ' + a)) s = Math.max(s, 1);
       }
       if (s) hits++;
       score += s;
@@ -128,8 +145,8 @@ export function search({ query = '', type, model, category, limit = 8 }) {
 }
 
 /** One prompt picked at random from those that pass the same filters as search(); undefined if none do. */
-export function random({ type, model, category } = {}, pick = Math.random) {
-  const matches = rowsFor(type).filter(filter({ type, model, category }));
+export function random({ type, model, category, source } = {}, pick = Math.random) {
+  const matches = rowsFor(type).filter(filter({ type, model, category, source }));
   if (!matches.length) return;
   const hit = matches[Math.floor(pick() * matches.length)];
   return hydrate(hit.kind, hit.slug);
