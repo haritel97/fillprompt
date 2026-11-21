@@ -168,6 +168,27 @@
       "license": "MIT",
       "licenseUrl": "https://github.com/abilzerian/LLM-Prompt-Library/blob/main/LICENSE"
     },
+    "superdesign": {
+      "name": "SuperDesign Prompts",
+      "by": "Superdesign",
+      "url": "https://github.com/superdesigndev/superdesign-prompts",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/superdesigndev/superdesign-prompts/blob/main/LICENSE"
+    },
+    "zsky": {
+      "name": "ZSky Prompt Library",
+      "by": "ZSky AI",
+      "url": "https://github.com/zsky-ai/zsky-prompt-library",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/zsky-ai/zsky-prompt-library/blob/master/LICENSE"
+    },
+    "samux": {
+      "name": "Awesome Prompts",
+      "by": "samuxbuilds",
+      "url": "https://github.com/samuxbuilds/awesome-prompts",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/samuxbuilds/awesome-prompts/blob/main/LICENSE"
+    },
     "anthropic": {
       "name": "Anthropic Skills",
       "by": "Anthropic",

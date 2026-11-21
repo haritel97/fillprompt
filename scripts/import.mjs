@@ -48,6 +48,7 @@ const FILES = {
   'atlas-omni.json': `${RAW}/AtlasCloudAI/awesome-gemini-omni-prompts/main/data/prompts_by_locale/en-US.json`,
   'youmind-grok.md': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/README.md`,
   'youmind-grok-videos.json': `${RAW}/YouMind-OpenLab/awesome-grok-imagine-prompts/main/video-urls.json`,
+  'superdesign.json': `${RAW}/superdesigndev/superdesign-prompts/main/prompts.json`,
 };
 
 // Community skill repositories shown on the Skills page as links. Name, description, license and
@@ -287,6 +288,27 @@ export const SOURCES = {
     license: 'MIT',
     licenseUrl: 'https://github.com/abilzerian/LLM-Prompt-Library/blob/main/LICENSE',
   },
+  superdesign: {
+    name: 'SuperDesign Prompts',
+    by: 'Superdesign',
+    url: 'https://github.com/superdesigndev/superdesign-prompts',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/superdesigndev/superdesign-prompts/blob/main/LICENSE',
+  },
+  zsky: {
+    name: 'ZSky Prompt Library',
+    by: 'ZSky AI',
+    url: 'https://github.com/zsky-ai/zsky-prompt-library',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/zsky-ai/zsky-prompt-library/blob/master/LICENSE',
+  },
+  samux: {
+    name: 'Awesome Prompts',
+    by: 'samuxbuilds',
+    url: 'https://github.com/samuxbuilds/awesome-prompts',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/samuxbuilds/awesome-prompts/blob/main/LICENSE',
+  },
   anthropic: {
     name: 'Anthropic Skills',
     by: 'Anthropic',
@@ -379,7 +401,15 @@ async function fetchSources() {
   if (!(await exists(skills))) {
     execFileSync('git', ['clone', '--depth', '1', '-q', 'https://github.com/anthropics/skills.git', skills]);
   } else if (FETCH) {
-    execFileSync('git', ['-C', skills, 'pull', '-q', '--depth', '1']);
+    try {
+      execFileSync('git', ['-C', skills, 'pull', '-q', '--depth', '1']);
+    } catch {
+      // Shallow clone can diverge; re-clone cleanly.
+      const { rm } = await import('node:fs/promises');
+      await rm(skills, { recursive: true, force: true });
+      execFileSync('git', ['clone', '--depth', '1', '-q', 'https://github.com/anthropics/skills.git', skills]);
+      console.log('re-cloned anthropics/skills');
+    }
   }
 }
 
@@ -866,6 +896,8 @@ const TEXT_REPOS = {
   'repo-mustvlad_ChatGPT-System-Prompts': ['mustvlad/ChatGPT-System-Prompts', null],
   'repo-abilzerian_LLM-Prompt-Library': ['abilzerian/LLM-Prompt-Library', null],
   'repo-fabric': ['danielmiessler/Fabric', 'data/patterns'],
+  'repo-zsky-ai_zsky-prompt-library': ['zsky-ai/zsky-prompt-library', 'categories'],
+  'repo-samuxbuilds_awesome-prompts': ['samuxbuilds/awesome-prompts', 'prompts'],
 };
 
 async function fetchTextRepos() {
@@ -1023,6 +1055,150 @@ async function importFabric() {
   return out;
 }
 
+/** SuperDesign UI/agent prompts: full design-integration specs with sample previews. */
+function importSuperdesign(raw) {
+  return JSON.parse(raw)
+    .filter((x) => x.title && x.prompt && english(x.prompt) && english(x.title))
+    .map((x) =>
+      textEntry({
+        title: x.title.trim(),
+        desc: (x.description || '').split(/\n\n/)[0].replace(/\s+/g, ' ').trim().slice(0, 280),
+        prompt: x.prompt.trim(),
+        type: 'structured',
+        forDevs: true,
+        model: 'Any model',
+        source: 'superdesign',
+        author: (x.author || '').trim(),
+        sourceUrl: `https://github.com/superdesigndev/superdesign-prompts/blob/main/prompts/${x.slug}/`,
+      }),
+    );
+}
+
+/** ZSky category markdown: ### Title + fenced prompt (+ optional Produces/Tags). No sample images → text type "image". */
+async function importZsky() {
+  const root = path.join(SRC, 'repo-zsky-ai_zsky-prompt-library', 'categories');
+  if (!(await exists(root))) return [];
+  const out = [];
+  for (const file of (await readdir(root)).filter((f) => f.endsWith('.md')).sort()) {
+    const md = (await readFile(path.join(root, file), 'utf8')).replace(/\r\n/g, '\n');
+    const rel = `categories/${file}`;
+    for (const block of md.split(/^### /m).slice(1)) {
+      const title = block.slice(0, block.indexOf('\n')).trim();
+      const prompt = ((block.match(/```[^\n]*\n([\s\S]*?)\n```/) || [])[1] || '').trim();
+      const desc = ((block.match(/\*\*Produces:\*\*\s*(.+)/) || [])[1] || '').trim();
+      if (!title || prompt.length < 20 || !english(prompt) || !english(title)) continue;
+      out.push(
+        textEntry({
+          title,
+          desc,
+          prompt,
+          type: 'image',
+          model: 'Any model',
+          source: 'zsky',
+          sourceUrl: `https://github.com/zsky-ai/zsky-prompt-library/blob/master/${rel}`,
+        }),
+      );
+    }
+  }
+  return out;
+}
+
+/** Parse YAML-ish front matter keys used by AwesomePrompts (title, category, tags, author, preview). */
+function awesomeFrontMatter(raw) {
+  const md = raw.replace(/\r\n/g, '\n');
+  const m = md.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (!m) return { data: {}, body: md.trim() };
+  const data = {};
+  const fm = m[1];
+  const pick = (key) => {
+    const line = fm.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'));
+    return (line?.[1] || '').trim().replace(/^['"]|['"]$/g, '');
+  };
+  data.title = pick('title');
+  data.category = pick('category');
+  data.preview = pick('preview');
+  data.previewVideo = pick('previewVideo');
+  data.author = pick('author');
+  const tagsBlock = fm.match(/^tags:\n((?:[ \t]*-[ \t]*.+\n?)*)/m);
+  data.tags = tagsBlock
+    ? [...tagsBlock[1].matchAll(/^[ \t]*-[ \t]*(.+)$/gm)].map((x) => x[1].trim().replace(/^['"]|['"]$/g, ''))
+    : [];
+  return { data, body: md.slice(m[0].length).trim() };
+}
+
+function parseAwesomeAuthor(raw) {
+  const m = raw.match(/\[@?([^\]]+)\]\((https?:\/\/[^)]+)\)/) || raw.match(/@(\w+)/);
+  if (!m) return { author: raw.replace(/^@/, '').trim(), authorUrl: '' };
+  return { author: m[1].replace(/^@/, ''), authorUrl: m[2] || (m[1] ? `https://x.com/${m[1]}` : '') };
+}
+
+/** Body → copyable prompt: prefer prompt_template inside a JSON fence, else plain text minus Source/Example. */
+function awesomePromptBody(body) {
+  let text = body
+    .replace(/\n##\s*Source\b[\s\S]*$/i, '')
+    .replace(/\n##\s*Example Output\b[\s\S]*$/i, '')
+    .trim();
+  const fence = text.match(/```(?:json)?\n([\s\S]*?)\n```/);
+  if (fence) {
+    try {
+      const j = JSON.parse(fence[1]);
+      if (typeof j.prompt_template === 'string' && j.prompt_template.trim().length >= 20) return j.prompt_template.trim();
+      if (typeof j.prompt === 'string' && j.prompt.trim().length >= 20) return j.prompt.trim();
+    } catch {
+      /* keep fenced text */
+    }
+    return fence[1].trim();
+  }
+  return text.trim();
+}
+
+const SAMUX_CAT = {
+  portraits: 'portrait-avatar',
+  posters: 'poster',
+  thumbnails: 'social-media',
+  icons: 'infographic-ui',
+  '3d': 'illustration-3d',
+  creative: 'creative',
+};
+
+/** AwesomePrompts (samuxbuilds): markdown + sample image under public/media. */
+async function importSamux() {
+  const root = path.join(SRC, 'repo-samuxbuilds_awesome-prompts', 'prompts');
+  if (!(await exists(root))) return [];
+  const out = [];
+  for (const rel of await walkMd(root)) {
+    // Motion clips need a playable video URL in our video pipeline; skip for now.
+    if (rel.startsWith('motion/')) continue;
+    const { data, body } = awesomeFrontMatter(await readFile(path.join(root, rel), 'utf8'));
+    const prompt = awesomePromptBody(body);
+    const title = (data.title || humanize(rel.split('/').pop().replace(/\.md$/, ''))).trim();
+    if (!prompt || prompt.length < 20 || !english(prompt) || !english(title)) continue;
+    if (!data.preview || data.previewVideo) continue;
+    const img = `${RAW}/samuxbuilds/awesome-prompts/main/public${data.preview.startsWith('/') ? data.preview : `/${data.preview}`}`;
+    const { author, authorUrl } = parseAwesomeAuthor(data.author || '');
+    const sourceUrl =
+      (body.match(/\[Original Post\]\((https?:\/\/[^)]+)\)/i) || [])[1] ||
+      `https://github.com/samuxbuilds/awesome-prompts/blob/main/prompts/${rel.split('/').map(encodeURIComponent).join('/')}`;
+    const label = [data.category, ...(data.tags || []), title].join(' ');
+    out.push({
+      id: `x${slugify(rel.replace(/\.md$/, ''))}`.slice(0, 40).replace(/-+$/, '') || `x${slugify(title)}`,
+      title,
+      desc: '',
+      prompt,
+      images: [img],
+      cats: [SAMUX_CAT[data.category] || catFor(label)],
+      model: 'Any image model',
+      author,
+      authorUrl,
+      sourceUrl,
+      date: '',
+      likes: 0,
+      source: 'samux',
+    });
+  }
+  return out.filter((x) => english(x.prompt) && english(x.title));
+}
+
 /** Gemini 3 prompts: same README layout as the other YouMind collections. */
 function importYoumindGemini(md) {
   const seen = new Set();
@@ -1083,6 +1259,8 @@ async function importAllTexts() {
     ...(await importMustvlad()),
     ...(await importFabric()),
     ...(await importLlmPromptLibrary()),
+    ...importSuperdesign(await read('superdesign.json')),
+    ...(await importZsky()),
   ];
   return { chat, added };
 }
@@ -1124,6 +1302,7 @@ let images = [
   ...importYoumind(await read('youmind-gptimage15.md'), { model: 'GPT Image 1.5', source: 'youmindgptimage15', prefix: 'o' }),
   ...importDevanshug(await read('devanshug.md')),
   ...(await Promise.all(YM_SKILL_CATS.map(async ([file, cat]) => importYoumindSkill(await read(`youmind-skill-${file}`), cat)))).flat(),
+  ...(await importSamux()),
 ];
 // Sample images that no longer load (checked by hand when the collection was added); those prompts are left out.
 const DEAD_IMAGES = new Set([
