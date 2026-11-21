@@ -141,6 +141,10 @@ const isOn = (p: string) =>
     {!noindex && ld.map((json) => <script type="application/ld+json" set:html={json} />)}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {/* Sample images load from the original collections' CDNs. */}
+    <link rel="preconnect" href="https://images.meigen.ai" crossorigin />
+    <link rel="preconnect" href="https://cms-assets.youmind.com" crossorigin />
+    <link rel="dns-prefetch" href="https://pbs.twimg.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
