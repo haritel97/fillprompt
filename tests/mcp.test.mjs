@@ -159,6 +159,12 @@ test('search_prompts and get_prompt honour the source filter', async () => {
   assert.match(p.credit.collection || '', /Hodios|Hermes/i);
 });
 
+test('search_prompts matches collection display names', async () => {
+  const r = (await call('search_prompts', { type: 'text', query: 'hodios', limit: 5 })).structuredContent;
+  assert.ok(r.total > 0, 'display-name / key tokens find prompts');
+  assert.ok(r.results.some((x) => x.source === 'hodios'));
+});
+
 test('get_prompt returns the full body for oversized text prompts', async () => {
   const r = (await call('search_prompts', { type: 'text', source: 'superdesign', limit: 5 })).structuredContent;
   assert.ok(r.results.length > 0);

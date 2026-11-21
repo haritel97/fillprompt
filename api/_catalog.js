@@ -100,16 +100,22 @@ export function search({ query = '', type, model, category, source, limit = 8 })
   const items = rowsFor(type);
   const terms = [...new Set(words(query))];
   const keep = filter({ type, model, category, source });
+  const sourceName = (key) => {
+    const name = meta().sources?.[key]?.name;
+    return name ? ' ' + words(name).join(' ') + ' ' : '';
+  };
   const scored = [];
   for (const x of items) {
     if (!keep(x)) continue;
     let score = 0;
     let hits = 0;
+    const srcName = sourceName(x.source);
     for (const w of terms) {
       let s = 0;
       for (const a of variants(w)) {
         if (x.idx.title.includes(' ' + a)) s = Math.max(s, 6);
         if (x.idx.tags.includes(' ' + a)) s = Math.max(s, 3);
+        if (srcName.includes(' ' + a) || (x.source && words(x.source).includes(a))) s = Math.max(s, 3);
         if (x.idx.desc.includes(a)) s = Math.max(s, 2);
         if (x.idx.prompt.includes(' ' + a)) s = Math.max(s, 1);
       }
