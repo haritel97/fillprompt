@@ -47,7 +47,7 @@ const en = {
   home: 'home',
   search: 'Search',
   searchPrompts: 'Search prompts',
-  searchHint: 'product, poster, logo, resume…',
+  searchHint: 'product, poster, source:hodios…',
   collection: 'Collection',
   about: 'About',
   more: 'More',
