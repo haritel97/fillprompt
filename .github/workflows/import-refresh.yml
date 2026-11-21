@@ -61,6 +61,11 @@ jobs:
             Triggered by schedule or workflow_dispatch.
           add-paths: |
             src/data/
+            README.md
+            server.json
+            plugins/fillprompt/.claude-plugin/plugin.json
+            plugins/fillprompt/skills/fillprompt/SKILL.md
+            .claude-plugin/marketplace.json
       - name: Fallback PR via gh when Actions cannot open PRs
         if: steps.cpr.outcome == 'failure'
         env:

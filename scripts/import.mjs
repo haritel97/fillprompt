@@ -1458,6 +1458,44 @@ console.log(`video prompts: ${videos.length} of ${rawVideos} raw`, videos.reduce
 console.log(`community skills: ${community.length}`, community.map((s) => `${s.by}/${s.name}=${s.license}`).join(', '));
 console.log(`skills: ${skills.length}`, skills.map((s) => `${s.name}=${s.license}`).join(', '));
 
+// Keep README / registry / plugin marketing counts in step with the rebuilt catalogs.
+const syncMarketingCounts = async (imageN, videoN, textN) => {
+  const total = imageN + videoN + textN;
+  const fmt = (n) => n.toLocaleString('en-US');
+  const plus = `${fmt(Math.floor(total / 100) * 100)}+`;
+  const pages = `${fmt(Math.round(total / 1000) * 1000)}`;
+
+  const patchFile = async (rel, rewrite) => {
+    const file = path.join(ROOT, rel);
+    const before = await readFile(file, 'utf8');
+    const after = rewrite(before);
+    if (after !== before) await writeFile(file, after);
+  };
+
+  await patchFile('README.md', (s) =>
+    s
+      .replace(/\| Image prompts \| [\d,]+ \|/, `| Image prompts | ${fmt(imageN)} |`)
+      .replace(/\| Video prompts \| [\d,]+ \|/, `| Video prompts | ${fmt(videoN)} |`)
+      .replace(/\| Text prompts \| [\d,]+ \|/, `| Text prompts | ${fmt(textN)} |`)
+      .replace(/about [\d,]+ pages/, `about ${pages} pages`),
+  );
+
+  const bumpPlus = (s) => s.replace(/\b[\d,]+\+\b/g, plus);
+  for (const rel of [
+    'server.json',
+    'plugins/fillprompt/.claude-plugin/plugin.json',
+    '.claude-plugin/marketplace.json',
+  ]) {
+    await patchFile(rel, bumpPlus);
+  }
+  await patchFile('plugins/fillprompt/skills/fillprompt/SKILL.md', (s) =>
+    s.replace(/over [\d,]+(\+)? AI prompts/, `over ${fmt(Math.floor(total / 100) * 100)} AI prompts`),
+  );
+  console.log(`marketing counts synced (${fmt(imageN)} / ${fmt(videoN)} / ${fmt(textN)}, ${plus})`);
+};
+
+await syncMarketingCounts(images.length, videos.length, texts.length);
+
 const { buildMcpCatalog } = await import('./mcp-catalog.mjs');
 await buildMcpCatalog();
 

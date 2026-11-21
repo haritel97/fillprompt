@@ -51,8 +51,8 @@ What a collection needs: a license that allows redistribution, English prompts, 
 1. Confirm the collection's license allows redistribution, and note its license URL.
 2. Add it to `SOURCES` in `scripts/import.mjs` with its name, author, URL and license.
 3. Write an import function that maps its entries to the existing prompt shape. Keep prompt text unchanged and keep author credit.
-4. Add a row for it on the Credits page (`src/views/Credits.astro`) and in the README's sources table.
-5. Run `npm run import:fresh` and check the new prompts in the dev server.
+4. Add a row for it in the README's sources table. Credits and `/sources` pick it up automatically from `meta.json` once import runs.
+5. Run `npm run import:fresh` (this also refreshes marketing counts in the README and plugin files) and check the new prompts in the dev server.
 
 The keyword filter (`BLOCK` in `scripts/import.mjs`) keeps the site family-friendly. Do not weaken it.
 

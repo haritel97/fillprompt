@@ -11,11 +11,11 @@ export function GET() {
   const packLines = packs.map((p) => `- [${p.title}](${SITE}/packs/${p.slug}): ${fmt(p.items.length)} prompts — ${p.blurb}`).join('\n');
   const daily = promptOfTheDay();
   const sourceLines = sourceStats
-    .map((s) => `- [${s.name}](${SITE}/source/${s.key}): ${fmt(s.total)} prompts — ${s.license} ([repo](${s.url}))`)
+    .map((s) => `- [${s.name}](${SITE}/source/${s.key}): ${fmt(s.total)} prompts — ${s.license} by ${s.by} ([repo](${s.url}))`)
     .join('\n');
-  const srcs = Object.values(sources)
-    .map((s) => `- [${s.name}](${s.url}) by ${s.by}, ${s.license}`)
-    .join('\n');
+  const skillSource = sources.anthropic
+    ? `- [${sources.anthropic.name}](${sources.anthropic.url}) by ${sources.anthropic.by}, per-skill license (${skills.length} skills, links only)`
+    : '';
   const body = `# fillprompt.com
 
 > A free library of ${fmt(total)} ready-to-copy AI prompts: ${fmt(images.length)} image prompts, ${fmt(videos.length)} video prompts and ${fmt(texts.length)} text prompts, plus ${skills.length + communitySkills.length} agent skills. No account, no ads, no paywall. Every prompt names its original author and links to its source.
@@ -66,9 +66,9 @@ ${cats}
 
 ## Sources and licenses
 
-All content is collected from open-source projects. Prompt text is unchanged; some titles are shortened and categories regrouped. Sample images and clips are shown from the original collections' servers and belong to their authors.
+All content is collected from open-source projects. Prompt text is unchanged; some titles are shortened and categories regrouped. Sample images and clips are shown from the original collections' servers and belong to their authors. Licenses and browse links are listed under Prompt collections above.
 
-${srcs}
+${skillSource}
 
 ## Using this content
 

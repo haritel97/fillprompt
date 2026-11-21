@@ -208,13 +208,16 @@ const isOn = (p: string) =>
           <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"></path></svg>
         </button>
       </div>
-      <nav class="wrap flex items-center gap-5 overflow-x-auto border-t border-line py-2 md:hidden" aria-label={t.navLabel}>
+      <nav class="wrap flex items-center gap-5 overflow-x-auto border-t border-line py-2 pe-6 md:hidden" aria-label={t.navLabel}>
         {
-          nav.map(([p, label]) => (
-            <a href={href(lang, p)} aria-current={isOn(p) ? 'page' : undefined} class:list={['whitespace-nowrap text-sm font-semibold', isOn(p) ? 'bg-mark px-1.5' : 'text-muted']}>
-              {label}
-            </a>
-          ))
+          // Donate stays in the footer on small screens so the strip fits the main sections.
+          nav
+            .filter(([p]) => p !== '/donate')
+            .map(([p, label]) => (
+              <a href={href(lang, p)} aria-current={isOn(p) ? 'page' : undefined} class:list={['whitespace-nowrap text-sm font-semibold', isOn(p) ? 'bg-mark px-1.5' : 'text-muted']}>
+                {label}
+              </a>
+            ))
         }
         <a href={href(lang, '/search')} class:list={['whitespace-nowrap text-sm font-semibold sm:hidden', isOn('/search') ? 'bg-mark px-1.5' : 'text-muted']}>
           {t.search}

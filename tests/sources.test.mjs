@@ -38,18 +38,22 @@ test('README lists the four newer open-source collections', () => {
 
 test('distribution copy stays within catalog scale', () => {
   const floor = Math.floor(total / 100) * 100; // e.g. 12800
+  const claim = (text) => {
+    const m = text.match(/\b([\d,]{4,})\+?\b/);
+    assert.ok(m, 'missing N+ / over-N scale claim');
+    return Number(m[1].replace(/,/g, ''));
+  };
   const files = {
     'server.json': read('server.json').description,
     'plugins/fillprompt/.claude-plugin/plugin.json': read('plugins/fillprompt/.claude-plugin/plugin.json').description,
     '.claude-plugin/marketplace.json': read('.claude-plugin/marketplace.json').plugins[0].description,
+    'plugins/fillprompt/skills/fillprompt/SKILL.md': readFileSync('plugins/fillprompt/skills/fillprompt/SKILL.md', 'utf8'),
   };
   for (const [file, text] of Object.entries(files)) {
-    const m = text.match(/([\d,]+)\+/);
-    assert.ok(m, `${file} should include an N+ prompt count`);
-    const claimed = Number(m[1].replace(/,/g, ''));
+    const claimed = claim(text);
     assert.ok(
       claimed >= floor - 1000 && claimed <= total + 200,
-      `${file} claims ${claimed}+ but catalog has ${total}`,
+      `${file} claims ${claimed} but catalog has ${total}`,
     );
   }
 
@@ -61,4 +65,16 @@ test('distribution copy stays within catalog scale', () => {
   ]) {
     assert.match(readme, new RegExp(`\\| ${label} \\| ${n.toLocaleString('en-US')} \\|`));
   }
+});
+
+test('sitemap and RSS wire up sources browse', () => {
+  const sitemap = readFileSync('src/lib/sitemap.ts', 'utf8');
+  assert.match(sitemap, /['"]\/sources['"]/);
+  assert.match(sitemap, /sourceStats/);
+  assert.match(sitemap, /\/source\/\$\{s\.key\}/);
+
+  const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+  assert.match(rss, /Collection ·/);
+  assert.match(rss, /sourceStats/);
+  assert.match(rss, /\/source\/\$\{s\.key\}/);
 });
