@@ -1,0 +1,25 @@
+name: Media freshness
+
+on:
+  schedule:
+    # Weekly Monday 09:00 UTC — catches dead sample images/clips early.
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: HEAD-check a sample of image and video URLs
+        run: node scripts/sample-media.mjs --limit 10
+      - name: Live MCP smoke (production)
+        run: npm run mcp:smoke

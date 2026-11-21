@@ -20,6 +20,7 @@
     "import:fresh": "node scripts/import.mjs --fetch",
     "mcp:catalog": "node scripts/mcp-catalog.mjs",
     "mcp:smoke": "node scripts/mcp-smoke.mjs",
+    "media:check": "node scripts/sample-media.mjs",
     "brand": "node scripts/og.mjs",
     "test": "node --test \"tests/**/*.test.mjs\"",
     "stats:mcp": "node scripts/mcp-stats.mjs"
