@@ -163,6 +163,7 @@ test('search_prompts matches collection display names', async () => {
   const r = (await call('search_prompts', { type: 'text', query: 'hodios', limit: 5 })).structuredContent;
   assert.ok(r.total > 0, 'display-name / key tokens find prompts');
   assert.ok(r.results.some((x) => x.source === 'hodios'));
+  assert.ok(r.results.some((x) => /Hodios/i.test(x.collection || '')));
 });
 
 test('get_prompt returns the full body for oversized text prompts', async () => {

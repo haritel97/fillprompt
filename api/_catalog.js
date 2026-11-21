@@ -177,16 +177,20 @@ export const credit = (x) => {
 };
 
 /** Short form used in search results. */
-export const summary = (x) => ({
-  title: x.title,
-  type: x.kind,
-  model: x.model,
-  tags: x.tags,
-  source: x.source,
-  url: x.url,
-  preview: x.preview,
-  ...(x.sample ? { sample: x.sample } : {}),
-});
+export const summary = (x) => {
+  const src = x.source ? meta().sources?.[x.source] : null;
+  return {
+    title: x.title,
+    type: x.kind,
+    model: x.model,
+    tags: x.tags,
+    source: x.source,
+    ...(src?.name ? { collection: src.name } : {}),
+    url: x.url,
+    preview: x.preview,
+    ...(x.sample ? { sample: x.sample } : {}),
+  };
+};
 
 /** Counts for the filters, so an agent can pick valid values. */
 export function filters() {
