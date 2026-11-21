@@ -144,6 +144,8 @@ const en = {
       `${n(total)} prompts from ${name} (${license}), shown with credit to their authors.`,
     searchCollection: 'Search this collection',
     back: '← All collections',
+    filterLabel: 'Filter collections by kind',
+    filterAll: 'All',
     kindImage: 'Image',
     kindVideo: 'Video',
     kindText: 'Text',
