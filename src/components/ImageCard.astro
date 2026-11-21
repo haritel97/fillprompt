@@ -17,6 +17,7 @@ const meta = [categoryLabels[lang][p.cats[0]], p.model, srcName].filter(Boolean)
       src={p.images[0]}
       alt={p.title}
       loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
       decoding="async"
       referrerpolicy="no-referrer"
       class="block min-h-20 w-full"
