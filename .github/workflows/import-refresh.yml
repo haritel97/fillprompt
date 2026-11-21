@@ -1,0 +1,57 @@
+name: Import refresh
+
+on:
+  schedule:
+    # Weekly Wednesday 10:00 UTC — refresh catalogs after Monday's media check.
+    - cron: '0 10 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: import-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Fetch sources and rebuild catalogs
+        env:
+          # Lifts the unauthenticated GitHub API limit while listing community skills.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run import:fresh
+      - name: Tests
+        run: npm test
+      - name: Sample media still loads
+        run: node scripts/sample-media.mjs --limit 6
+      - name: Open PR if data changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/import-refresh
+          delete-branch: true
+          title: Refresh open-source prompt catalogs
+          commit-message: |
+            Refresh open-source prompt catalogs.
+
+            Re-fetch source collections and rebuild image, video, text, and MCP data.
+          body: |
+            Automated weekly import of the open-source prompt collections behind fillprompt.com.
+
+            - Ran `npm run import:fresh` (re-download + rebuild `src/data`)
+            - Ran `npm test` and a sample media HEAD check
+            - Review the diff for unexpected drops or NSFW filter changes, then merge
+
+            Triggered by schedule or workflow_dispatch.
+          add-paths: |
+            src/data/

@@ -93,9 +93,13 @@ The site runs at http://localhost:4321. The prompt data is already in `src/data/
 | `npm run preview` | Serve the built site locally |
 | `npm run import` | Rebuild `src/data/*.json` from the files cached in `sources/` |
 | `npm run import:fresh` | Download every source again, then import |
+| `npm run mcp:catalog` | Rebuild the gzipped MCP search/full catalogs |
+| `npm run media:check` | HEAD-check a sample of image and video preview URLs |
 | `npm run brand` | Regenerate the share image, touch icon and donation QR |
 | `npm test` | Data checks and MCP server tests |
 | `npm run stats:mcp` | MCP usage for the last 30 days |
+
+Scheduled GitHub Actions: **CI** on every push, **Media freshness** (weekly sample URL check + MCP smoke), and **Import refresh** (weekly `import:fresh` that opens a PR when catalogs change).
 
 ## Project layout
 

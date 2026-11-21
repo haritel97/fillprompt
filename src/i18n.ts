@@ -68,6 +68,7 @@ const en = {
     mcp: 'MCP server for AI agents',
     rss: 'RSS feed',
     sources: 'Sources, licenses & credits',
+    browseSources: 'Browse by collection',
     takedown: 'Request content removal',
     donate: 'Support this site',
     strip: 'Free · no account · open source',

@@ -246,6 +246,7 @@ const isOn = (p: string) =>
         <div>
           <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-paper/50">{t.about}</p>
           <ul class="mt-3 space-y-2 text-sm">
+            <li><a class="hover:text-mark" href={href(lang, '/sources')}>{t.footer.browseSources}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/credits')}>{t.footer.sources}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/credits') + '#removal'}>{t.footer.takedown}</a></li>
             <li><a class="hover:text-mark" href={href(lang, '/donate')}><span class="text-hot" aria-hidden="true">♥</span> {t.footer.donate}</a></li>
