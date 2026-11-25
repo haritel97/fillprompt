@@ -5,7 +5,7 @@ description: Find a proven, ready-made prompt on fillprompt.com and fill it in f
 
 # fillprompt
 
-fillprompt.com is a free library of over 12,800 AI prompts collected from open-source collections, each with sample output (where available) and credit to its author. The `fillprompt` MCP server in this plugin searches it. Browse packs at https://fillprompt.com/packs and collections at https://fillprompt.com/sources.
+fillprompt.com is a free library of over 12,900 AI prompts collected from open-source collections, each with sample output (where available) and credit to its author. The `fillprompt` MCP server in this plugin searches it. Browse packs at https://fillprompt.com/packs and collections at https://fillprompt.com/sources.
 
 ## Steps
 

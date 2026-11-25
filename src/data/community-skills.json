@@ -2,9 +2,9 @@
   {
     "name": "hyperframes",
     "by": "heygen-com",
-    "description": "AI video you can actually edit. HyperFrames is a free, open-source AI video editor. Describe any video and get a real project you can change down to the frame.",
+    "description": "Open-source AI video editor: edit your own footage, or create and remake any video with Claude Code, Codex or the free Studio app. Write HTML, render MP4. By HeyGen.",
     "license": "Apache-2.0",
-    "stars": 87813,
+    "stars": 90066,
     "topic": "motion",
     "url": "https://github.com/heygen-com/hyperframes"
   },
@@ -13,7 +13,7 @@
     "by": "coreyhaines31",
     "description": "Marketing skills for Claude Code and AI agents. CRO, copywriting, SEO, analytics, and growth engineering.",
     "license": "MIT",
-    "stars": 61870,
+    "stars": 62609,
     "topic": "more",
     "url": "https://github.com/coreyhaines31/marketingskills"
   },
@@ -22,7 +22,7 @@
     "by": "Nutlope",
     "description": "Anti-AI-slop design skill for Claude Code, Cursor, and Codex.",
     "license": "MIT",
-    "stars": 59029,
+    "stars": 61002,
     "topic": "design",
     "url": "https://github.com/Nutlope/hallmark"
   },
@@ -31,7 +31,7 @@
     "by": "K-Dense-AI",
     "description": "Turn any AI agent into an AI Scientist. The #1 Agent Skills library for science, used by 250,000+ scientists worldwide. 177 ready-to-use validated skills plus 100+ scientific databases covering biology, chemistry, medicine, and drug discovery. Compatible with Cursor, Claude Code, Codex, Pi, Antigravity, and the open Agent Skills standard.",
     "license": "MIT",
-    "stars": 58025,
+    "stars": 58459,
     "topic": "more",
     "url": "https://github.com/K-Dense-AI/scientific-agent-skills"
   },
@@ -40,7 +40,7 @@
     "by": "sickn33",
     "description": "3,000+ reusable AI agent skills for Claude Code, Codex, Cursor and Gemini CLI. AAS Core adds local catalog discovery, agent-owned selection and plan preview. CLI, MCP and plugins.",
     "license": "MIT",
-    "stars": 50101,
+    "stars": 50319,
     "topic": "more",
     "url": "https://github.com/sickn33/agentic-awesome-skills"
   },
@@ -49,7 +49,7 @@
     "by": "github",
     "description": "Community-contributed instructions, agents, skills, and configurations to help you make the most of GitHub Copilot.",
     "license": "MIT",
-    "stars": 41427,
+    "stars": 41556,
     "topic": "more",
     "url": "https://github.com/github/awesome-copilot"
   },
@@ -58,7 +58,7 @@
     "by": "VoltAgent",
     "description": "A curated collection of 1000+ agent skills from official dev teams and the community, compatible with Claude Code, Codex, Gemini CLI, Cursor, and more.",
     "license": "MIT",
-    "stars": 37418,
+    "stars": 37547,
     "topic": "more",
     "url": "https://github.com/VoltAgent/awesome-agent-skills"
   },
@@ -67,7 +67,7 @@
     "by": "ahujasid",
     "description": "Community plugin to control Blender 3D with any LLM of your choice. Not affiliated with the official Blender Foundation.",
     "license": "MIT",
-    "stars": 35258,
+    "stars": 35777,
     "topic": "motion",
     "url": "https://github.com/ahujasid/mcp-for-blender"
   },
@@ -76,7 +76,7 @@
     "by": "Vincentwei1021",
     "description": "AI video skill for Claude Code & Codex — cinematic, editable product promos with Remotion: 124 shot recipe cards, 150 motion previews, beat sync, sound design, Motion Workbench & JianYing (CapCut CN) export.",
     "license": "Apache-2.0",
-    "stars": 21961,
+    "stars": 22579,
     "topic": "motion",
     "url": "https://github.com/Vincentwei1021/video-shotcraft"
   },
@@ -85,7 +85,7 @@
     "by": "greensock",
     "description": "Official AI skills for GSAP. These skills teach AI coding agents how to correctly use GSAP (GreenSock Animation Platform), including best practices, common animation patterns, and plugin usage.",
     "license": "MIT",
-    "stars": 18872,
+    "stars": 19062,
     "topic": "motion",
     "url": "https://github.com/greensock/gsap-skills"
   },
@@ -94,7 +94,7 @@
     "by": "google-labs-code",
     "description": "A library of Agent Skills designed to work with the Stitch MCP server. Each skill follows the Agent Skills open standard, for compatibility with coding agents such as Antigravity, Gemini CLI, Claude Code, Cursor.",
     "license": "Apache-2.0",
-    "stars": 11378,
+    "stars": 12928,
     "topic": "design",
     "url": "https://github.com/google-labs-code/stitch-skills"
   },
@@ -103,34 +103,34 @@
     "by": "gamedev-skills",
     "description": "Make games with your AI coding agent: 79 game-dev skills and a router for Godot, Unity, Unreal, Roblox, three.js, Phaser and 6 more engines. Checked on the real engines.",
     "license": "Apache-2.0",
-    "stars": 9950,
+    "stars": 11134,
     "topic": "more",
     "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills"
-  },
-  {
-    "name": "seedance2-skill",
-    "by": "dexhunter",
-    "description": "skill to create best prompts for generating videos with seedance2.0",
-    "license": "MIT",
-    "stars": 4557,
-    "topic": "motion",
-    "url": "https://github.com/dexhunter/seedance2-skill"
   },
   {
     "name": "claude-animated-shorts",
     "by": "mromidev",
     "description": "Free Claude skill: viral animated story shorts (2D characters in a 3D world) with three.js + Remotion",
     "license": "MIT",
-    "stars": 4466,
+    "stars": 4914,
     "topic": "motion",
     "url": "https://github.com/mromidev/claude-animated-shorts"
+  },
+  {
+    "name": "seedance2-skill",
+    "by": "dexhunter",
+    "description": "skill to create best prompts for generating videos with seedance2.0",
+    "license": "MIT",
+    "stars": 4581,
+    "topic": "motion",
+    "url": "https://github.com/dexhunter/seedance2-skill"
   },
   {
     "name": "davinci-resolve-mcp",
     "by": "samuelgursky",
     "description": "MCP server integration for DaVinci Resolve Studio",
     "license": "MIT",
-    "stars": 4271,
+    "stars": 4374,
     "topic": "motion",
     "url": "https://github.com/samuelgursky/davinci-resolve-mcp"
   },
@@ -139,7 +139,7 @@
     "by": "oil-oil",
     "description": "UI design skill for Claude Code, Codex and other AI agents: explore distinct directions, compare them side by side, refine against real screenshots. 给 AI Agent 用的 UI 设计 Skill。",
     "license": "MIT",
-    "stars": 3711,
+    "stars": 3988,
     "topic": "design",
     "url": "https://github.com/oil-oil/oil-ui"
   },
@@ -148,34 +148,34 @@
     "by": "plugin87",
     "description": "Design-system skills for Claude Code, Codex, Cursor, Copilot and Gemini CLI: DTCG tokens, WCAG 2.2 AA to AAA, 2,144 design systems, 26 skills, any-framework code, and 52 gates that fail the build instead of taking the agent's word for it.",
     "license": "MIT",
-    "stars": 3216,
+    "stars": 3235,
     "topic": "design",
     "url": "https://github.com/plugin87/ux-ui-agent-skills"
-  },
-  {
-    "name": "claude-code-video-toolkit",
-    "by": "digitalsamba",
-    "description": "Make videos with Claude Code: script, AI voiceover, music, video clips and render, on open-source models that cost cents",
-    "license": "MIT",
-    "stars": 2697,
-    "topic": "motion",
-    "url": "https://github.com/digitalsamba/claude-code-video-toolkit"
   },
   {
     "name": "blender-skills",
     "by": "EL4CTEO",
     "description": "Professional Blender 5.3 workflows as Agent Skills for Claude Code, Codex, Gemini CLI, Copilot and Cursor: modeling, UVs, PBR, baking, rigging, animation, export and QA.",
     "license": "MIT",
-    "stars": 2611,
+    "stars": 2906,
     "topic": "motion",
     "url": "https://github.com/EL4CTEO/blender-skills"
+  },
+  {
+    "name": "claude-code-video-toolkit",
+    "by": "digitalsamba",
+    "description": "Make videos with Claude Code: script, AI voiceover, music, video clips and render, on open-source models that cost cents",
+    "license": "MIT",
+    "stars": 2763,
+    "topic": "motion",
+    "url": "https://github.com/digitalsamba/claude-code-video-toolkit"
   },
   {
     "name": "reanimate",
     "by": "NiazMorshed2007",
     "description": "A Claude Code skill that reverse-engineers any animation frame by frame, then proves the copy moves the same.",
     "license": "MIT",
-    "stars": 2077,
+    "stars": 2550,
     "topic": "motion",
     "url": "https://github.com/NiazMorshed2007/reanimate"
   },
@@ -184,7 +184,7 @@
     "by": "echris6",
     "description": "Claude Code skill kit for premium AI-assisted business videos: independent critic loop, motion principles from 28 launch films, quality bar, sound design, business offers, Three.js patterns, scripts",
     "license": "MIT",
-    "stars": 1438,
+    "stars": 1459,
     "topic": "motion",
     "url": "https://github.com/echris6/motion-video-kit"
   },
@@ -193,7 +193,7 @@
     "by": "freshtechbro",
     "description": "A comprehensive collection of Claude Code skills for modern web development, specializing in 3D graphics, animation, and interactive web experiences.",
     "license": "MIT",
-    "stars": 1425,
+    "stars": 1445,
     "topic": "design",
     "url": "https://github.com/freshtechbro/claudedesignskills"
   },
@@ -202,61 +202,61 @@
     "by": "adithya-s-k",
     "description": "Agent skills for Manim to create 3Blue1Brown style animations.",
     "license": "MIT",
-    "stars": 1351,
+    "stars": 1365,
     "topic": "motion",
     "url": "https://github.com/adithya-s-k/manim_skill"
-  },
-  {
-    "name": "awesome-claude-design",
-    "by": "rohitg00",
-    "description": "Claude Design DESIGN.md prompts by aesthetic family, remix recipes, skills, video teardowns, X signal, honest community takes.",
-    "license": "MIT",
-    "stars": 1244,
-    "topic": "design",
-    "url": "https://github.com/rohitg00/awesome-claude-design"
   },
   {
     "name": "claude-remotion-skill",
     "by": "haidrrrry",
     "description": "Open-source Claude agent skill that teaches Claude Code, Claude Desktop & Claude AI to create and edit professional motion graphics videos with Remotion. AI video editing, B-roll, captions, sound design — from one prompt.",
     "license": "MIT",
-    "stars": 1225,
+    "stars": 1340,
     "topic": "motion",
     "url": "https://github.com/haidrrrry/claude-remotion-skill"
+  },
+  {
+    "name": "awesome-claude-design",
+    "by": "rohitg00",
+    "description": "Claude Design DESIGN.md prompts by aesthetic family, remix recipes, skills, video teardowns, X signal, honest community takes.",
+    "license": "MIT",
+    "stars": 1250,
+    "topic": "design",
+    "url": "https://github.com/rohitg00/awesome-claude-design"
   },
   {
     "name": "Adobe_Premiere_Pro_MCP",
     "by": "hetpatel-11",
     "description": "Adobe Premiere Pro MCP. Tools for AI-driven video editing via MCP, for Codex, Claude, and other MCP clients.",
     "license": "MIT",
-    "stars": 912,
+    "stars": 943,
     "topic": "motion",
     "url": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP"
-  },
-  {
-    "name": "after-effects-mcp",
-    "by": "Dakkshin",
-    "description": "MCP Server for Adobe After Effects. Enables remote control (compositions, text, shapes, solids, properties) via the Model Context Protocol using ExtendScript.",
-    "license": "MIT",
-    "stars": 909,
-    "topic": "motion",
-    "url": "https://github.com/Dakkshin/after-effects-mcp"
   },
   {
     "name": "rossark-motion-skill",
     "by": "rossark0",
     "description": "Turn any SVG into a professional 60 fps animation. A Claude Code skill that brings anything drawn to life: live faces, full-body acting and whole scenes, in React Native and SwiftUI.",
     "license": "MIT",
-    "stars": 905,
+    "stars": 934,
     "topic": "motion",
     "url": "https://github.com/rossark0/rossark-motion-skill"
+  },
+  {
+    "name": "after-effects-mcp",
+    "by": "Dakkshin",
+    "description": "MCP Server for Adobe After Effects. Enables remote control (compositions, text, shapes, solids, properties) via the Model Context Protocol using ExtendScript.",
+    "license": "MIT",
+    "stars": 930,
+    "topic": "motion",
+    "url": "https://github.com/Dakkshin/after-effects-mcp"
   },
   {
     "name": "claude-motion-design",
     "by": "howseen-ai",
     "description": "A Claude Code skill to make motion design videos in pure code: HTML + Playwright + ffmpeg. No After Effects, no Remotion license.",
     "license": "MIT",
-    "stars": 879,
+    "stars": 893,
     "topic": "motion",
     "url": "https://github.com/howseen-ai/claude-motion-design"
   },
@@ -265,7 +265,7 @@
     "by": "leancoderkavy",
     "description": "Adobe Premiere Pro MCP — independent, local-first server for supported workflows. Connect Claude, Codex, or Cursor through a local CEP bridge.",
     "license": "MIT",
-    "stars": 567,
+    "stars": 584,
     "topic": "motion",
     "url": "https://github.com/leancoderkavy/premiere-pro-mcp"
   },
@@ -274,34 +274,34 @@
     "by": "jnMetaCode",
     "description": "Claude Code Skill that turns any idea into a cinematic, model-ready video prompt — Sora · Kling · Veo · Seedance. 21 genre templates, 5-stage structure, eval-tested. Distilled from the AI short Hollywood director PJ Ace called \"one of the best short films I've seen in years.\"",
     "license": "MIT",
-    "stars": 558,
+    "stars": 567,
     "topic": "motion",
     "url": "https://github.com/jnMetaCode/ai-shortfilm-prompts"
-  },
-  {
-    "name": "AI-Faceless-Video-Generator",
-    "by": "SamurAIGPT",
-    "description": "Generate a video script, voice and a talking face completely with AI",
-    "license": "MIT",
-    "stars": 544,
-    "topic": "motion",
-    "url": "https://github.com/SamurAIGPT/AI-Faceless-Video-Generator"
   },
   {
     "name": "code-video-showcase",
     "by": "Moessif",
     "description": "A pure-code beat-synced showcase-video Agent Skill: HTML/Canvas/SVG/Three.js frame-by-frame + Python numpy/scipy score + FFmpeg. No generative models.",
     "license": "MIT",
-    "stars": 535,
+    "stars": 564,
     "topic": "motion",
     "url": "https://github.com/Moessif/code-video-showcase"
+  },
+  {
+    "name": "AI-Faceless-Video-Generator",
+    "by": "SamurAIGPT",
+    "description": "Generate a video script, voice and a talking face completely with AI",
+    "license": "MIT",
+    "stars": 551,
+    "topic": "motion",
+    "url": "https://github.com/SamurAIGPT/AI-Faceless-Video-Generator"
   },
   {
     "name": "motion2code",
     "by": "lovisdotio",
     "description": "Skills for coding agents: rebuild a motion design video as looping SVG + GSAP code, checked frame by frame against the source",
     "license": "MIT",
-    "stars": 361,
+    "stars": 365,
     "topic": "motion",
     "url": "https://github.com/lovisdotio/motion2code"
   },
@@ -310,7 +310,7 @@
     "by": "Evolink-AI",
     "description": "Curated Blender + Seedance workflows for AI filmmaking: previs, camera control, Blender MCP, reference video, and agent-guided use cases.",
     "license": "CC-BY-4.0",
-    "stars": 355,
+    "stars": 356,
     "topic": "motion",
     "url": "https://github.com/Evolink-AI/Awesome-Blender-Seedance-Workflow-Usecases"
   },
@@ -319,7 +319,7 @@
     "by": "KyaniteLabs",
     "description": "Guardrailed video editing MCP server for AI agents. FFmpeg, Hyperframes, repurposing tools, Python client, and CLI. Local, fast, free.",
     "license": "Apache-2.0",
-    "stars": 273,
+    "stars": 281,
     "topic": "motion",
     "url": "https://github.com/KyaniteLabs/kinocut"
   },
@@ -328,16 +328,25 @@
     "by": "Yusuke710",
     "description": "SKILL.md for creating animations with Manim.",
     "license": "MIT",
-    "stars": 215,
+    "stars": 221,
     "topic": "motion",
     "url": "https://github.com/Yusuke710/manim-skill"
+  },
+  {
+    "name": "video-agent-skills",
+    "by": "Melvynx",
+    "description": "Free Claude Code skills to script, research and edit short-form videos. Markdown only.",
+    "license": "MIT",
+    "stars": 214,
+    "topic": "motion",
+    "url": "https://github.com/Melvynx/video-agent-skills"
   },
   {
     "name": "cinematic-video-prompt-skill",
     "by": "Rylaispirit",
     "description": "AI video prompt cheat sheet & Claude Skill: cinematic camera angles, camera movement, lighting, composition, color grading for Veo 3, Kling, Sora, Runway, Midjourney. 700+ terms with Vietnamese explanations.",
     "license": "MIT",
-    "stars": 204,
+    "stars": 208,
     "topic": "motion",
     "url": "https://github.com/Rylaispirit/cinematic-video-prompt-skill"
   },
@@ -346,34 +355,34 @@
     "by": "Square-Zero-Labs",
     "description": "AI Agent Skill for Prompting Video Models",
     "license": "Apache-2.0",
-    "stars": 197,
+    "stars": 199,
     "topic": "motion",
     "url": "https://github.com/Square-Zero-Labs/video-prompting-skill"
-  },
-  {
-    "name": "video-agent-skills",
-    "by": "Melvynx",
-    "description": "Free Claude Code skills to script, research and edit short-form videos. Markdown only.",
-    "license": "MIT",
-    "stars": 193,
-    "topic": "motion",
-    "url": "https://github.com/Melvynx/video-agent-skills"
   },
   {
     "name": "vibe-creating-skill",
     "by": "Alisa0808",
     "description": "Open-source, bilingual AI video-prompt skill — rewrite ideas into model-ready text-to-video prompts. A portable Agent Skill (Claude Code, Codex, OpenClaw, Hermes); generate via Atlas Cloud — Seedance 2.0, Kling, Veo, Hailuo, Wan, Vidu, Gemini Omni, Grok Imagine.",
     "license": "MIT",
-    "stars": 164,
+    "stars": 168,
     "topic": "motion",
     "url": "https://github.com/Alisa0808/vibe-creating-skill"
+  },
+  {
+    "name": "awesome-motion-design-agent-skills",
+    "by": "frankxai",
+    "description": "Curated motion design agent skills: GSAP, Motion, Remotion, Lottie and Rive for web animation, programmatic video and motion QA. Installable in Claude Code, Codex, Copilot.",
+    "license": "CC0-1.0",
+    "stars": 160,
+    "topic": "motion",
+    "url": "https://github.com/frankxai/awesome-motion-design-agent-skills"
   },
   {
     "name": "ffmpeg-mcp",
     "by": "video-creator",
     "description": "Using ffmpeg command line to achieve an mcp server, can be very convenient, through the dialogue to achieve the local video search, tailoring, stitching, playback,clip, overlay, concat and other functions",
     "license": "MIT",
-    "stars": 155,
+    "stars": 156,
     "topic": "motion",
     "url": "https://github.com/video-creator/ffmpeg-mcp"
   },
@@ -387,20 +396,11 @@
     "url": "https://github.com/mrbuslov/capcut-ai-editor"
   },
   {
-    "name": "awesome-motion-design-agent-skills",
-    "by": "frankxai",
-    "description": "Curated motion design agent skills: GSAP, Motion, Remotion, Lottie and Rive for web animation, programmatic video and motion QA. Installable in Claude Code, Codex, Copilot.",
-    "license": "CC0-1.0",
-    "stars": 128,
-    "topic": "motion",
-    "url": "https://github.com/frankxai/awesome-motion-design-agent-skills"
-  },
-  {
     "name": "web-animation-skills",
     "by": "iart-ai",
     "description": "Web animation skills for Claude Code — GSAP, SVG, Lottie, micro-interactions, page transitions, and 60fps performance, installed straight into your agent.",
     "license": "MIT",
-    "stars": 105,
+    "stars": 115,
     "topic": "motion",
     "url": "https://github.com/iart-ai/web-animation-skills"
   },
