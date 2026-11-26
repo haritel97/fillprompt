@@ -22,9 +22,9 @@ Pick one, fill in the blanks, paste it into ChatGPT, Gemini, Claude or your vide
 
 | | Count | Written for |
 |---|---:|---|
-| Image prompts | 5,705 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 and any image model |
-| Video prompts | 970 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
-| Text prompts | 6,193 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
+| Image prompts | 5,710 | Nano Banana, Nano Banana Pro, GPT Image, GPT Image 1.5, GPT Image 2, Seedream 4.5 and any image model |
+| Video prompts | 991 | Seedance, Seedance 2.0 and 2.5, Gemini Omni, MiniMax Hailuo 3, Grok Imagine |
+| Text prompts | 6,260 | ChatGPT, Claude, Gemini, any model (roles, system prompts, agents) |
 | Agent skills | 67 | Claude Code and other agents (links to their own repositories) |
 
 - **Sample results.** Image and video prompts show the output they produced, loaded from the original collection.
