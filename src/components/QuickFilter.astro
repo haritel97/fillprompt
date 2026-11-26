@@ -92,16 +92,19 @@ const cfg = {
       a.href = cfg.base + slug;
       const frame = el('span', 'tile-img aspect-video overflow-hidden');
       if (poster) {
-        const im = el('img', 'h-full w-full object-cover');
+        const im = el('img', 'size-full object-cover');
         im.src = poster;
         im.alt = title;
         im.loading = 'lazy';
         im.referrerPolicy = 'no-referrer';
-        im.onerror = () => (im.style.visibility = 'hidden');
+        im.onerror = () => {
+          im.removeAttribute('src');
+          frame.classList.add('bg-line/60');
+        };
         frame.append(im);
       } else if (clip) {
         // No poster: show a frame of the clip.
-        const vid = el('video', 'h-full w-full object-cover');
+        const vid = el('video', 'size-full object-cover');
         vid.src = clip + '#t=0.5';
         vid.muted = true;
         vid.playsInline = true;

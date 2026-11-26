@@ -39,8 +39,10 @@ jobs:
       - name: Sample media still loads
         run: node scripts/sample-media.mjs --limit 6
       # Requires: repo Settings → Actions → General → allow GitHub Actions to create and approve pull requests.
+      # continue-on-error so the gh fallback still runs when the Actions token cannot open PRs.
       - name: Open PR if data changed
         id: cpr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -67,7 +69,7 @@ jobs:
             plugins/fillprompt/skills/fillprompt/SKILL.md
             .claude-plugin/marketplace.json
       - name: Fallback PR via gh when Actions cannot open PRs
-        if: steps.cpr.outcome == 'failure'
+        if: always() && steps.cpr.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -84,4 +86,3 @@ jobs:
           else
             echo "No import branch to open a PR from."
           fi
-          exit 0

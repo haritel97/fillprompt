@@ -21,8 +21,8 @@ const badge = [v.model, srcName].filter(Boolean).join(' · ');
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
           referrerpolicy="no-referrer"
-          class="h-full w-full object-cover"
-          onerror="this.style.visibility='hidden'"
+          class="size-full object-cover"
+          onerror="this.removeAttribute('src'); this.parentElement.classList.add('bg-line/60')"
         />
       ) : (
         // Some collections publish no poster image: show a frame of the clip instead.
