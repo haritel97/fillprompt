@@ -50,3 +50,13 @@ test('the site headers, build files kept a year, search indexes a day, robots.tx
   assert.equal(await (await get('/robots.txt')).text(), await readFile('public/robots.txt', 'utf8'));
   assert.equal((await get('/api/nothing-here')).status, 404);
 });
+
+test('every page counts visits with Cloudflare Web Analytics', { skip }, async () => {
+  const beacon = `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"a2c023ea16904f84917c4522e5ca63d8"}'></script></body>`;
+  const home = await (await get('/')).text();
+  const prompt = home.match(/href="(\/prompt\/[a-z0-9-]+)"/)?.[1];
+  for (const path of ['/', prompt, '/packs', '/mcp', '/prompt/no-such-prompt-anywhere']) {
+    const html = await (await get(path)).text();
+    assert.equal(html.split(beacon).length, 2, `${path} carries the beacon once`);
+  }
+});
