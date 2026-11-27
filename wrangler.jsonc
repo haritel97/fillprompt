@@ -1,0 +1,20 @@
+// fillprompt.com on Cloudflare Workers: the Astro site as static assets, and a Worker for /api/* (the MCP
+// server). Build with `npm run cf:build`, try with `npm run cf:preview`, publish with `npm run cf:deploy`.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fillprompt",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-11-27",
+  // api/_catalog.js imports node:fs and node:path (used only under Node)
+  "compatibility_flags": ["nodejs_compat"],
+  "alias": { "@vercel/functions": "./cloudflare/wait-until.js" },
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    // cleanUrls and no trailing slash, as on Vercel: /packs serves packs/index.html, /packs/ redirects
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}

@@ -6,7 +6,13 @@ import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 process.env.MCP_USAGE = 'off';
-const { POST, GET, OPTIONS } = await import(pathToFileURL(path.resolve('api/mcp.js')).href);
+// With MCP_URL set (npm run test:cloudflare) the same tests ask a running server, such as the Worker
+// under wrangler dev, instead of calling api/mcp.js in this process.
+const remote = process.env.MCP_URL;
+const ask = (request) => fetch(new Request(remote, request), { redirect: 'manual' });
+const { POST, GET, OPTIONS } = remote
+  ? { POST: ask, GET: ask, OPTIONS: () => ask(new Request(remote, { method: 'OPTIONS' })) }
+  : await import(pathToFileURL(path.resolve('api/mcp.js')).href);
 
 const VERSION = '2025-06-18';
 let id = 0;
