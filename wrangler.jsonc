@@ -7,6 +7,12 @@
   "compatibility_date": "2026-11-27",
   // api/_catalog.js imports node:fs and node:path (used only under Node)
   "compatibility_flags": ["nodejs_compat"],
+  // The site itself and www (which a Redirect Rule in the dashboard sends on to the site itself).
+  // mytemplate.my and www.mytemplate.my are only Redirect Rules on their own zone, to fillprompt.com.
+  "routes": [
+    { "pattern": "fillprompt.com", "custom_domain": true },
+    { "pattern": "www.fillprompt.com", "custom_domain": true }
+  ],
   "alias": { "@vercel/functions": "./cloudflare/wait-until.js" },
   "assets": {
     "directory": "dist",
