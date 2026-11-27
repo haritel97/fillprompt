@@ -1,6 +1,8 @@
 // The prompt catalog behind the MCP server.
 // Loads a slim gzipped search index first; full prompt bodies load per kind on demand.
 // Built by `node scripts/mcp-catalog.mjs` into src/data/mcp/.
+// Where the data comes from is a store: files in src/data/mcp under Node (the default), or the
+// Worker's static assets on Cloudflare (cloudflare/worker.js calls useStore).
 import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import path from 'node:path';
@@ -9,60 +11,74 @@ import { variants } from '../src/lib/synonyms.mjs';
 export const SITE = 'https://fillprompt.com';
 export const KINDS = ['image', 'video', 'text'];
 const PATHS = { image: '/prompt/', video: '/video/', text: '/text-prompt/' };
-const MCP = path.join(process.cwd(), 'src', 'data', 'mcp');
 
 const words = (s) => (s.toLowerCase().match(/[a-z0-9]+/g) || []).filter((w) => w.length > 1);
-const readGz = (f) => JSON.parse(gunzipSync(readFileSync(path.join(MCP, f))));
 
-let metaCache;
-const searchCache = Object.create(null);
-const fullCache = Object.create(null);
-const xlCache = Object.create(null);
-
-function meta() {
-  if (!metaCache) metaCache = readGz('meta.json.gz');
-  return metaCache;
+/** The files in src/data/mcp. full() gives one prompt's record with its whole text (long ones live in -xl). */
+function fileStore(dir = path.join(process.cwd(), 'src', 'data', 'mcp')) {
+  const readGz = (f) => JSON.parse(gunzipSync(readFileSync(path.join(dir, f))));
+  let metaCache;
+  const fullCache = Object.create(null);
+  const xlCache = Object.create(null);
+  const xlMap = (kind) => {
+    if (xlCache[kind] === undefined) {
+      try {
+        xlCache[kind] = readGz(`full-${kind}-xl.json.gz`);
+      } catch {
+        xlCache[kind] = null;
+      }
+    }
+    return xlCache[kind];
+  };
+  return {
+    meta: () => (metaCache ??= readGz('meta.json.gz')),
+    search: async (kind) => readGz(`search-${kind}.json.gz`),
+    full: async (kind, slug) => {
+      const body = (fullCache[kind] ??= readGz(`full-${kind}.json.gz`))[slug];
+      if (!body?.xl) return body;
+      return { ...body, prompt: xlMap(kind)?.[slug]?.prompt || body.prompt };
+    },
+  };
 }
 
-function searchRows(kind) {
+let store = fileStore();
+const searchCache = Object.create(null);
+
+/** Read the catalog from somewhere else: { meta(), search(kind), full(kind, slug) }. */
+export function useStore(next) {
+  store = next;
+  for (const k of Object.keys(searchCache)) delete searchCache[k];
+}
+
+function meta() {
+  return store.meta();
+}
+
+async function searchRows(kind) {
   if (!searchCache[kind]) {
-    const rows = readGz(`search-${kind}.json.gz`);
-    for (const x of rows) {
-      x.kind = kind;
-      x.url = SITE + PATHS[kind] + x.slug;
-    }
-    searchCache[kind] = rows;
+    searchCache[kind] = store.search(kind).then((rows) => {
+      for (const x of rows) {
+        x.kind = kind;
+        x.url = SITE + PATHS[kind] + x.slug;
+      }
+      return rows;
+    });
+    searchCache[kind].catch(() => delete searchCache[kind]);
   }
   return searchCache[kind];
 }
 
-function fullMap(kind) {
-  if (!fullCache[kind]) fullCache[kind] = readGz(`full-${kind}.json.gz`);
-  return fullCache[kind];
-}
-
-function xlMap(kind) {
-  if (xlCache[kind] === undefined) {
-    try {
-      xlCache[kind] = readGz(`full-${kind}-xl.json.gz`);
-    } catch {
-      xlCache[kind] = null;
-    }
-  }
-  return xlCache[kind];
-}
-
 /** Search rows for the given kinds (default: all). */
-function rowsFor(type) {
+async function rowsFor(type) {
   const kinds = type && KINDS.includes(type) ? [type] : KINDS;
-  return kinds.flatMap(searchRows);
+  return (await Promise.all(kinds.map(searchRows))).flat();
 }
 
 /** Hydrate one search hit (or slug) into the full prompt record used by get/random. */
-function hydrate(kind, slug) {
-  const body = fullMap(kind)[slug];
+async function hydrate(kind, slug) {
+  const body = await store.full(kind, slug);
   if (!body) return;
-  const prompt = body.xl ? xlMap(kind)?.[slug]?.prompt || body.prompt : body.prompt;
+  const prompt = body.prompt;
   return {
     kind,
     slug,
@@ -96,8 +112,8 @@ function filter({ type, model, category, source }) {
 }
 
 /** Ranked search: title hits weigh most, then category/model, summary and prompt text. */
-export function search({ query = '', type, model, category, source, limit = 8 }) {
-  const items = rowsFor(type);
+export async function search({ query = '', type, model, category, source, limit = 8 }) {
+  const items = await rowsFor(type);
   const terms = [...new Set(words(query))];
   const keep = filter({ type, model, category, source });
   const sourceName = (key) => {
@@ -132,15 +148,15 @@ export function search({ query = '', type, model, category, source, limit = 8 })
 }
 
 /** One prompt picked at random from those that pass the same filters as search(); undefined if none do. */
-export function random({ type, model, category, source } = {}, pick = Math.random) {
-  const matches = rowsFor(type).filter(filter({ type, model, category, source }));
+export async function random({ type, model, category, source } = {}, pick = Math.random) {
+  const matches = (await rowsFor(type)).filter(filter({ type, model, category, source }));
   if (!matches.length) return;
   const hit = matches[Math.floor(pick() * matches.length)];
   return hydrate(hit.kind, hit.slug);
 }
 
 /** Find a prompt by its page URL or slug. */
-export function find(ref, type) {
+export async function find(ref, type) {
   const s = String(ref).trim().replace(/[?#].*$/, '').replace(/\/+$/, '');
   const m = s.match(/\/(prompt|video|text-prompt)\/([^/]+)$/);
   if (m) {
@@ -149,7 +165,7 @@ export function find(ref, type) {
   }
   const slug = s.split('/').pop();
   for (const k of type ? [type] : KINDS) {
-    const x = hydrate(k, slug);
+    const x = await hydrate(k, slug);
     if (x) return x;
   }
 }

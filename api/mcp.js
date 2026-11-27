@@ -61,7 +61,7 @@ const mcp = createMcpHandler(
       },
       async (args) =>
         timed('search_prompts', args.type, async () => {
-          const { total, results } = search(args);
+          const { total, results } = await search(args);
           recordUsage('search_prompts', args.type, total === 0);
           return json({ total, results: results.map(summary) });
         }),
@@ -81,7 +81,7 @@ const mcp = createMcpHandler(
       },
       async ({ ref, type }) =>
         timed('get_prompt', type, async () => {
-          const x = find(ref, type);
+          const x = await find(ref, type);
           recordUsage('get_prompt', x?.kind);
           if (!x) return { isError: true, content: [{ type: 'text', text: `No prompt found for "${ref}". Use search_prompts to find one.` }] };
           return json(full(x));
@@ -104,7 +104,7 @@ const mcp = createMcpHandler(
       },
       async (args) =>
         timed('random_prompt', args.type, async () => {
-          const x = random(args);
+          const x = await random(args);
           recordUsage('random_prompt', x?.kind ?? args.type, !x);
           if (!x) return { isError: true, content: [{ type: 'text', text: 'No prompt matches these filters. Use list_filters to see the valid values.' }] };
           return json(full(x));
